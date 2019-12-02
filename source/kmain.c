@@ -15,10 +15,12 @@ void kmain(unsigned long magic, multiboot_info_t* mbi)
 
     if(are_interrupts_enabled())
     {
+        //green color - OK
         clearLFBMemory(0x00FF00);
     }
     else
     {
+        //red color - ERROR
         clearLFBMemory(0xFF0000);
     }
     

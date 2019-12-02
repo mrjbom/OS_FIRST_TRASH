@@ -3,12 +3,12 @@
 
 uint32_t* LFBFRAMEBUFFER_ADDR = NULL;
 
-void initVGAMemory()
+void initLFBMemory()
 {
     LFBFRAMEBUFFER_ADDR = (uint32_t*)((uint32_t)MBI->framebuffer_addr);
 }
 
-void clearVGAMemory(uint32_t color)
+void clearLFBMemory(uint32_t color)
 {
     for (uint32_t pixelPos = 0; pixelPos < MBI->framebuffer_width * MBI->framebuffer_height; pixelPos++)
         LFBFRAMEBUFFER_ADDR[pixelPos] = color;

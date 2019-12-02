@@ -5,9 +5,9 @@
 
 extern uint32_t* LFBFRAMEBUFFER_ADDR;
 
-extern void initVGAMemory();
+extern void initLFBMemory();
 
-extern void clearVGAMemory(uint32_t color);
+extern void clearLFBMemory(uint32_t color);
 
 extern void writePixelToLFB(uint32_t line, uint32_t column, uint32_t color);
 

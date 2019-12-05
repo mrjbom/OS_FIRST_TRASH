@@ -60,11 +60,19 @@ start:
    dw gdt_end - gdt - 1
    dd gdt
 
-  ;load gdt
   load_gdt:
-    lgdt [gdt_desc]  ;load GDT
+  lgdt [gdt_desc]  ;load GDT
+  mov ax, 0x10
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
+  jmp 0x08:.setcs
+  .setcs:
 
   call kmain
+  cli
   hlt
 
 section .bss

@@ -70,7 +70,7 @@ start:
   mov ss, ax
   jmp 0x08:.setcs
   .setcs:
-
+  
   call kmain
   cli
   hlt

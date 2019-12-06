@@ -172,13 +172,12 @@ void idt_init(void) {
 	load_idt(idt_ptr);
 }
 
-
-
 void irq0_handler(void) {
     outb(0x20, 0x20); //EOI
 }
  
 void irq1_handler(void) {
+	
 	outb(0x20, 0x20); //EOI
 }
  
@@ -212,8 +211,8 @@ void irq8_handler(void) {
 }
  
 void irq9_handler(void) {
-        outb(0xA0, 0x20);
-        outb(0x20, 0x20); //EOI
+    outb(0xA0, 0x20);
+    outb(0x20, 0x20); //EOI
 }
  
 void irq10_handler(void) {

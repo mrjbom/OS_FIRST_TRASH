@@ -182,6 +182,7 @@ int a = 0;
 
 void irq1_handler(void) {
 	writePixelToLFB(300, a, 0xFFFFFF);
+	write_serial('I');
 	a++;
 	outb(0x20, 0x20); //EOI
 }

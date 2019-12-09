@@ -1,6 +1,8 @@
 #include "interruptions.h"
 #include "../kernel/kernel.h"
 #include "../inlineassembly/inlineassembly.h"
+#include "../lfbmemory/lfbmemory.h"
+#include "../debug/debug.h"
 
 void idt_init(void) {
     extern int load_idt();
@@ -175,9 +177,12 @@ void idt_init(void) {
 void irq0_handler(void) {
     outb(0x20, 0x20); //EOI
 }
- 
+
+int a = 0;
+
 void irq1_handler(void) {
-	
+	writePixelToLFB(300, a, 0xFFFFFF);
+	a++;
 	outb(0x20, 0x20); //EOI
 }
  

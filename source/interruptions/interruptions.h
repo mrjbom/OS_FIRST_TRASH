@@ -17,6 +17,8 @@ extern void idt_init(void);
 
 extern void irq0_handler(void);
 
+extern int a;
+
 extern void irq1_handler(void);
 
 extern void irq2_handler(void);

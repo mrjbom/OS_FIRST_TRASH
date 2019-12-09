@@ -57,8 +57,8 @@ start:
   gdt_end:
 
   gdt_desc:
-   dw gdt_end - gdt - 1
-   dd gdt
+  dw gdt_end - gdt - 1
+  dd gdt
 
   load_gdt:
   lgdt [gdt_desc]  ;load GDT
@@ -72,8 +72,9 @@ start:
   .setcs:
   
   call kmain
-  cli
+  .hltloop:
   hlt
+  jmp .hltloop
 
 section .bss
 resb 8192

@@ -16,10 +16,10 @@ typedef unsigned char               uint8_t;
 typedef unsigned short              uint16_t;
 typedef unsigned int                uint32_t;
 typedef unsigned long long          uint64_t;
-typedef char               int8_t;
-typedef short              int16_t;
-typedef int                int32_t;
-typedef long long          int64_t;
+typedef char                        int8_t;
+typedef short                       int16_t;
+typedef int                         int32_t;
+typedef long long                   int64_t;
 
 enum base_textmode_colors
 {
@@ -43,6 +43,6 @@ enum base_textmode_colors
 
 extern multiboot_info_t* MBI;
 
-extern void initMultibootInfo(multiboot_info_t* mbiTemp);
+extern void init_multiboot_info(multiboot_info_t* mbi_temp);
 
 #endif

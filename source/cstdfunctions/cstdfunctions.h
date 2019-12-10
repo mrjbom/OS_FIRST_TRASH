@@ -5,4 +5,6 @@
 
 extern size_t strlen(const char *s);
 
+extern char* itoa(int value, char* result, int base);
+
 #endif

@@ -5,12 +5,12 @@
 
 extern uint32_t* LFBFRAMEBUFFER_ADDR;
 
-extern void initLFBMemory();
+extern void init_lfb_mem();
 
-extern void clearLFBMemory(uint32_t color);
+extern void clear_lfb_mem(uint32_t color);
 
-extern void writePixelToLFB(uint32_t line, uint32_t column, uint32_t color);
+extern void write_pixel_lfb_mem(uint32_t line, uint32_t column, uint32_t color);
 
-extern void writeSymbolToLFB(uint32_t line, uint32_t column, char symbol);
+extern void print_symbol_lfb_mem(uint32_t line, uint32_t column, char symbol);
 
 #endif

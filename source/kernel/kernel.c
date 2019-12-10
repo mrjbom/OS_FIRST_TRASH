@@ -3,7 +3,6 @@
 
 multiboot_info_t* MBI;
 
-void initMultibootInfo(multiboot_info_t* mbiTemp)
-{
-    MBI = mbiTemp;
+void init_multiboot_info(multiboot_info_t* mbi_temp) {
+    MBI = mbi_temp;
 }

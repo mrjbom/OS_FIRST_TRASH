@@ -2,7 +2,7 @@
 
 declare -a clearRoutes
 clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" "./o/kmain.o" "./o/kernel.o" "./o/vgamem.o" 
-"./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/cstdfuncs.o" "./o/debug.o"
+"./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/cstdfuncs.o" "./o/debug.o" "./o/deviceskeyboard.o"
 "./kernel-0" "./iso/boot/kernel-0")
 
 clear()
@@ -53,13 +53,13 @@ declare -a buildCRoutes
 buildCRoutes=("./source/kmain.c" "./source/kernel/kernel.c" 
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
 "./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c" "./source/cstdfunctions/cstdfunctions.c"
-"./source/debug/debug.c")
+"./source/debug/debug.c" "./source/devices/keyboard/keyboard.c")
 
 declare -a buildObjectNames
 buildObjectNames=("./o/kmain.o" "./o/kernel.o" 
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o" "./o/intrupts.o" "./o/cstdfuncs.o"
-"./o/debug.o")
+"./o/debug.o" "./o/deviceskeyboard.o")
 
 echo -e "\e[36mCompile .c files...\e[0m"
 buildCRoutesSize=${#buildCRoutes[*]}
@@ -88,7 +88,7 @@ then
 	exit;
 fi
 echo -e "\e[36mStart linker...\n\e[0m"
-./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ./o/kmain.o ./o/kernel.o ./o/lfbmem.o ./o/textmodemem.o ./o/inlineasm.o ./o/intrupts.o ./o/cstdfuncs.o ./o/debug.o
+./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ./o/kmain.o ./o/kernel.o ./o/lfbmem.o ./o/textmodemem.o ./o/inlineasm.o ./o/intrupts.o ./o/cstdfuncs.o ./o/debug.o ./o/deviceskeyboard.o
 
 #check kernel file
 if [ ! -f ./kernel-0 ]

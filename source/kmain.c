@@ -30,7 +30,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi)
     size_t ram_len;
 
     while(memory_map < MBI->mmap_addr + MBI->mmap_length) {
-		memory_map = (multiboot_memory_map_t*)((unsigned int)memory_map + memory_map->size + sizeof(memory_map->size));
+	    memory_map = (multiboot_memory_map_t*)((unsigned int)memory_map + memory_map->size + sizeof(memory_map->size));
         ram_len += memory_map->len;
         char* str_result;
         itoa(memory_map->addr, str_result, 16);

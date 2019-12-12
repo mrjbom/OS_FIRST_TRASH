@@ -27,23 +27,27 @@ void kmain(unsigned long magic, multiboot_info_t* mbi)
 
     multiboot_memory_map_t* memory_map = (multiboot_memory_map_t*)MBI->mmap_addr;
 
-    uint64_t ram_len;
+    //in bytes
+    uint32_t ram_len;
+    uint32_t ram_available;
 
-    while((uint32_t)memory_map < MBI->mmap_addr + MBI->mmap_length) {
-	    memory_map = (multiboot_memory_map_t*)((unsigned int)memory_map + memory_map->size + sizeof(memory_map->size));
+    int memory_map_addr = mbi->mmap_addr;
+	int memory_map_len = mbi->mmap_length;
+
+    while (memory_map < (void*)(memory_map_addr + memory_map_len))
+    {
         ram_len += memory_map->len;
+        if(memory_map->type == 1)
+            ram_available += memory_map->len;
+        memory_map = (multiboot_memory_map_t*)((unsigned int)memory_map + memory_map->size + sizeof(memory_map->size));
     }
-    char str_result[16];
-    itoaINT32(MBI->mem_lower, str_result, 10);
-    write_serial_str("mem_lower = ");
-    write_serial_str(str_result);
-    write_serial('\n');
-    itoaINT32(MBI->mem_upper, str_result, 10);
-    write_serial_str("mem_upper = ");
-    write_serial_str(str_result);
-    write_serial('\n');
-    itoaINT32(ram_len, str_result, 10);
-    write_serial_str("ram_len = ");
-    write_serial_str(str_result);
-    write_serial('\n');
+
+
+    {
+        char str_result[16];
+        itoaINT32(ram_available, str_result, 10);
+        write_serial_str("ram_available = ");
+        write_serial_str(str_result);
+        write_serial('\n');
+    }
 }

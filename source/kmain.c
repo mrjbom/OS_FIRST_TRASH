@@ -31,8 +31,8 @@ void kmain(unsigned long magic, multiboot_info_t* mbi)
     uint32_t ram_len;
     uint32_t ram_available;
 
-    int memory_map_addr = mbi->mmap_addr;
-	int memory_map_len = mbi->mmap_length;
+    uint32_t memory_map_addr = mbi->mmap_addr;
+    uint32_t memory_map_len = mbi->mmap_length;
 
     while (memory_map < (void*)(memory_map_addr + memory_map_len))
     {

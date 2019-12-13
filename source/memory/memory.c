@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "../memory/memory.h"
 #include "../kernel/kernel.h"
 #include "../lib/cstdlib.h"
 #include "../lib/stddef.h"

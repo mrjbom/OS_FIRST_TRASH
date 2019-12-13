@@ -2,7 +2,7 @@
 
 declare -a clearRoutes
 clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" "./o/kmain.o" "./o/kernel.o" "./o/vgamem.o" 
-"./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/cstdfuncs.o" "./o/debug.o" "./o/deviceskeyboard.o"
+"./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o" "./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o"
 "./kernel-0" "./iso/boot/kernel-0")
 
 clear()
@@ -53,15 +53,15 @@ declare -a buildCRoutes
 buildCRoutes=("./source/kmain.c" "./source/kernel/kernel.c"
 "./source/lib/cstdlib.c" "./source/lib/string.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
-"./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c"
-"./source/debug/debug.c" "./source/devices/keyboard/keyboard.c")
+"./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c" "./source/memory/memory.c"
+"./source/debug/debug.c" "./source/devices/keyboard/keyboard.c" "./source/devices/cpu/cpu.c")
 
 declare -a buildObjectRoutes
 buildObjectRoutes=("./o/kmain.o" "./o/kernel.o"
 "./o/cstdlib.o" "./o/string.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
-"./o/inlineasm.o" "./o/intrupts.o"
-"./o/debug.o" "./o/deviceskeyboard.o")
+"./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o"
+"./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o")
 
 echo -e "\e[36mCompile .c files...\e[0m"
 buildCRoutesSize=${#buildCRoutes[*]}
@@ -70,7 +70,7 @@ do
 	if [ -f ${buildCRoutes[i]} ]
 	then
 		echo "Build ${buildCRoutes[i]}"
-		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
+		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
 	else
 		echo -e "\e[31mERROR!\e[0m"
 		echo "${buildCRoutes[i]} not found"

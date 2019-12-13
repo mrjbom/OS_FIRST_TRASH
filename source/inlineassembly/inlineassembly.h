@@ -42,4 +42,6 @@ extern void lidt(void* base, uint16_t size);
 //CPUID
 extern void cpuid(int code, uint32_t* a, uint32_t* d);
 
+extern int cpuid_string(int code, uint32_t where[4]);
+
 #endif

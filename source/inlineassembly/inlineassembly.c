@@ -96,3 +96,9 @@ void cpuid(int code, uint32_t* a, uint32_t* d)
 {
     __asm__ volatile ( "cpuid" : "=a"(*a), "=d"(*d) : "0"(code) : "ebx", "ecx" );
 }
+
+int cpuid_string(int code, uint32_t where[4]) {
+  __asm__ volatile("cpuid":"=a"(*where),"=b"(*(where+1)),
+               "=c"(*(where+2)),"=d"(*(where+3)):"a"(code));
+  return (int)where[0];
+}

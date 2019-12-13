@@ -2,6 +2,8 @@
 #define _TEXTMODEMEMORY_H_
 
 #include "../kernel/kernel.h"
+#include "../lib/stdint.h"
+#include "../lib/string.h"
 
 extern void clearBaseTextBuffer(uint32_t color);
 

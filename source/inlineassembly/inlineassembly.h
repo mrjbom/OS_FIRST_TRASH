@@ -2,6 +2,9 @@
 #define _INLINEASSEMBLY_H_
 
 #include "../kernel/kernel.h"
+#include "../lib/cstdlib.h"
+#include "../lib/stddef.h"
+#include "../lib/stdint.h"
 
 //----Memory access----
 

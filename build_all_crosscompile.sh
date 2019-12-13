@@ -38,27 +38,29 @@ fi
 nasm -f elf32 ./source/bootloader.asm -o ./o/bootloaderasm.o
 
 #check and compile irqhandlers.asm
-echo -e "\e[36mCompile ./source/irqhandlers/irqhandlers.asm...\n\e[0m"
-if [ ! -f ./source/irqhandlers/irqhandlers.asm ]
+echo -e "\e[36mCompile ./source/irqhandlersasm/irqhandlers.asm...\n\e[0m"
+if [ ! -f ./source/irqhandlersasm/irqhandlers.asm ]
 then
 	echo -e "\e[31mERROR!\e[0m"
-	echo "./source/irqhandlers/irqhandlers.asm not found"
+	echo "./source/irqhandlersasm/irqhandlers.asm not found"
 	echo "Abort..."
 	clear
 	exit;
 fi
-nasm -f elf32 ./source/irqhandlers/irqhandlers.asm -o ./o/iqrhandlersasm.o
+nasm -f elf32 ./source/irqhandlersasm/irqhandlers.asm -o ./o/iqrhandlersasm.o
 
 declare -a buildCRoutes
-buildCRoutes=("./source/kmain.c" "./source/kernel/kernel.c" 
+buildCRoutes=("./source/kmain.c" "./source/kernel/kernel.c"
+"./source/lib/cstdlib.c" "./source/lib/string.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
-"./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c" "./source/cstdfunctions/cstdfunctions.c"
+"./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c"
 "./source/debug/debug.c" "./source/devices/keyboard/keyboard.c")
 
-declare -a buildObjectNames
-buildObjectNames=("./o/kmain.o" "./o/kernel.o" 
+declare -a buildObjectRoutes
+buildObjectRoutes=("./o/kmain.o" "./o/kernel.o"
+"./o/cstdlib.o" "./o/string.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
-"./o/inlineasm.o" "./o/intrupts.o" "./o/cstdfuncs.o"
+"./o/inlineasm.o" "./o/intrupts.o"
 "./o/debug.o" "./o/deviceskeyboard.o")
 
 echo -e "\e[36mCompile .c files...\e[0m"
@@ -68,7 +70,7 @@ do
 	if [ -f ${buildCRoutes[i]} ]
 	then
 		echo "Build ${buildCRoutes[i]}"
-		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -std=c11 -c ${buildCRoutes[i]} -o ${buildObjectNames[i]}
+		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
 	else
 		echo -e "\e[31mERROR!\e[0m"
 		echo "${buildCRoutes[i]} not found"
@@ -87,8 +89,9 @@ then
 	clear
 	exit;
 fi
-echo -e "\e[36mStart linker...\n\e[0m"
-./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ./o/kmain.o ./o/kernel.o ./o/lfbmem.o ./o/textmodemem.o ./o/inlineasm.o ./o/intrupts.o ./o/cstdfuncs.o ./o/debug.o ./o/deviceskeyboard.o
+echo -e "\n\e[36mStart linker...\n\e[0m"
+
+./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]}
 
 #check kernel file
 if [ ! -f ./kernel-0 ]

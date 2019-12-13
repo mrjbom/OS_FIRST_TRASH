@@ -5,23 +5,6 @@
 
 #define BASE_TEXT_MODE_ADDRESS 0xB8000
 
-#define true 0x00
-#define false 0x01
-#define NULL 0
-
-typedef unsigned char               bool;
-typedef unsigned char               byte;
-typedef unsigned int                size_t;
-typedef unsigned char               uint8_t;
-typedef unsigned short              uint16_t;
-typedef unsigned int                uint32_t;
-typedef unsigned long long          uint64_t;
-
-typedef char                        int8_t;
-typedef short                       int16_t;
-typedef int                         int32_t;
-typedef long long                   int64_t;
-
 enum base_textmode_colors
 {
     TEXT_MODE_BLACK = 0x0,

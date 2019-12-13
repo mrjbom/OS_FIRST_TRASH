@@ -1,5 +1,8 @@
 #include "../lfbmemory/lfbmemory.h"
 #include "../kernel/kernel.h"
+#include "../lib/cstdlib.h"
+#include "../lib/stddef.h"
+#include "../lib/stdint.h"
 
 uint32_t* LFBFRAMEBUFFER_ADDR = NULL;
 
@@ -18,5 +21,5 @@ void write_pixel_lfb_mem(uint32_t line, uint32_t column, uint32_t color) {
 }
 
 void print_symbol_lfb_mem(uint32_t line, uint32_t column, char symbol) {
-
+    
 }

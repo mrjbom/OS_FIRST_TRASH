@@ -1,5 +1,8 @@
 #include "../inlineassembly/inlineassembly.h"
 #include "../kernel/kernel.h"
+#include "../lib/cstdlib.h"
+#include "../lib/stddef.h"
+#include "../lib/stdint.h"
 
 uint32_t farpeekl(uint16_t sel, void* off)
 {
@@ -60,6 +63,9 @@ unsigned long save_irqdisable(void)
 {
     unsigned long flags;
     __asm__ volatile ("pushf\n\tcli\n\tpop %0" : "=r"(flags) : : "memory");
+    
+    //add by me
+    return flags;
 }
 
 void irqrestore(unsigned long flags)

@@ -228,7 +228,7 @@ void irq7_handler(void) {
  
 void irq8_handler(void) {
     outb(0xA0, 0x20);
-	outb(0x20, 0x20); //EOI          
+	outb(0x20, 0x20); //EOI         
 }
  
 void irq9_handler(void) {

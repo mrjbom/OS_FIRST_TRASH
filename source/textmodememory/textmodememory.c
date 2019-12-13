@@ -1,6 +1,7 @@
 #include "textmodememory.h"
 #include "../kernel/kernel.h"
-#include "../cstdfunctions/cstdfunctions.h"
+#include "../lib/stdint.h"
+#include "../lib/string.h"
 
 byte* BASE_TEXTBUFFER_ADDRESS = (byte*)BASE_TEXT_MODE_ADDRESS;
 

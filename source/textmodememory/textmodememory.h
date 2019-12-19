@@ -6,7 +6,7 @@
 #include "../lib/stdint.h"
 #include "../lib/string.h"
 
-#define BASE_TEXT_MODE_ADDRESS 0xB8000
+#define BASE_TEXTBUFFER_ADDRESS 0xB8000
 
 enum base_textmode_colors
 {

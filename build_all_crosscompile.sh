@@ -80,6 +80,21 @@ do
 	fi
 done
 
+#
+#check linker file and start linker
+#if [ ! -f ./link.ld ]
+#then
+#	echo -e "\e[31mERROR!\e[0m"
+#	echo "./link.ld not found"
+#	echo "Abort..."
+#	clear
+#	exit;
+#fi
+#echo -e "\n\e[36mStart linker...\n\e[0m"
+#
+#./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
+#
+
 #check linker file and start linker
 if [ ! -f ./link.ld ]
 then
@@ -91,7 +106,8 @@ then
 fi
 echo -e "\n\e[36mStart linker...\n\e[0m"
 
-./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
+#./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
+./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
 
 #check kernel file
 if [ ! -f ./kernel-0 ]

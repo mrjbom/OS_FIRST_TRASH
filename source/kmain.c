@@ -58,4 +58,18 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         write_serial_str(str_result);
         write_serial_str(" MBytes\n");
     }
+
+    {
+        char str_result[16];
+        write_serial_str("THIS UINT64 OUTPUT SECTION\n");
+        itoaUINT64(ram_available, str_result, 10);
+        write_serial_str("ram_available = ");
+        write_serial_str(str_result);
+        write_serial_str(" Bytes\n");
+        //Bytes to Megabytes
+        itoaUINT64(ram_available / 1024 / 1024, str_result, 10);
+        write_serial_str("ram_available = ");
+        write_serial_str(str_result);
+        write_serial_str(" MBytes\n");
+    }
 }

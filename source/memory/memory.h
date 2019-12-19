@@ -11,8 +11,8 @@
 extern multiboot_memory_map_t* memory_map;
 
 //in bytes
-extern uint32_t ram_len;
-extern uint32_t ram_available;
+extern uint64_t ram_len;
+extern uint64_t ram_available;
 
 extern uint32_t memory_map_addr;
 extern uint32_t memory_map_len;

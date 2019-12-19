@@ -2,8 +2,8 @@
 
 multiboot_memory_map_t* memory_map = NULL;
 
-uint32_t ram_len = NULL;
-uint32_t ram_available = NULL;
+uint64_t ram_len = NULL;
+uint64_t ram_available = NULL;
 
 uint32_t memory_map_addr = NULL;
 uint32_t memory_map_len = NULL;

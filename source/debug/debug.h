@@ -1,7 +1,10 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-#include "../kernel/kernel.h"
+#include "../lib/cstdlib.h"
+#include "../lib/stddef.h"
+#include "../lib/stdint.h"
+#include "../lib/string.h"
 
 #define PORT 0x3f8   /* COM1 */
  

@@ -1,8 +1,6 @@
 #include "keyboard.h"
-#include "../../kernel/kernel.h"
-#include "../../lib/cstdlib.h"
-#include "../../lib/stddef.h"
-#include "../../lib/stdint.h"
+
+#include "../../debug/debug.h"
 
 unsigned char keyboard_keys[128] =
 {
@@ -45,5 +43,4 @@ unsigned char keyboard_keys[128] =
 };
 
 void keyboard_handler(byte key, byte status) {
-    
 }

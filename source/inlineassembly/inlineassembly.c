@@ -1,8 +1,4 @@
 #include "../inlineassembly/inlineassembly.h"
-#include "../kernel/kernel.h"
-#include "../lib/cstdlib.h"
-#include "../lib/stddef.h"
-#include "../lib/stdint.h"
 
 uint32_t farpeekl(uint16_t sel, void* off)
 {

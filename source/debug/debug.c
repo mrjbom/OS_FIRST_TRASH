@@ -1,10 +1,5 @@
 #include "debug.h"
-#include "../kernel/kernel.h"
 #include "../inlineassembly/inlineassembly.h"
-#include "../lib/cstdlib.h"
-#include "../lib/stddef.h"
-#include "../lib/stdint.h"
-#include "../lib/string.h"
 
 void init_serial() {
    outb(PORT + 1, 0x00);    // Disable all interrupts

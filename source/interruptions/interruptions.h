@@ -1,7 +1,10 @@
 #ifndef _INTERRUPTS_H_
 #define _INTERRUPTS_H_
 
-#include "../kernel/kernel.h"
+#include "../lib/cstdlib.h"
+#include "../lib/stddef.h"
+#include "../lib/stdint.h"
+#include "../lib/string.h"
 
 struct IDT_entry{
 	unsigned short int offset_lowerbits;

@@ -1,17 +1,12 @@
-#include "kernel/kernel.h"
-//stdlib
-#include "lib/cstdlib.h"
-#include "lib/stddef.h"
-#include "lib/stdint.h"
-
 #include "lfbmemory/lfbmemory.h"
 #include "inlineassembly/inlineassembly.h"
 #include "interruptions/interruptions.h"
+#include "memory/memory.h"
 #include "debug/debug.h"
 #include "devices/cpu/cpu.h"
+#include "more/more.h"
 
-void kmain(unsigned long magic, multiboot_info_t* mbi)
-{
+void kmain(unsigned long magic, multiboot_info_t* mbi) {
     (void)magic;
     init_multiboot_info(mbi);
 
@@ -21,6 +16,9 @@ void kmain(unsigned long magic, multiboot_info_t* mbi)
     lidt(IDT, sizeof(IDT));
     idt_init();
     init_serial();
+    init_memory();
+
+    calclulate_memory();
 
     if(are_interrupts_enabled()) {
         write_serial_str("In kmain(): are_interrupts_enabled() ok\n");
@@ -36,11 +34,9 @@ void kmain(unsigned long magic, multiboot_info_t* mbi)
     {
         char str_result[16];
         //Bytes to Megabytes
-        //itoaINT32(ram_available / 1024 / 1024, str_result, 10);
+        itoaINT32(ram_available / 1024 / 1024, str_result, 10);
         write_serial_str("ram_available = ");
         write_serial_str(str_result);
         write_serial_str(" MBytes\n");
     }
-
-    detect_cpu();
 }

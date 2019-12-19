@@ -1,7 +1,7 @@
 #!/bin/bash
 
 declare -a clearRoutes
-clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" "./o/kmain.o" "./o/kernel.o" "./o/vgamem.o" 
+clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" "./o/kmain.o" "./o/more.o" "./o/vgamem.o" 
 "./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o" "./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o"
 "./kernel-0" "./iso/boot/kernel-0")
 
@@ -38,26 +38,26 @@ fi
 nasm -f elf32 ./source/bootloader.asm -o ./o/bootloaderasm.o
 
 #check and compile irqhandlers.asm
-echo -e "\e[36mCompile ./source/irqhandlersasm/irqhandlers.asm...\n\e[0m"
-if [ ! -f ./source/irqhandlersasm/irqhandlers.asm ]
+echo -e "\e[36mCompile ./source/interruptions/irqhandlers.asm...\n\e[0m"
+if [ ! -f ./source/interruptions/irqhandlers.asm ]
 then
 	echo -e "\e[31mERROR!\e[0m"
-	echo "./source/irqhandlersasm/irqhandlers.asm not found"
+	echo "./source/interruptions/irqhandlers.asm not found"
 	echo "Abort..."
 	clear
 	exit;
 fi
-nasm -f elf32 ./source/irqhandlersasm/irqhandlers.asm -o ./o/iqrhandlersasm.o
+nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/iqrhandlersasm.o
 
 declare -a buildCRoutes
-buildCRoutes=("./source/kmain.c" "./source/kernel/kernel.c"
+buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/lib/cstdlib.c" "./source/lib/string.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
 "./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c" "./source/memory/memory.c"
 "./source/debug/debug.c" "./source/devices/keyboard/keyboard.c" "./source/devices/cpu/cpu.c")
 
 declare -a buildObjectRoutes
-buildObjectRoutes=("./o/kmain.o" "./o/kernel.o"
+buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/cstdlib.o" "./o/string.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o"

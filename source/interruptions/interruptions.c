@@ -1,7 +1,6 @@
 #include "interruptions.h"
-#include "../kernel/kernel.h"
+
 #include "../inlineassembly/inlineassembly.h"
-#include "../lfbmemory/lfbmemory.h"
 #include "../devices/keyboard/keyboard.h"
 
 void idt_init(void) {

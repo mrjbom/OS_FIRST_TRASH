@@ -1,16 +1,18 @@
-#include "../memory/memory.h"
-#include "../kernel/kernel.h"
-#include "../lib/cstdlib.h"
-#include "../lib/stddef.h"
-#include "../lib/stdint.h"
+#include "memory.h"
 
-multiboot_memory_map_t* memory_map = (multiboot_memory_map_t*)MBI->mmap_addr;
+multiboot_memory_map_t* memory_map = NULL;
 
-uint32_t ram_len;
-uint32_t ram_available;
+uint32_t ram_len = NULL;
+uint32_t ram_available = NULL;
 
-uint32_t memory_map_addr = MBI->mmap_addr;
-uint32_t memory_map_len = MBI->mmap_length;
+uint32_t memory_map_addr = NULL;
+uint32_t memory_map_len = NULL;
+
+void init_memory() {
+    memory_map = (multiboot_memory_map_t*)MBI->mmap_addr;
+    memory_map_addr = MBI->mmap_addr;
+    memory_map_len = MBI->mmap_length;
+}
 
 void calclulate_memory() {
     while ((void*)memory_map < (void*)(memory_map_addr + memory_map_len))

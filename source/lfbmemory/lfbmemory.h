@@ -1,12 +1,12 @@
 #ifndef _VGAMEMORY_H_
 #define _VGAMEMORY_H_
 
-#include "../kernel/kernel.h"
 #include "../lib/cstdlib.h"
 #include "../lib/stddef.h"
 #include "../lib/stdint.h"
+#include "../lib/string.h"
 
-extern uint32_t* LFBFRAMEBUFFER_ADDR;
+extern uint32_t* LFBMEMORY_ADDR;
 
 extern void init_lfb_mem();
 

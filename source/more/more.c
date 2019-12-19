@@ -1,5 +1,4 @@
-#include "kernel.h"
-#include "../multiboot/multiboot.h"
+#include "more.h"
 
 multiboot_info_t* MBI;
 

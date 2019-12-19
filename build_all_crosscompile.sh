@@ -70,7 +70,7 @@ do
 	if [ -f ${buildCRoutes[i]} ]
 	then
 		echo "Build ${buildCRoutes[i]}"
-		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -m32 -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
+		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -m32 -std=c11 -lgcc -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
 	else
 		echo -e "\e[31mERROR!\e[0m"
 		echo "${buildCRoutes[i]} not found"

@@ -17,7 +17,7 @@ char* strcpy(char* s1, const char* s2)
     return original;
 }
 
-extern char* strncpy(char* s1, const char* s2, uint32_t n)
+char* strncpy(char* s1, const char* s2, uint32_t n)
 {
     char* original = s1;
 
@@ -31,7 +31,7 @@ extern char* strncpy(char* s1, const char* s2, uint32_t n)
     return original;
 }
 
-extern void* memcpy(void* buf1, const void* buf2, uint32_t bytes)
+void* memcpy(void* buf1, const void* buf2, uint32_t bytes)
 {
     uint8_t* buf_dst = buf1;
     const uint8_t* buf_src = buf2;
@@ -43,7 +43,7 @@ extern void* memcpy(void* buf1, const void* buf2, uint32_t bytes)
     return buf_dst;
 }
 
-extern void* memset(void* buf1, uint8_t value, size_t bytes)
+void* memset(void* buf1, uint8_t value, size_t bytes)
 {
     uint8_t* buf_dst = buf1;
 
@@ -54,7 +54,7 @@ extern void* memset(void* buf1, uint8_t value, size_t bytes)
     return buf1;
 }
 
-extern int strcmp(const char* s1, const char* s2)
+int strcmp(const char* s1, const char* s2)
 {
     while (1) {
         if (*s1 != *s2)
@@ -66,7 +66,7 @@ extern int strcmp(const char* s1, const char* s2)
     }
 }
 
-extern int strncmp(const char* s1, const char* s2, uint32_t n)
+int strncmp(const char* s1, const char* s2, uint32_t n)
 {
     for (unsigned int i = 0; i < n; ++i) {
         if (*s1 != *s2)
@@ -80,7 +80,7 @@ extern int strncmp(const char* s1, const char* s2, uint32_t n)
     return 0;
 }
 
-extern char* strcat(char* s1, const char* s2)
+char* strcat(char* s1, const char* s2)
 {
     char* original = s1;
 
@@ -93,7 +93,7 @@ extern char* strcat(char* s1, const char* s2)
     return original;
 }
 
-extern char* strext(char* buf, const char* str, char sym)
+char* strext(char* buf, const char* str, char sym)
 {
     while (*str != '\0') {
         *buf++ = *str++;
@@ -103,7 +103,7 @@ extern char* strext(char* buf, const char* str, char sym)
     return buf;
 }
 
-extern int strspn(char* str, const char* accept)
+int strspn(char* str, const char* accept)
 {
     int len = strlen(accept);
     int i;
@@ -126,7 +126,7 @@ extern int strspn(char* str, const char* accept)
     return i;
 }
 
-extern int strcspn(char* str, const char* rejected)
+int strcspn(char* str, const char* rejected)
 {
     int len = strlen(rejected);
     int i;
@@ -163,7 +163,7 @@ char* strchr(const char* str, char ch)
     return NULL;
 }
 
-extern char* strtok_r(char* str, const char* delim, char** save_ptr)
+char* strtok_r(char* str, const char* delim, char** save_ptr)
 {
     char* end;
 
@@ -196,7 +196,7 @@ extern char* strtok_r(char* str, const char* delim, char** save_ptr)
     return str;
 }
 
-extern char* memext(void* buff_dst, uint32_t n, const void* buff_src, char sym)
+char* memext(void* buff_dst, uint32_t n, const void* buff_src, char sym)
 {
     uint8_t* buff_dst_ptr = buff_dst;
     uint8_t* buff_src_ptr = (uint8_t*)buff_src;
@@ -209,7 +209,7 @@ extern char* memext(void* buff_dst, uint32_t n, const void* buff_src, char sym)
     return buff_dst;
 }
 
-extern char* itoa(uint32_t value, char* str, uint32_t base)
+char* itoa(uint32_t value, char* str, uint32_t base)
 {
     char* original = str;
     char digit;
@@ -246,7 +246,7 @@ extern char* itoa(uint32_t value, char* str, uint32_t base)
     return str;
 }
 
-extern unsigned int atou(char* str)
+unsigned int atou(char* str)
 {
     int k = 0;
 
@@ -258,7 +258,7 @@ extern unsigned int atou(char* str)
     return k;
 }
 
-extern char* strinv(char* str)
+char* strinv(char* str)
 {
     int i;
     uint32_t n = strlen(str);
@@ -275,7 +275,7 @@ extern char* strinv(char* str)
     return str;
 }
 
-extern unsigned int sprintf(char* s1, const char* s2, ...)
+unsigned int sprintf(char* s1, const char* s2, ...)
 {
     va_list list;
     va_start(list, s2);
@@ -283,7 +283,7 @@ extern unsigned int sprintf(char* s1, const char* s2, ...)
     return vsprintf(s1, s2, list);
 }
 
-extern unsigned int snprintf(char* s1, unsigned int n, const char* s2, ...)
+unsigned int snprintf(char* s1, unsigned int n, const char* s2, ...)
 {
     va_list list;
     va_start(list, s2);
@@ -291,12 +291,12 @@ extern unsigned int snprintf(char* s1, unsigned int n, const char* s2, ...)
     return vsnprintf(s1, n, s2, list);
 }
 
-extern unsigned int vsprintf(char* s1, const char* s2, va_list list)
+unsigned int vsprintf(char* s1, const char* s2, va_list list)
 {
     return vsnprintf(s1, 4 * 1024, s2, list);
 }
 
-extern unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
+unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
 {
     uint32_t j = 0;
     size_t count = 0;
@@ -315,19 +315,25 @@ extern unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list 
                 /* character */
                 *cur++ = va_arg(list, char);
                 break;
-            case 'u':
-                /* unsigned decimal */
-                itoaUINT32(va_arg(list, uint32_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'd':
-                /* decimal */
+            case 'i':
+                /* int32_t */
                 itoaINT32(va_arg(list, int32_t), number, 10);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
-            case 'X':
+            case 'I':
+                /* uint32_t */
+                itoaUINT32(va_arg(list, uint32_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'L':
+                /* uint64_t */
+                itoaUINT64(va_arg(list, uint64_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'x':
                 /* unsigned hexedecimal */
                 itoaUINT32(va_arg(list, uint32_t), number, 16);
                 strcpy(cur, number);

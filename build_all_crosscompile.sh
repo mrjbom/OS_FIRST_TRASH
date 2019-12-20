@@ -2,7 +2,8 @@
 
 declare -a clearRoutes
 clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" 
-"./o/kmain.o" "./o/more.o" "./o/vgamem.o" 
+"./o/kmain.o" "./o/more.o" "./o/vgamem.o"
+"./o/cstdlib.o" "./o/string.o"
 "./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o" "./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o"
 "./kernel-0" "./iso/boot/kernel-0")
 

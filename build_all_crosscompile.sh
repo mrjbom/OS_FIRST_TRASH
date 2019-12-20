@@ -1,7 +1,8 @@
 #!/bin/bash
 
 declare -a clearRoutes
-clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" "./o/kmain.o" "./o/more.o" "./o/vgamem.o" 
+clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" 
+"./o/kmain.o" "./o/more.o" "./o/vgamem.o" 
 "./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o" "./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o"
 "./kernel-0" "./iso/boot/kernel-0")
 
@@ -70,7 +71,7 @@ do
 	if [ -f ${buildCRoutes[i]} ]
 	then
 		echo "Build ${buildCRoutes[i]}"
-		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -m32 -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
+		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc --freestanding -m32 -std=c11 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -c ${buildCRoutes[i]} -o ${buildObjectRoutes[i]}
 	else
 		echo -e "\e[31mERROR!\e[0m"
 		echo "${buildCRoutes[i]} not found"

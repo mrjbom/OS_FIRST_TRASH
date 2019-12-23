@@ -300,7 +300,7 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
 {
     uint32_t j = 0;
     size_t count = 0;
-    char number[32];
+    char number[128];
     char* cur = s1;
     char* str;
 
@@ -327,13 +327,21 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
+            case 'l':
+            //NOT WORKING!
+            //    /* int64_t */
+            //    itoaINT64(va_arg(list, int64_t), number, 10);
+            //    strcpy(cur, number);
+            //    cur += strlen(number);
+            //    break;
             case 'L':
-                /* uint64_t */
-                itoaUINT64(va_arg(list, uint64_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'x':
+            //NOT WORKING!
+            //    /* uint64_t */
+            //    itoaUINT64(va_arg(list, uint64_t), number, 10);
+            //    strcpy(cur, number);
+            //    cur += strlen(number);
+            //    break;
+            case 'X':
                 /* unsigned hexedecimal */
                 itoaUINT32(va_arg(list, uint32_t), number, 16);
                 strcpy(cur, number);

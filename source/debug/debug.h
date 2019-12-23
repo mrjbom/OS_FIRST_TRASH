@@ -18,4 +18,6 @@ extern void write_serial_ch(char ch);
 
 extern void write_serial_str(const char* str);
 
+extern void dprintf(const char* s2, ...);
+
 #endif

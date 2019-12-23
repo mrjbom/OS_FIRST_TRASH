@@ -30,13 +30,19 @@
 #include "cpu.h"
 #include "../../debug/debug.h"
 
+//my
+//char forprint[256];
+
+cpuinfo_t cpu_info;
+char stringregs[17];
+
 /* Required Declarations */
 int do_intel(void);
 int do_amd(void);
 void printregs(int eax, int ebx, int ecx, int edx);
 
 /* Simply call this function detect_cpu(); */
-int detect_cpu(void) { /* or main() if your trying to port this as an independant application */
+void detect_cpu(void) { /* or main() if your trying to port this as an independant application */
 	unsigned long ebx, unused;
 	cpuid(0, unused, ebx, unused, unused);
 	switch(ebx) {
@@ -50,7 +56,7 @@ int detect_cpu(void) { /* or main() if your trying to port this as an independan
 		write_serial_str("Unknown x86 CPU Detected\n");
 		break;
 	}
-	return 0;
+	//return rcpuinfo;
 }
 
 /* Intel Specific brand list */
@@ -111,57 +117,81 @@ char *Intel_Other[] = {
 
 /* Intel-specific information */
 int do_intel(void) {
-	write_serial_str("Intel Specific Features:\n");
+	cpu_info.intel_or_amd = 1;
+	//write_serial_str("Intel Specific Features:\n");
 	unsigned long eax, ebx, ecx, edx, max_eax, signature, unused;
 	int model, family, type, brand, stepping, reserved;
 	int extended_family = -1;
+	cpu_info.intel_extended_family = -1;
 	cpuid(1, eax, ebx, unused, unused);
 	model = (eax >> 4) & 0xf;
+	cpu_info.intel_model = model;
 	family = (eax >> 8) & 0xf;
+	cpu_info.intel_family = family;
 	type = (eax >> 12) & 0x3;
+	cpu_info.intel_type = type;
 	brand = ebx & 0xff;
+	cpu_info.intel_brand = brand;
 	stepping = eax & 0xf;
+	cpu_info.intel_stepping = stepping;
 	reserved = eax >> 14;
+	cpu_info.intel_reserved = reserved;
 	signature = eax;
+	cpu_info.intel_signature = signature;
 	//printf("Type %d - ", type);
+	//sprintf(forprint, "Type %i - ", type);
+	//write_serial_str(forprint);
 	switch(type) {
 		case 0:
-		write_serial_str("Original OEM");
+		//write_serial_str("Original OEM");
+		cpu_info.intel_type_str = "Original OEM";
 		break;
 		case 1:
-		write_serial_str("Overdrive");
+		//write_serial_str("Overdrive");
+		cpu_info.intel_type_str = "Overdrive";
 		break;
 		case 2:
-		write_serial_str("Dual-capable");
+		//write_serial_str("Dual-capable");
+		cpu_info.intel_type_str = "Dual-capable";
 		break;
 		case 3:
-		write_serial_str("Reserved");
+		//write_serial_str("Reserved");
+		cpu_info.intel_type_str = "Reserved";
 		break;
 	}
-	write_serial_str("\n");
+	//write_serial_str("\n");
 	//printf("Family %d - ", family);
+	//sprintf(forprint, "Family %i - ", family);
 	switch(family) {
 		case 3:
 		write_serial_str("i386");
+		cpu_info.intel_family_str = "i386";
 		break;
 		case 4:
 		write_serial_str("i486");
+		cpu_info.intel_family_str = "i486";
 		break;
 		case 5:
 		write_serial_str("Pentium");
+		cpu_info.intel_family_str = "Pentium";
 		break;
 		case 6:
-		write_serial_str("Pentium Pro");
+		//write_serial_str("Pentium Pro");
+		cpu_info.intel_family_str = "Pentium Pro";
 		break;
 		case 15:
-		write_serial_str("Pentium 4");
+		//write_serial_str("Pentium 4");
+		cpu_info.intel_family_str = "Pentium 4";
 	}
-	write_serial_str("\n");
+	//write_serial_str("\n");
 	if(family == 15) {
 		extended_family = (eax >> 20) & 0xff;
+		cpu_info.intel_extended_family = extended_family;
 		//printf("Extended family %d\n", extended_family);
+		//sprintf(forprint, "Extended family %i\n", extended_family);
 	}
 	//printf("Model %d - ", model);
+	//sprintf(forprint, "Model %i - ", model);
 	switch(family) {
 		case 3:
 		break;
@@ -169,140 +199,176 @@ int do_intel(void) {
 		switch(model) {
 			case 0:
 			case 1:
-			write_serial_str("DX");
+			//write_serial_str("DX");
+			cpu_info.intel_model_str = "DX";
 			break;
 			case 2:
-			write_serial_str("SX");
+			//write_serial_str("SX");
+			cpu_info.intel_model_str = "SX";
 			break;
 			case 3:
-			write_serial_str("487/DX2");
+			//write_serial_str("487/DX2");
+			cpu_info.intel_model_str = "487/DX2";
 			break;
 			case 4:
-			write_serial_str("SL");
+			//write_serial_str("SL");
+			cpu_info.intel_model_str = "SL";
 			break;
 			case 5:
-			write_serial_str("SX2");
+			//write_serial_str("SX2");
+			cpu_info.intel_model_str = "SX2";
 			break;
 			case 7:
-			write_serial_str("Write-back enhanced DX2");
+			//write_serial_str("Write-back enhanced DX2");
+			cpu_info.intel_model_str = "Write-back enhanced DX2";
 			break;
 			case 8:
-			write_serial_str("DX4");
+			//write_serial_str("DX4");
+			cpu_info.intel_model_str = "DX4";
 			break;
 		}
 		break;
 		case 5:
 		switch(model) {
 			case 1:
-			write_serial_str("60/66");
+			//write_serial_str("60/66");
+			cpu_info.intel_model_str = "60/66";
 			break;
 			case 2:
-			write_serial_str("75-200");
+			//write_serial_str("75-200");
+			cpu_info.intel_model_str = "75-200";
 			break;
 			case 3:
-			write_serial_str("for 486 system");
+			//write_serial_str("for 486 system");
+			cpu_info.intel_model_str = "for 486 system";
 			break;
 			case 4:
-			write_serial_str("MMX");
+			//write_serial_str("MMX");
+			cpu_info.intel_model_str = "MMX";
 			break;
 		}
 		break;
 		case 6:
 		switch(model) {
 			case 1:
-			write_serial_str("Pentium Pro");
+			//write_serial_str("Pentium Pro");
+			cpu_info.intel_model_str = "Pentium Pro";
 			break;
 			case 3:
-			write_serial_str("Pentium II Model 3");
+			//write_serial_str("Pentium II Model 3");
+			cpu_info.intel_model_str = "Pentium II Model 3";
 			break;
 			case 5:
-			write_serial_str("Pentium II Model 5/Xeon/Celeron");
+			//write_serial_str("Pentium II Model 5/Xeon/Celeron");
+			cpu_info.intel_model_str = "Pentium II Model 5/Xeon/Celeron";
 			break;
 			case 6:
-			write_serial_str("Celeron");
+			//write_serial_str("Celeron");
+			cpu_info.intel_model_str = "Celeron";
 			break;
 			case 7:
-			write_serial_str("Pentium III/Pentium III Xeon - external L2 cache");
+			//write_serial_str("Pentium III/Pentium III Xeon - external L2 cache");
+			cpu_info.intel_model_str = "Pentium III/Pentium III Xeon - external L2 cache";
 			break;
 			case 8:
-			write_serial_str("Pentium III/Pentium III Xeon - internal L2 cache");
+			//write_serial_str("Pentium III/Pentium III Xeon - internal L2 cache");
+			cpu_info.intel_model_str = "Pentium III/Pentium III Xeon - internal L2 cache";
 			break;
 		}
 		break;
 		case 15:
 		break;
 	}
-	write_serial_str("\n");
+	//write_serial_str("\n");
 	cpuid(0x80000000, max_eax, unused, unused, unused);
 	/* Quok said: If the max extended eax value is high enough to support the processor brand string
 	(values 0x80000002 to 0x80000004), then we'll use that information to return the brand information. 
 	Otherwise, we'll refer back to the brand tables above for backwards compatibility with older processors. 
 	According to the Sept. 2006 Intel Arch Software Developer's Guide, if extended eax values are supported, 
 	then all 3 values for the processor brand string are supported, but we'll test just to make sure and be safe. */
+	strcpy(cpu_info.intel_brand_str, "");
 	if(max_eax >= 0x80000004) {
-		write_serial_str("Brand: ");
+		//write_serial_str("Brand: ");
 		if(max_eax >= 0x80000002) {
 			cpuid(0x80000002, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
+			strcat(cpu_info.intel_brand_str, stringregs);
 		}
 		if(max_eax >= 0x80000003) {
 			cpuid(0x80000003, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
+			strcat(cpu_info.intel_brand_str, stringregs);
 		}
 		if(max_eax >= 0x80000004) {
 			cpuid(0x80000004, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
+			strcat(cpu_info.intel_brand_str, stringregs);
 		}
-		write_serial_str("\n");
+		//write_serial_str("\n");
 	} else if(brand > 0) {
 		//printf("Brand %d - ", brand);
+		//sprintf(forprint, "Brand %i - ", brand);
+		//write_serial_str(forprint);
 		if(brand < 0x18) {
 			if(signature == 0x000006B1 || signature == 0x00000F13) {
 				//printf("%s\n", Intel_Other[brand]);
-				write_serial_str(Intel_Other[brand]);
-				write_serial_ch('\n');
+				cpu_info.intel_specific_brand_other = Intel_Other[brand];
+				//write_serial_str(Intel_Other[brand]);
+				//write_serial_ch('\n');
 			} else {
-				//printf("%s\n", Intel[brand]);
-				write_serial_str(Intel[brand]);
-				write_serial_ch('\n');
+				//sprintf(forprint, "%s\n", Intel[brand]);
+				cpu_info.intel_specific_brand = Intel[brand];
+				//write_serial_str(forprint);
+				//write_serial_str(Intel[brand]);
+				//write_serial_ch('\n');
 			}
 		} else {
-			write_serial_str("Reserved\n");
+			cpu_info.intel_brand_str = "Reserved";
+			//write_serial_str("Reserved\n");
 		}
 	}
 	//printf("Stepping: %d Reserved: %d\n", stepping, reserved);
+	cpu_info.intel_stepping = stepping;
+	cpu_info.intel_reserved = reserved;
+	//sprintf(forprint, "Stepping: %i Reserved: %i\n", stepping, reserved);
 	return 0;
 }
 
 /* Print Registers */
 void printregs(int eax, int ebx, int ecx, int edx) {
 	int j;
-	char string[17];
-	string[16] = '\0';
+	stringregs[16] = '\0';
 	for(j = 0; j < 4; j++) {
-		string[j] = eax >> (8 * j);
-		string[j + 4] = ebx >> (8 * j);
-		string[j + 8] = ecx >> (8 * j);
-		string[j + 12] = edx >> (8 * j);
+		stringregs[j] = eax >> (8 * j);
+		stringregs[j + 4] = ebx >> (8 * j);
+		stringregs[j + 8] = ecx >> (8 * j);
+		stringregs[j + 12] = edx >> (8 * j);
 	}
-	write_serial_str(string);
+	//dprintf("%s", stringregs);
 	//printf("%s", string);
 }
 
 /* AMD-specific information */
 int do_amd(void) {
-	write_serial_str("AMD Specific Features:\n");
+	//write_serial_str("AMD Specific Features:\n");
 	unsigned long extended, eax, ebx, ecx, edx, unused;
 	int family, model, stepping, reserved;
 	cpuid(1, eax, unused, unused, unused);
 	model = (eax >> 4) & 0xf;
+	cpu_info.amd_model = model;
 	family = (eax >> 8) & 0xf;
+	cpu_info.amd_family = family;
 	stepping = eax & 0xf;
+	cpu_info.amd_stepping = stepping;
 	reserved = eax >> 12;
+	cpu_info.amd_reserved = reserved;
 	//printf("Family: %d Model: %d [", family, model);
+	//sprintf(forprint, "Family: %i Model: %i [", family, model);
 	switch(family) {
 		case 4:
 		//printf("486 Model %d", model);
+		//sprintf(forprint, "486 Model %i", model);
+		cpu_info.amd_family_str = "Am486";
 		break;
 		case 5:
 		switch(model) {
@@ -313,15 +379,21 @@ int do_amd(void) {
 			case 6:
 			case 7:
 			//printf("K6 Model %d", model);
+			//sprintf(forprint, "K6 Model %i", model);
+			cpu_info.amd_model_str = "K6 Model";
 			break;
 			case 8:
-			write_serial_str("K6-2 Model 8");
+			//write_serial_str("K6-2 Model 8");
+			cpu_info.amd_model_str = "K6-2 Model 8";
 			break;
 			case 9:
-			write_serial_str("K6-III Model 9");
+			//write_serial_str("K6-III Model 9");
+			cpu_info.amd_model_str = "K6-III Model 9";
 			break;
 			default:
 			//printf("K5/K6 Model %d", model);
+			//sprintf(forprint, "K5/K6 Model %i", model);
+			cpu_info.amd_model_str = "K5/K6 Model";
 			break;
 		}
 		break;
@@ -331,42 +403,52 @@ int do_amd(void) {
 			case 2:
 			case 4:
 			//printf("Athlon Model %d", model);
+			//sprintf(forprint, "Athlon Model %i", model);
+			cpu_info.amd_model_str = "Athlon Model";
 			break;
 			case 3:
-			write_serial_str("Duron Model 3");
+			//write_serial_str("Duron Model 3");
+			cpu_info.amd_model_str = "Duron Model 3";
 			break;
 			case 6:
-			write_serial_str("Athlon MP/Mobile Athlon Model 6");
+			//write_serial_str("Athlon MP/Mobile Athlon Model 6");
+			cpu_info.amd_model_str = "Athlon MP/Mobile Athlon Model 6";
 			break;
 			case 7:
-			write_serial_str("Mobile Duron Model 7");
+			//write_serial_str("Mobile Duron Model 7");
+			cpu_info.amd_model_str = "Mobile Duron Model 7";
 			break;
 			default:
 			//printf("Duron/Athlon Model %d", model);
+			//sprintf(forprint, "Duron/Athlon Model %i", model);
+			cpu_info.amd_model_str = "Duron/Athlon Model";
 			break;
 		}
 		break;
 	}
-	write_serial_str("]\n");
+	//write_serial_str("]\n");
 	cpuid(0x80000000, extended, unused, unused, unused);
 	if(extended == 0) {
 		return 0;
 	}
+	strcpy(cpu_info.amd_brand_str, "");
 	if(extended >= 0x80000002) {
 		unsigned int j;
-		write_serial_str("Detected Processor Name: ");
+		//write_serial_str("Detected Processor Name: ");
 		for(j = 0x80000002; j <= 0x80000004; j++) {
 			cpuid(j, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
+			strcat(cpu_info.amd_brand_str, stringregs);
 		}
-		write_serial_str("\n");
+		//write_serial_str("\n");
 	}
 	if(extended >= 0x80000007) {
 		cpuid(0x80000007, unused, unused, unused, edx);
 		if(edx & 1) {
-			write_serial_str("Temperature Sensing Diode Detected!\n");
+			//write_serial_str("Temperature Sensing Diode Detected!\n");
 		}
 	}
 	//printf("Stepping: %d Reserved: %d\n", stepping, reserved);
+	//sprintf(forprint, "Stepping: %i Reserved: %i\n", stepping, reserved);
 	return 0;
 }

@@ -27,3 +27,11 @@ void write_serial_str(const char* str) {
       write_serial_ch(str[i]);
    }
 }
+
+void dprintf(const char* s2, ...) {
+   char outstr[1024];
+   va_list list;
+   va_start(list, s2);
+   vsprintf(outstr, s2, list);
+   write_serial_str(outstr);
+}

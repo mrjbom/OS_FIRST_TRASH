@@ -40,7 +40,6 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         dprintf("CPU Model: %s\n", cpu_info.intel_model_str);
         dprintf("CPU Type: %s\n", cpu_info.intel_type_str);
         dprintf("CPU Brand: %s\n", cpu_info.intel_brand_str);
-        dprintf("\n");
     }
     else if(cpu_info.intel_or_amd == 2)
     {
@@ -48,12 +47,10 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         dprintf("CPU Family: %s\n", cpu_info.amd_family_str);
         dprintf("CPU Model: %s\n", cpu_info.amd_model_str);
         dprintf("CPU Brand: %s\n", cpu_info.amd_brand_str);
-        dprintf("\n");
     }
     else if(cpu_info.intel_or_amd == 3)
     {
         dprintf("This is unknown processor\n");
-        dprintf("\n");
     }
 
     dprintf("RAM Total: %I MBytes\n", (uint32_t)(ram_len / 1024 / 1024) + 1);

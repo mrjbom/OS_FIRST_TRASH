@@ -18,8 +18,15 @@ void calclulate_memory() {
     while ((void*)memory_map < (void*)(memory_map_addr + memory_map_len))
     {
         ram_len += memory_map->len;
-        if(memory_map->type == 1)
+        if(memory_map->type == MULTIBOOT_MEMORY_AVAILABLE)
+        {
             ram_available += memory_map->len;
+            dprintf("Avaiable RAM addr: 0x%X\n", (uint32_t)memory_map->addr);
+        }
+        else
+        {
+            dprintf("Unavaiable RAM addr: 0x%X\n", (uint32_t)memory_map->addr);
+        }
         memory_map = (multiboot_memory_map_t*)((unsigned int)memory_map + memory_map->size + sizeof(memory_map->size));
     }
 }
@@ -111,5 +118,25 @@ uint32_t allocate_frame() {
     next_free_frame = cur_num + 1;
 
     // Finally, return the newly allocated frame num
+    return cur_num;
+}
+
+uint32_t free_frame() {
+    // Check that the frames were previously allocated
+    if(next_free_frame - 1 == 0)
+    {
+        //If there are no frames to delete
+        return 0;
+    }
+    //Get the address for the current allocated frame
+    uint32_t cur_addr = mmap_read(next_free_frame - 1, MMAP_GET_ADDR);
+
+    // Call mmap_read again to get the frame number for our address
+    uint32_t cur_num = mmap_read(cur_addr, MMAP_GET_NUM);
+
+    // Update next_free_frame to the previous unallocated frame number
+    next_free_frame = cur_num;
+
+    // Finally, return the previous allocated frame num
     return cur_num;
 }

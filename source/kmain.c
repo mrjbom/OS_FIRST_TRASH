@@ -17,9 +17,6 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     lidt(IDT, sizeof(IDT));
     idt_init();
     init_serial();
-    init_memory();
-
-    calclulate_memory();
 
     if(are_interrupts_enabled()) {
         dprintf("In kmain(): are_interrupts_enabled() ok\n");
@@ -31,6 +28,11 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         dprintf("In kmain(): return from kmain()\n");
         return;
     }
+
+    init_memory();
+    calclulate_memory();
+
+    memory_page_allocator_init();
 
     detect_cpu();
     if(cpu_info.intel_or_amd == 1)
@@ -55,17 +57,26 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     dprintf("RAM Total: %I MBytes\n", (uint32_t)(ram_len / 1024 / 1024) + 1);
 
-    memory_page_allocator_init();
+    uint32_t current_frame_addr = NULL;
 
-    uint32_t new_frame = allocate_frame();
-    uint32_t new_frame_addr = mmap_read(new_frame, MMAP_GET_ADDR);
-    dprintf("New frame allocated at: 0x%X\n", new_frame_addr);
-
-    new_frame = allocate_frame();
-    new_frame_addr = mmap_read(new_frame, MMAP_GET_ADDR);
-    dprintf("New frame allocated at: 0x%X\n", new_frame_addr);
-
-    new_frame = allocate_frame();
-    new_frame_addr = mmap_read(new_frame, MMAP_GET_ADDR);
-    dprintf("New frame allocated at: 0x%X\n", new_frame_addr);
+    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
+    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
+    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
+    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
+    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
+    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
+    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
+    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
+    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
+    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
+    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
+    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
 }

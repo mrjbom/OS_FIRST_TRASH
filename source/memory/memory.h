@@ -52,4 +52,6 @@ extern uint32_t mmap_read(uint32_t request, uint8_t mode);
 //Allocate the next free frame and return it's frame number
 extern uint32_t allocate_frame();
 
+extern uint32_t free_frame();
+
 #endif

@@ -60,23 +60,22 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     uint32_t current_frame_addr = NULL;
 
     current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
     current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
     current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
     current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
+    dprintf("free: addr = 0x%X\n", current_frame_addr);
     current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
+    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
     current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: im allocate new frame, addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-    dprintf("free: im free frame, addr = 0x%X\n", current_frame_addr);
+    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
+    
+    dprintf("Final: free all frames\n");
+    while (next_free_frame != 1)
+    {
+        current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
+        dprintf("free: addr = 0x%X\n", current_frame_addr);
+    }
 }

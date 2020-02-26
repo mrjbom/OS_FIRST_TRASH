@@ -28,6 +28,12 @@ void write_serial_str(const char* str) {
    }
 }
 
+//formats
+//c - char
+//i - int32
+//I - uint32
+//X - uint32 address
+//s - string
 void dprintf(const char* s2, ...) {
    char outstr[1024];
    va_list list;

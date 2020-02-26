@@ -1,7 +1,8 @@
 #include "lfbmemory/lfbmemory.h"
 #include "inlineassembly/inlineassembly.h"
 #include "interruptions/interruptions.h"
-#include "memory/memory.h"
+#include "memory/memdetect/memdetect.h"
+#include "memory/memmmu/memmmu.h"
 #include "debug/debug.h"
 #include "devices/cpu/cpu.h"
 #include "more/more.h"
@@ -18,64 +19,51 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     idt_init();
     init_serial();
 
-    if(are_interrupts_enabled()) {
-        dprintf("In kmain(): are_interrupts_enabled() ok\n");
-        clear_lfb_mem(0x00FF00);
-    }
-    else {
-        dprintf("In kmain(): are_interrupts_enabled() error\n");
-        clear_lfb_mem(0xFF0000);
-        dprintf("In kmain(): return from kmain()\n");
-        return;
-    }
+    detect_cpu();
 
     init_memory();
     calclulate_memory();
-
-    memory_page_allocator_init();
-
-    detect_cpu();
-    if(cpu_info.intel_or_amd == 1)
+    if(init_memory_page_allocator() == false)
     {
-        dprintf("This is Intel processor\n");
-        dprintf("CPU Family: %s\n", cpu_info.intel_family_str);
-        dprintf("CPU Model: %s\n", cpu_info.intel_model_str);
-        dprintf("CPU Type: %s\n", cpu_info.intel_type_str);
-        dprintf("CPU Brand: %s\n", cpu_info.intel_brand_str);
-    }
-    else if(cpu_info.intel_or_amd == 2)
-    {
-        dprintf("This is AMD processor\n");
-        dprintf("CPU Family: %s\n", cpu_info.amd_family_str);
-        dprintf("CPU Model: %s\n", cpu_info.amd_model_str);
-        dprintf("CPU Brand: %s\n", cpu_info.amd_brand_str);
-    }
-    else if(cpu_info.intel_or_amd == 3)
-    {
-        dprintf("This is unknown processor\n");
+        dprintf("!!!MMAP ERROR!!!\n");
+        return;
     }
 
-    dprintf("RAM Total: %I MBytes\n", (uint32_t)(ram_len / 1024 / 1024) + 1);
+    show_base_info();
+    clear_lfb_mem(0x00FF00);
+    //---------------------
 
-    uint32_t current_frame_addr = NULL;
+    //test
+    show_pages_table(25);
+    uint32_t* arr1 = (uint32_t*)kmalloc(sizeof(uint32_t) * 10);
+    for(uint32_t i = 0; i < 10; ++i)
+    {
+        arr1[i] = i;
+    }
+    uint32_t* arr2 = (uint32_t*)kmalloc(sizeof(uint32_t) * 10);
+    for(uint32_t i = 0; i < 10; ++i)
+    {
+        arr2[i] = i * 2;
+    }
+    show_pages_table(25);
 
-    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-    dprintf("free: addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
-    current_frame_addr = mmap_read(allocate_frame(), MMAP_GET_ADDR);
-    dprintf("allocate: addr = 0x%X\n", current_frame_addr);
+    for(uint32_t i = 0; i < 10; ++i)
+    {
+        dprintf("arr1[%I] = %I\n", i, arr1[i]);
+    }
+
+    memcpy(arr1, arr2, sizeof(uint32_t) * 10);
+    dprintf("\n");
+
+    for(uint32_t i = 0; i < 10; ++i)
+    {
+        dprintf("arr1[%I] = %I\n", i, arr1[i]);
+    }
+
+    kfree(arr1);
+    kfree(arr2);
     
-    dprintf("Final: free all frames\n");
-    while (next_free_frame != 1)
-    {
-        current_frame_addr = mmap_read(free_frame(), MMAP_GET_ADDR);
-        dprintf("free: addr = 0x%X\n", current_frame_addr);
-    }
+    show_pages_table(25);
+
+    dprintf("end of kmain()\n");
 }

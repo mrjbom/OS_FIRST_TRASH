@@ -12,11 +12,11 @@ void clear_lfb_mem(uint32_t color) {
         LFBMEMORY_ADDR[pixelPos] = color;
 }
 
-void write_pixel_lfb_mem(uint32_t line, uint32_t column, uint32_t color) {
-    uint32_t pixelPos = line * MBI->framebuffer_width + column;
+void write_pixel_lfb_mem(uint32_t x, uint32_t y, uint32_t color) {
+    uint32_t pixelPos = x * MBI->framebuffer_width + y;
     LFBMEMORY_ADDR[pixelPos] = color;
 }
 
-void print_symbol_lfb_mem(uint32_t line, uint32_t column, char symbol) {
+void print_symbol_lfb_mem(uint32_t x, uint32_t y, char symbol) {
     
 }

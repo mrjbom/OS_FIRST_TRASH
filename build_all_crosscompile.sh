@@ -2,9 +2,19 @@
 
 declare -a clearRoutes
 clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" 
-"./o/kmain.o" "./o/more.o" "./o/vgamem.o"
+#/builded objects
+"./o/kmain.o" "./o/more.o"
 "./o/cstdlib.o" "./o/string.o"
-"./o/textmodemem.o" "./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o" "./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o"
+"./o/lfbmem.o" "./o/textmodemem.o" 
+"./o/inlineasm.o" 
+"./o/interruptions.o"
+#/memory
+"./o/memorymemdetect.o"
+"./o/memorymemmmu.o"
+#\memory
+"./o/debug.o" "./o/deviceskeyboard.o"
+"./o/devicescpu.o"
+#\builded objects
 "./kernel-0" "./iso/boot/kernel-0")
 
 clear()
@@ -49,21 +59,33 @@ then
 	clear
 	exit;
 fi
-nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/iqrhandlersasm.o
+nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
 
 declare -a buildCRoutes
 buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/lib/cstdlib.c" "./source/lib/string.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
-"./source/inlineassembly/inlineassembly.c" "./source/interruptions/interruptions.c" "./source/memory/memory.c"
-"./source/debug/debug.c" "./source/devices/keyboard/keyboard.c" "./source/devices/cpu/cpu.c")
+"./source/inlineassembly/inlineassembly.c"
+"./source/interruptions/interruptions.c"
+#memory
+"./source/memory/memdetect/memdetect.c"
+"./source/memory/memmmu/memmmu.c"
+#memory
+"./source/debug/debug.c" "./source/devices/keyboard/keyboard.c"
+"./source/devices/cpu/cpu.c")
 
 declare -a buildObjectRoutes
 buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/cstdlib.o" "./o/string.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
-"./o/inlineasm.o" "./o/intrupts.o" "./o/memory.o"
-"./o/debug.o" "./o/deviceskeyboard.o" "./o/devicescpu.o")
+"./o/inlineasm.o" 
+"./o/interruptions.o"
+#memory
+"./o/memorymemdetect.o"
+"./o/memorymemmmu.o"
+#memory
+"./o/debug.o" "./o/deviceskeyboard.o"
+"./o/devicescpu.o")
 
 echo -e "\e[36mCompile .c files...\e[0m"
 buildCRoutesSize=${#buildCRoutes[*]}
@@ -109,7 +131,7 @@ fi
 echo -e "\n\e[36mStart linker...\n\e[0m"
 
 #./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
-./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
+./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/irqhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
 
 #check kernel file
 if [ ! -f ./kernel-0 ]

@@ -14,7 +14,7 @@ Avaiable RAM addr: 0x100000
     Length: 133038080 bytes(129920 kilobytes)
 Unavaiable RAM addr: 0x7fe0000
 Unavaiable RAM addr: 0xfffc0000
-Kernel start: 0x100000 end: 0x1109228 size: 16814632 bytes(16 MBytes)
+Kernel start: 0x100000 end: 0x110b788 size: 16824200 bytes(16 MBytes)
 multiboot info start: 0x10000 end: 0x13840
 
 PAGES_TABLE:
@@ -101,6 +101,65 @@ arr1[9] = 18
 kfree try free 0x1000
 
 kfree try free 0x2000
+
+PAGES_TABLE:
+0: Physical address: 0x1000 is_busy: 0 next_pages: 0
+1: Physical address: 0x2000 is_busy: 0 next_pages: 0
+2: Physical address: 0x3000 is_busy: 0 next_pages: 0
+3: Physical address: 0x4000 is_busy: 0 next_pages: 0
+4: Physical address: 0x5000 is_busy: 0 next_pages: 0
+5: Physical address: 0x6000 is_busy: 0 next_pages: 0
+6: Physical address: 0x7000 is_busy: 0 next_pages: 0
+7: Physical address: 0x8000 is_busy: 0 next_pages: 0
+8: Physical address: 0x9000 is_busy: 0 next_pages: 0
+9: Physical address: 0xa000 is_busy: 0 next_pages: 0
+10: Physical address: 0xb000 is_busy: 0 next_pages: 0
+11: Physical address: 0xc000 is_busy: 0 next_pages: 0
+12: Physical address: 0xd000 is_busy: 0 next_pages: 0
+13: Physical address: 0xe000 is_busy: 0 next_pages: 0
+14: Physical address: 0x14000 is_busy: 0 next_pages: 0
+15: Physical address: 0x15000 is_busy: 0 next_pages: 0
+16: Physical address: 0x16000 is_busy: 0 next_pages: 0
+17: Physical address: 0x17000 is_busy: 0 next_pages: 0
+18: Physical address: 0x18000 is_busy: 0 next_pages: 0
+19: Physical address: 0x19000 is_busy: 0 next_pages: 0
+20: Physical address: 0x1a000 is_busy: 0 next_pages: 0
+21: Physical address: 0x1b000 is_busy: 0 next_pages: 0
+22: Physical address: 0x1c000 is_busy: 0 next_pages: 0
+23: Physical address: 0x1d000 is_busy: 0 next_pages: 0
+24: Physical address: 0x1e000 is_busy: 0 next_pages: 0
+
+kmalloc try allocate 27000 bytes
+search_npages try search 7 pages
+
+PAGES_TABLE:
+0: Physical address: 0x1000 is_busy: 1 next_pages: 6
+1: Physical address: 0x2000 is_busy: 1 next_pages: 0
+2: Physical address: 0x3000 is_busy: 1 next_pages: 0
+3: Physical address: 0x4000 is_busy: 1 next_pages: 0
+4: Physical address: 0x5000 is_busy: 1 next_pages: 0
+5: Physical address: 0x6000 is_busy: 1 next_pages: 0
+6: Physical address: 0x7000 is_busy: 1 next_pages: 0
+7: Physical address: 0x8000 is_busy: 0 next_pages: 0
+8: Physical address: 0x9000 is_busy: 0 next_pages: 0
+9: Physical address: 0xa000 is_busy: 0 next_pages: 0
+10: Physical address: 0xb000 is_busy: 0 next_pages: 0
+11: Physical address: 0xc000 is_busy: 0 next_pages: 0
+12: Physical address: 0xd000 is_busy: 0 next_pages: 0
+13: Physical address: 0xe000 is_busy: 0 next_pages: 0
+14: Physical address: 0x14000 is_busy: 0 next_pages: 0
+15: Physical address: 0x15000 is_busy: 0 next_pages: 0
+16: Physical address: 0x16000 is_busy: 0 next_pages: 0
+17: Physical address: 0x17000 is_busy: 0 next_pages: 0
+18: Physical address: 0x18000 is_busy: 0 next_pages: 0
+19: Physical address: 0x19000 is_busy: 0 next_pages: 0
+20: Physical address: 0x1a000 is_busy: 0 next_pages: 0
+21: Physical address: 0x1b000 is_busy: 0 next_pages: 0
+22: Physical address: 0x1c000 is_busy: 0 next_pages: 0
+23: Physical address: 0x1d000 is_busy: 0 next_pages: 0
+24: Physical address: 0x1e000 is_busy: 0 next_pages: 0
+
+kfree try free 0x1000
 
 PAGES_TABLE:
 0: Physical address: 0x1000 is_busy: 0 next_pages: 0

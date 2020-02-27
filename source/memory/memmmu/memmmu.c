@@ -71,7 +71,8 @@ bool init_memory_page_allocator() {
 					   		memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) > 0x0
 					)
 				{
-					memory_pages_table[page_index + memory_pages_table_count].physical_address = memory_paging[memory_paging_sections_number].address + (0x1000 * page_index);
+					if(page_index + memory_pages_table_count < 1048575)
+						memory_pages_table[page_index + memory_pages_table_count].physical_address = memory_paging[memory_paging_sections_number].address + (0x1000 * page_index);
 				}
 				else
 				{
@@ -176,7 +177,7 @@ void kfree(void* address)
 }
 //-------------------------------------
 
-void show_pages_table(uint32_t to_n)
+void show_npages_table(uint32_t to_n)
 {
 	dprintf("\nPAGES_TABLE:\n");
 	for (uint32_t i = 0; i < to_n; ++i)

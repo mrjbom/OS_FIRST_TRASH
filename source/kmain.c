@@ -23,7 +23,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     init_memory();
     calclulate_memory();
-    if(init_memory_page_allocator() == false)
+    if(!init_memory_page_allocator())
     {
         dprintf("!!!MMAP ERROR!!!\n");
         return;
@@ -34,7 +34,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //---------------------
 
     //test
-    show_pages_table(25);
+    show_npages_table(25);
     uint32_t* arr1 = (uint32_t*)kmalloc(sizeof(uint32_t) * 10);
     for(uint32_t i = 0; i < 10; ++i)
     {
@@ -45,7 +45,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     {
         arr2[i] = i * 2;
     }
-    show_pages_table(25);
+    show_npages_table(25);
 
     for(uint32_t i = 0; i < 10; ++i)
     {
@@ -62,8 +62,16 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     kfree(arr1);
     kfree(arr2);
-    
-    show_pages_table(25);
+    //---------
+    show_npages_table(25);
+
+    void* ptr = kmalloc(27000);
+
+    show_npages_table(25);
+
+    kfree(ptr);
+
+    show_npages_table(25);
 
     dprintf("end of kmain()\n");
 }

@@ -14,6 +14,8 @@ extern void clear_lfb_mem(uint32_t color);
 
 extern void write_pixel_lfb_mem(uint32_t x, uint32_t y, uint32_t color);
 
-extern void print_symbol_lfb_mem(uint32_t x, uint32_t y, char symbol);
+//symbol print
+extern void scale_symbol(uint32_t n_lines_map, uint32_t n_columns_map, bool map[][n_columns_map], uint32_t x_pos, uint32_t y_pos, uint32_t text_color, uint32_t back_color, uint32_t scale);
+extern void print_symbol_lfb_mem(uint32_t x, uint32_t y, char symbol, uint32_t text_color, uint32_t back_color, uint32_t scale);
 
 #endif

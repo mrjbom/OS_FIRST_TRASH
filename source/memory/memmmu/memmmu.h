@@ -76,7 +76,7 @@ extern void* kmalloc(uint32_t nbytes);
 extern void* search_npages(uint32_t number);
 extern void kfree(void* address);
 
-extern void show_pages_table(uint32_t to_n);
+extern void show_npages_table(uint32_t to_n);
 //---------------------------
 
 #endif

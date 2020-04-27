@@ -38,6 +38,20 @@ uint8_t inb(uint16_t port)
     return ret;
 }
 
+uint16_t inw( uint16_t p_port)
+{
+    uint16_t l_ret;
+    __asm__ volatile ( "inw %1, %0"
+                    : "=a" (l_ret)
+                    : "dN" (p_port) );
+    return l_ret;
+}
+
+void outw (uint16_t p_port,uint16_t p_data)
+{
+    __asm__ volatile ( "outw %1, %0" : : "dN" (p_port), "a" (p_data) );
+}
+
 void io_wait(void)
 {
     /* TODO: This is probably fragile. */

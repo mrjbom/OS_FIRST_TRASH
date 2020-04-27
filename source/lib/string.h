@@ -11,6 +11,7 @@ extern char* strcpy(char* s1, const char* s2);
 extern char* strncpy(char* s1, const char* s2, size_t n);
 extern void* memcpy(void* buf1, const void* buf2, size_t bytes);
 extern void* memset(void* buf1, uint8_t value, size_t bytes);
+extern int memcmp(const void* s1, const void* s2, size_t n);
 extern int strcmp(const char* s1, const char* s2);
 extern int strncmp(const char* s1, const char* s2, uint32_t n);
 extern char* strcat(char* s1, const char* s2);

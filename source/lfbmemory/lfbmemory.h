@@ -1,21 +1,33 @@
-#ifndef _VGAMEMORY_H_
-#define _VGAMEMORY_H_
+#ifndef _LFBMEMORY_H_
+#define _LFBMEMORY_H_
 
 #include "../lib/cstdlib.h"
 #include "../lib/stddef.h"
 #include "../lib/stdint.h"
 #include "../lib/string.h"
+#include "../more/more.h"
 
-extern uint32_t* LFBMEMORY_ADDR;
+//#define SSFN_NOIMPLEMENTATION               /* don't include the normal renderer implementation */
+//#define SSFN_CONSOLEBITMAP_HICOLOR          /* use the special renderer for hicolor packed pixels */
+//#define SSFN_CONSOLEBITMAP_CLEARBG          /* added by me, for availability of changing the ssfn_bg variable */
+//#include "../lib/ssfn/ssfn.h"
+
+//sfn start addr from obj
+//FreeSans.sfn
+extern unsigned char _binary_FSfont_sfn_start;
+//FreeSerif.sfn
+extern unsigned char _binary_FSifont_sfn_start;
+
+extern uint32_t* lfb_framebuffer_addr;
 
 extern void init_lfb_mem();
 
 extern void clear_lfb_mem(uint32_t color);
 
-extern void write_pixel_lfb_mem(uint32_t x, uint32_t y, uint32_t color);
+extern void put_pixel_lfb_mem(uint32_t x, uint32_t y, uint32_t color);
 
-//symbol print
-extern void scale_symbol(uint32_t n_lines_map, uint32_t n_columns_map, bool map[][n_columns_map], uint32_t x_pos, uint32_t y_pos, uint32_t text_color, uint32_t back_color, uint32_t scale);
-extern void print_symbol_lfb_mem(uint32_t x, uint32_t y, char symbol, uint32_t text_color, uint32_t back_color, uint32_t scale);
+extern void draw_line_lfb_mem(int x0, int y0, int x1, int y1, uint32_t color);
+
+extern void test_func();
 
 #endif

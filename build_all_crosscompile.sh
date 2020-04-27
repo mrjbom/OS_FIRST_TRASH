@@ -1,10 +1,10 @@
 #!/bin/bash
 
 declare -a clearRoutes
-clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o" 
+clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o" 
 #/builded objects
 "./o/kmain.o" "./o/more.o"
-"./o/cstdlib.o" "./o/string.o"
+"./o/cstdlib.o" "./o/string.o" "./o/math.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o" 
 "./o/interruptions.o"
@@ -12,7 +12,10 @@ clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/iqrhandlersasm.o"
 "./o/memorymemdetect.o"
 "./o/memorymemmmu.o"
 #\memory
-"./o/debug.o" "./o/deviceskeyboard.o"
+"./o/task.o"
+"./o/switchS.o"
+"./o/debug.o" 
+"./o/deviceskeyboard.o"
 "./o/devicescpu.o"
 #\builded objects
 "./kernel-0" "./iso/boot/kernel-0")
@@ -63,7 +66,7 @@ nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
 
 declare -a buildCRoutes
 buildCRoutes=("./source/kmain.c" "./source/more/more.c"
-"./source/lib/cstdlib.c" "./source/lib/string.c"
+"./source/lib/cstdlib.c" "./source/lib/string.c" "./source/lib/math.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
 "./source/inlineassembly/inlineassembly.c"
 "./source/interruptions/interruptions.c"
@@ -71,12 +74,15 @@ buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/memory/memdetect/memdetect.c"
 "./source/memory/memmmu/memmmu.c"
 #memory
-"./source/debug/debug.c" "./source/devices/keyboard/keyboard.c"
+"./source/task/task.c"
+"./source/task/switch.S" #its not error!
+"./source/debug/debug.c"
+"./source/devices/keyboard/keyboard.c"
 "./source/devices/cpu/cpu.c")
 
 declare -a buildObjectRoutes
 buildObjectRoutes=("./o/kmain.o" "./o/more.o"
-"./o/cstdlib.o" "./o/string.o"
+"./o/cstdlib.o" "./o/string.o" "./o/math.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o" 
 "./o/interruptions.o"
@@ -84,7 +90,10 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/memorymemdetect.o"
 "./o/memorymemmmu.o"
 #memory
-"./o/debug.o" "./o/deviceskeyboard.o"
+"./o/task.o"
+"./o/switchS.o" #its not error!
+"./o/debug.o"
+"./o/deviceskeyboard.o"
 "./o/devicescpu.o")
 
 echo -e "\e[36mCompile .c files...\e[0m"
@@ -104,21 +113,6 @@ do
 	fi
 done
 
-#
-#check linker file and start linker
-#if [ ! -f ./link.ld ]
-#then
-#	echo -e "\e[31mERROR!\e[0m"
-#	echo "./link.ld not found"
-#	echo "Abort..."
-#	clear
-#	exit;
-#fi
-#echo -e "\n\e[36mStart linker...\n\e[0m"
-#
-#./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
-#
-
 #check linker file and start linker
 if [ ! -f ./link.ld ]
 then
@@ -131,7 +125,7 @@ fi
 echo -e "\n\e[36mStart linker...\n\e[0m"
 
 #./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-ld -m elf_i386 -T link.ld -o kernel-0 ./o/bootloaderasm.o ./o/iqrhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
-./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/irqhandlersasm.o ${buildObjectRoutes[@]} -nostdlib -lgcc
+./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/irqhandlersasm.o ./FSfont.o ./FSifont.o ${buildObjectRoutes[@]} -nostdlib -lgcc
 
 #check kernel file
 if [ ! -f ./kernel-0 ]

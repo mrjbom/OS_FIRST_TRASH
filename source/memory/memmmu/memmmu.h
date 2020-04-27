@@ -73,8 +73,10 @@ extern uint32_t memory_pages_table_count;
 
 extern bool init_memory_page_allocator();
 extern void* kmalloc(uint32_t nbytes);
-extern void* search_npages(uint32_t number);
-extern void kfree(void* address);
+extern void* search_npages(uint32_t n);
+extern void kfree(void* ptr);
+extern void* krealloc(void* ptr, size_t size);
+extern uint32_t ksizeof(void* ptr);
 
 extern void show_npages_table(uint32_t to_n);
 //---------------------------

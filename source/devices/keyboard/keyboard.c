@@ -1,7 +1,5 @@
 #include "keyboard.h"
 
-#include "../../debug/debug.h"
-
 unsigned char keyboard_keys[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */

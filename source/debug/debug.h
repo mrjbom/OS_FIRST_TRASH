@@ -1,14 +1,14 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
+//serial PORT debug
+
 #include "../lib/cstdlib.h"
 #include "../lib/stddef.h"
 #include "../lib/stdint.h"
 #include "../lib/string.h"
 
-#define PORT 0x3f8   /* COM1 */
- 
-//serial PORT debug
+#define PORT_COM1 0x3f8   /* COM1 */
 
 extern void init_serial();
 
@@ -18,6 +18,13 @@ extern void write_serial_ch(char ch);
 
 extern void write_serial_str(const char* str);
 
+//serial printf
+//formats
+//c - char
+//i - int32
+//I - uint32
+//X - uint32 address
+//s - string
 extern void dprintf(const char* s2, ...);
 
 #endif

@@ -44,7 +44,7 @@ void printregs(int eax, int ebx, int ecx, int edx);
 /* Simply call this function detect_cpu(); */
 void detect_cpu(void) { /* or main() if your trying to port this as an independant application */
 	unsigned long ebx, unused;
-	cpuid(0, unused, ebx, unused, unused);
+	cpuidm(0, unused, ebx, unused, unused);
 	switch(ebx) {
 		case 0x756e6547: /* Intel Magic Code */
 		do_intel();
@@ -123,7 +123,7 @@ int do_intel(void) {
 	int model, family, type, brand, stepping, reserved;
 	int extended_family = -1;
 	cpu_info.intel_extended_family = -1;
-	cpuid(1, eax, ebx, unused, unused);
+	cpuidm(1, eax, ebx, unused, unused);
 	model = (eax >> 4) & 0xf;
 	cpu_info.intel_model = model;
 	family = (eax >> 8) & 0xf;
@@ -280,7 +280,7 @@ int do_intel(void) {
 		break;
 	}
 	//write_serial_str("\n");
-	cpuid(0x80000000, max_eax, unused, unused, unused);
+	cpuidm(0x80000000, max_eax, unused, unused, unused);
 	/* Quok said: If the max extended eax value is high enough to support the processor brand string
 	(values 0x80000002 to 0x80000004), then we'll use that information to return the brand information. 
 	Otherwise, we'll refer back to the brand tables above for backwards compatibility with older processors. 
@@ -290,17 +290,17 @@ int do_intel(void) {
 	if(max_eax >= 0x80000004) {
 		//write_serial_str("Brand: ");
 		if(max_eax >= 0x80000002) {
-			cpuid(0x80000002, eax, ebx, ecx, edx);
+			cpuidm(0x80000002, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
 			strcat(cpu_info.intel_brand_str, stringregs);
 		}
 		if(max_eax >= 0x80000003) {
-			cpuid(0x80000003, eax, ebx, ecx, edx);
+			cpuidm(0x80000003, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
 			strcat(cpu_info.intel_brand_str, stringregs);
 		}
 		if(max_eax >= 0x80000004) {
-			cpuid(0x80000004, eax, ebx, ecx, edx);
+			cpuidm(0x80000004, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
 			strcat(cpu_info.intel_brand_str, stringregs);
 		}
@@ -353,7 +353,7 @@ int do_amd(void) {
 	//write_serial_str("AMD Specific Features:\n");
 	unsigned long extended, eax, ebx, ecx, edx, unused;
 	int family, model, stepping, reserved;
-	cpuid(1, eax, unused, unused, unused);
+	cpuidm(1, eax, unused, unused, unused);
 	model = (eax >> 4) & 0xf;
 	cpu_info.amd_model = model;
 	family = (eax >> 8) & 0xf;
@@ -427,7 +427,7 @@ int do_amd(void) {
 		break;
 	}
 	//write_serial_str("]\n");
-	cpuid(0x80000000, extended, unused, unused, unused);
+	cpuidm(0x80000000, extended, unused, unused, unused);
 	if(extended == 0) {
 		return 0;
 	}
@@ -436,14 +436,14 @@ int do_amd(void) {
 		unsigned int j;
 		//write_serial_str("Detected Processor Name: ");
 		for(j = 0x80000002; j <= 0x80000004; j++) {
-			cpuid(j, eax, ebx, ecx, edx);
+			cpuidm(j, eax, ebx, ecx, edx);
 			printregs(eax, ebx, ecx, edx);
 			strcat(cpu_info.amd_brand_str, stringregs);
 		}
 		//write_serial_str("\n");
 	}
 	if(extended >= 0x80000007) {
-		cpuid(0x80000007, unused, unused, unused, edx);
+		cpuidm(0x80000007, unused, unused, unused, edx);
 		if(edx & 1) {
 			//write_serial_str("Temperature Sensing Diode Detected!\n");
 		}

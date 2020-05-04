@@ -88,6 +88,7 @@ bool init_memory_page_allocator() {
 }
 
 void* kmalloc(uint32_t nbytes) {
+	//dprintf("kmalloc()\n");
 	//dprintf("\nkmalloc try allocate %I bytes\n", nbytes);
 	void* first_page_address = search_npages(nbytes / 4096 + 1);
 	if (first_page_address != 0x0)
@@ -134,7 +135,11 @@ void* search_npages(uint32_t n) {
 }
 
 void kfree(void* ptr) {
-	//dprintf("\nkfree try free 0x%X\n", (uint32_t)address);
+	if((uint32_t)ptr == 0x0) {
+		return;
+	}
+	//dprintf("kfree()\n");
+	//dprintf("\nkfree try free 0x%X\n", (uint32_t)ptr);
 	for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
 		if ((void*)memory_pages_table[page_index].physical_address == ptr) {
 			if (memory_pages_table[page_index].next_pages == 0) {
@@ -153,6 +158,7 @@ void kfree(void* ptr) {
 }
 
 void* krealloc(void* ptr, size_t size) {
+	//dprintf("krealloc()\n");
 	void* newptr = 0;
 	size_t ptr_size = ksizeof(ptr);
 	if(size == 0) {
@@ -166,11 +172,11 @@ void* krealloc(void* ptr, size_t size) {
 	else
 	{
 		//newptr = kmalloc(size);
-		/*
-		if(!newptr) {
-			return 0x0;
-		}
-		*/
+		//
+		//if(!newptr) {
+		//	return 0x0;
+		//}
+		//
 		//if you need more memory
 		if(ptr_size < (((size / 4096) + 1) * 4096)) {
 			newptr = kmalloc(size);
@@ -211,6 +217,7 @@ void* krealloc(void* ptr, size_t size) {
 
 //return size as (4096 * number of blocks in the pointer)
 uint32_t ksizeof(void* ptr) {
+	//dprintf("ksizeof()\n");
 	for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
 		if((void*)memory_pages_table[page_index].physical_address == ptr) {
 			return (memory_pages_table[page_index].next_pages + 1) * 4096;
@@ -221,7 +228,7 @@ uint32_t ksizeof(void* ptr) {
 //-------------------------------------
 
 void show_npages_table(uint32_t to_n) {
-	dprintf("\nPAGES_TABLE:\n");
+	//dprintf("\nPAGES_TABLE:\n");
 	for (uint32_t i = 0; i < to_n; ++i) {
 		dprintf("%I: Physical address: 0x%X is_busy: %I next_pages: %I\n", i, memory_pages_table[i].physical_address, memory_pages_table[i].is_busy, memory_pages_table[i].next_pages);
 	}

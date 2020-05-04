@@ -1,10 +1,14 @@
+#include "inlineassembly/inlineassembly.h"
+#include "interruptions/interruptions.h"
+#include "devices/cpu/cpu.h"
 #include "more/more.h"
 
 void kmain(unsigned long magic, multiboot_info_t* mbi) {
     (void)magic;
     init_multiboot_info(mbi);
 
-    init_lfb_mem();
+    lfb_init();
+    lfb_clear(0x00FF00);
     //clear_lfb_mem(0xFE01AC);
 
     lidt(IDT, sizeof(IDT));
@@ -16,16 +20,12 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     init_memory();
     calclulate_memory();
     if(!init_memory_page_allocator()) {
-        dprintf("!!!MMAP ERROR!!!\n");
+        dprintf("init_memory_page_allocator() ERROR!\n");
+        lfb_clear(0xFF0000);
         return;
     }
 
-    show_base_info();
-    clear_lfb_mem(0x00FF00);
-
-    init_tasking();
-
-    //test_func();
+    show_npages_table(1);
 
     dprintf("end of kmain()\n");
 }

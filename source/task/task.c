@@ -4,8 +4,8 @@ static Task *runningTask;
 static Task mainTask;
 static Task otherTask;
  
-static void otherMain() {
-    dprintf("Hello multitasking world!");
+void otherMain() {
+    dprintf("Multitasking work!\n");
     yield();
 }
  

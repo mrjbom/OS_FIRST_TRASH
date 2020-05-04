@@ -6,8 +6,6 @@
 #include "../../lib/stdint.h"
 #include "../../lib/string.h"
 
-#include "../../more/more.h"
-
 #include "../memdetect/memdetect.h"
 
 #include "../../debug/debug.h"

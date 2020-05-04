@@ -3,7 +3,7 @@
 
 #include "../../lib/string.h"
 
-#define cpuid(in, a, b, c, d) __asm__("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (in));
+#define cpuidm(in, a, b, c, d) __asm__("cpuid": "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (in));
 
 typedef struct cpuinfo {
     //intel - 1

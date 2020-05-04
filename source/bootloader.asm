@@ -15,8 +15,8 @@ multiboot_header:
     dd 0
     dd 0
     dd 0
-    dd 800 ; width
-    dd 600 ; height
+    dd 1280 ; width
+    dd 1024 ; height
     dd 32 ; bbp
 
 global start

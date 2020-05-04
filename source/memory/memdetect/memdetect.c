@@ -22,21 +22,25 @@ void calclulate_memory() {
         ram_len += memory_map->len;
         
         //сохраняем данные о секциях
-        memory_sections[counter].address = (uint32_t)memory_map->addr;
-        memory_sections[counter].length = (uint32_t)memory_map->len;
-        memory_sections[counter].type = memory_map->type;
-        if(memory_map->type == MULTIBOOT_MEMORY_AVAILABLE)
+        //ограничиваем всё 4 ГБ
+        if(memory_map->addr + memory_map->addr < 0xFFFFFFFFU)
         {
-            ram_available += memory_map->len;
-            //dprintf("Avaiable RAM addr: 0x%X\n", (uint32_t)memory_map->addr);
-            //dprintf("Length: %I bytes(%I kilobytes)\n", (uint32_t)memory_map->len, memory_map->len / 1024);
-        }
-        else
-        {
-            //dprintf("Unavaiable RAM addr: 0x%X\n", (uint32_t)memory_map->addr);
+            memory_sections[counter].address = (uint32_t)memory_map->addr;
+            memory_sections[counter].length = (uint32_t)memory_map->len;
+            memory_sections[counter].type = memory_map->type;
+            if(memory_map->type == MULTIBOOT_MEMORY_AVAILABLE)
+            {
+                ram_available += memory_map->len;
+                //dprintf("Avaiable RAM addr: 0x%X\n", (uint32_t)memory_map->addr);
+                //dprintf("Length: %I bytes(%I kilobytes)\n", (uint32_t)memory_map->len, memory_map->len / 1024);
+            }
+            else
+            {
+                //dprintf("Unavaiable RAM addr: 0x%X\n", (uint32_t)memory_map->addr);
+            }
+            ++counter;
         }
         memory_map = (multiboot_memory_map_t*)((uint32_t)memory_map + memory_map->size + sizeof(memory_map->size));
-        ++counter;
     }
     memory_section_number = counter;
 }

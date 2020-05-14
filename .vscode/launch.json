@@ -1,0 +1,18 @@
+{
+    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "gdb",
+            "request": "attach",
+            "name": "Attach to QEMU",
+            "executable": "${workspaceFolder}/kernel-0",
+            "target": ":1234",
+            "remote": true,
+            "cwd": "${workspaceRoot}",
+            "gdbpath": "${workspaceRoot}/i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gdb"
+        }
+    ]
+}

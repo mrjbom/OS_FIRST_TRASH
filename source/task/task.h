@@ -1,8 +1,7 @@
 #ifndef __TASK_H__
 #define __TASK_H__
- 
+
 #include "../lib/stdint.h"
-#include "../memory/memmmu/memmmu.h"
  
 typedef struct {
     uint32_t eax, ebx, ecx, edx, esi, edi, esp, ebp, eip, eflags, cr3;

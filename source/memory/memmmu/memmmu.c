@@ -1,4 +1,6 @@
 #include "memmmu.h"
+#include "../memdetect/memdetect.h"
+#include "../../debug/debug.h"
 
 //page frame allocator
 uint32_t multiboot_reserved_start;

@@ -6,10 +6,6 @@
 #include "../../lib/stdint.h"
 #include "../../lib/string.h"
 
-#include "../memdetect/memdetect.h"
-
-#include "../../debug/debug.h"
-
 //page frame allocator
 
 //секция - то, на что делится оперативная память в memory_map

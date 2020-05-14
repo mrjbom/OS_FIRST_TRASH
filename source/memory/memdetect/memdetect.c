@@ -23,7 +23,7 @@ void calclulate_memory() {
         
         //сохраняем данные о секциях
         //ограничиваем всё 4 ГБ
-        if(memory_map->addr + memory_map->addr < 0xFFFFFFFFU)
+        if(memory_map->addr + memory_map->addr < 0xFFFFFFFFu)
         {
             memory_sections[counter].address = (uint32_t)memory_map->addr;
             memory_sections[counter].length = (uint32_t)memory_map->len;

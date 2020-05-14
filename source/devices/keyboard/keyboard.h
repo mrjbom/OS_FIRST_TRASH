@@ -6,8 +6,6 @@
 #include "../../lib/stdint.h"
 #include "../../lib/string.h"
 
-#include "../../debug/debug.h"
-
 extern unsigned char keyboard_keys[128];
 
 extern void keyboard_handler(byte key, byte status);

@@ -1,0 +1,22 @@
+{
+    "files.associations": {
+        "*.def": "c",
+        "*.tcc": "c",
+        "cstdlib": "c",
+        "cstdlib.h": "c",
+        "stdint.h": "c",
+        "unistd.h": "c",
+        "more.h": "c",
+        "multiboot2.h": "c",
+        "acpi.h": "c",
+        "ssfn.h": "c",
+        "lfbmemory.h": "c",
+        "memdetect.h": "c",
+        "stddef.h": "c",
+        "string.h": "c",
+        "math.h": "c",
+        "memmmu.h": "c",
+        "debug.h": "c",
+        "inlineassembly.h": "c"
+    }
+}

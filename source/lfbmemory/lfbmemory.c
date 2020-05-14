@@ -1,6 +1,8 @@
 #include "lfbmemory.h"
 
 //for SSFN
+#include "../memory/memmmu/memmmu.h"
+#include "../more/more.h"
 #define size_t size_t
 #define SSFN_memcmp memcmp
 #define SSFN_memset memset
@@ -60,71 +62,60 @@ void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint
     }
 }
 
-//ssfnt
+//ssfn
 #define SSFN_CONTEXTS_MAX_NUMBER 32
+#define SSFN_GLYPHS_MAX_NUMBER 127
 ssfn_t* ssfn_contexts[SSFN_CONTEXTS_MAX_NUMBER]; /* the renderer contexts */
-ssfn_glyph_t* ssfn_glyphs_caches[SSFN_CONTEXTS_MAX_NUMBER][128]; /* cached glyphs for each individual context */
+ssfn_glyph_t* ssfn_glyphs_caches[SSFN_CONTEXTS_MAX_NUMBER][SSFN_GLYPHS_MAX_NUMBER]; /* cached glyphs for each individual context */
 uint32_t ssfn_context_counter = 0;
 
-int ssfn_init_new_context()
+int ssfn_init_new_context(unsigned char* binary_font_start)
 {
     if(!(ssfn_context_counter < (SSFN_CONTEXTS_MAX_NUMBER - 1)))
         return -1;
-    ssfn_context_counter++;
     ssfn_contexts[ssfn_context_counter] = (ssfn_t*)kmalloc(sizeof(ssfn_t));
     memset(ssfn_contexts[ssfn_context_counter], 0, sizeof(ssfn_t));
-
-    //FreeSans.sfn
-    if(ssfn_load(ssfn_contexts[ssfn_context_counter], (ssfn_font_t*)&_binary_FSfont_sfn_start) != SSFN_OK) {
-        //dprintf("ssfn_load() error: %s\n!", ssfn_error(ssfn_lasterr(&ctx)));
+    if(ssfn_load(ssfn_contexts[ssfn_context_counter], (ssfn_font_t*)binary_font_start) != SSFN_OK) {
+        dprintf("ssfn_load() error: %s\n!", ssfn_error(ssfn_lasterr(ssfn_contexts[ssfn_context_counter])));
         ssfn_context_counter--;
         return -1;
     }
-
-    int errorcode = ssfn_select(
-        ssfn_contexts[ssfn_context_counter],
-        SSFN_FAMILY_SANS, NULL,  /* family */
-        SSFN_STYLE_REGULAR, 16,  /* style and size */
-        SSFN_MODE_ALPHA          /* rendering mode */
-    );
-
-    if(errorcode != SSFN_OK) {
-        //dprintf("!ssfn_select() error: %s\n!", ssfn_error(errorcode));
-        ssfn_context_counter--;
-        return -1;
-    }
-    return ssfn_context_counter;
+    ssfn_context_counter++;
+    return ssfn_context_counter - 1;
 }
 
 void ssfn_free_context(uint32_t context_index)
 {
-    for(uint32_t i = 0; i < 128; ++i) {
+    for(uint32_t i = 0; i < SSFN_GLYPHS_MAX_NUMBER; ++i) {
         kfree(ssfn_glyphs_caches[context_index][i]);
     }
-    ssfn_free(ssfn_contexts[context_index]);
+    if(ssfn_contexts[context_index]) {
+        ssfn_free(ssfn_contexts[context_index]);
+        ssfn_context_counter--;
+    }
 }
 
-bool ssfn_cache_glyphs(uint32_t context_index, uint32_t font_size)
+extern bool ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t font_style, uint32_t font_size)
 {
     if(font_size < 8 || font_size > 255) {
         //dprintf("!set_ssfn_render_size() error: invalid size\n");
         return false;
     }
-    
+
     int errorcode = ssfn_select(
         ssfn_contexts[context_index],
-        SSFN_FAMILY_SANS, NULL,         /* family */
-        SSFN_STYLE_REGULAR, font_size,  /* style and size */
+        font_family, NULL,              /* family */
+        font_style, font_size,          /* style and size */
         SSFN_MODE_ALPHA                 /* rendering mode */
     );
-    
+
     if(errorcode != SSFN_OK) {
         //dprintf("!ssfn_select() error: %s\n!", ssfn_error(errorcode));
         return false;
     }
 
     //characters below or above are not rendered
-    for(uint32_t i = 32; i < 128; ++i) {
+    for(uint32_t i = 32; i < SSFN_GLYPHS_MAX_NUMBER; ++i) {
         //if we previously cached glyphs
         if(ssfn_glyphs_caches[context_index][i] != NULL) {
             kfree(ssfn_glyphs_caches[context_index][i]);
@@ -132,7 +123,7 @@ bool ssfn_cache_glyphs(uint32_t context_index, uint32_t font_size)
         ssfn_glyphs_caches[context_index][i] = ssfn_render(ssfn_contexts[context_index], (uint8_t)(char)i);
         if(ssfn_glyphs_caches[context_index][i] == NULL) {
             //dprintf("ssfn_render error!\n");
-            //dprintf("error with symbol number %I\n", i);
+            dprintf("error with symbol number '%I'\n", i);
             //return false;
         }
     }
@@ -150,9 +141,12 @@ ssfn_text_cursor_t* ssfn_create_cursor(uint32_t context_index)
     return text_cursor;
 }
 
-void ssfn_free_cursor(ssfn_text_cursor_t* text_cursor)
+void ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32_t y, uint32_t newline_y_offset, uint32_t fgcolor)
 {
-    kfree(text_cursor);
+    text_cursor->x = x;
+    text_cursor->y = y;
+    text_cursor->newline_y_offset = newline_y_offset;
+    text_cursor->fgcolor = fgcolor;
 }
 
 void lfb_draw_ssfn_glyph(ssfn_glyph_t *glyph, int pen_x, int pen_y, uint32_t fgcolor)
@@ -214,23 +208,35 @@ void lfb_draw_ssfn_glyph(ssfn_glyph_t *glyph, int pen_x, int pen_y, uint32_t fgc
     }
 }
 
-void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str, uint32_t fgcolor)
+void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str)
 {
+    if(!text_cursor) {
+        return;
+    }
     uint32_t context_index = text_cursor->context_index;
-    uint32_t x = text_cursor->x;
-    uint32_t y = text_cursor->y;
+    uint32_t fgcolor = text_cursor->fgcolor;
+    uint32_t start_x = text_cursor->x;
     for(uint32_t i = 0; i < strlen(str); ++i) {
         //dprintf("glyph addr = 0x%X\n", glyph);
-        lfb_draw_ssfn_glyph(ssfn_glyphs_caches[context_index][(uint8_t)str[i]], x, y, fgcolor);
-        x += ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->adv_x;
-        y += ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->adv_y;
+        //dprintf("glyph number %I h = %I, w = %I\nadv_x = %I, adv_y = %I\n\n", (uint8_t)str[i], ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->h, ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->w, ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->adv_x, ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->adv_y);
+        lfb_draw_ssfn_glyph(ssfn_glyphs_caches[context_index][(uint8_t)str[i]], text_cursor->x, text_cursor->y, fgcolor);
+        //not working(problem in ssfn glyph height)
+        //text_cursor->y += ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->adv_y;
+        if(str[i] != '\n') {
+            text_cursor->x += ssfn_glyphs_caches[context_index][(uint8_t)str[i]]->adv_x;
+        }
+        else
+        {
+            text_cursor->x = start_x;
+            text_cursor->y += text_cursor->newline_y_offset;
+        }
     }
 }
 
-void tprintf(ssfn_text_cursor_t* text_cursor, uint32_t fgcolor, const char* s2, ...) {
+void tprintf(ssfn_text_cursor_t* text_cursor, const char* s2, ...) {
    char outstr[1024];
    va_list list;
    va_start(list, s2);
    vsprintf(outstr, s2, list);
-   lfb_draw_ssfn_str(text_cursor, outstr, fgcolor);
+   lfb_draw_ssfn_str(text_cursor, outstr);
 }

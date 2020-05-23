@@ -1,0 +1,2 @@
+./sfnconv UbuntuBold.ttf UbuntuBold.sfn
+

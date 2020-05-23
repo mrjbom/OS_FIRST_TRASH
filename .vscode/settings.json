@@ -17,6 +17,15 @@
         "math.h": "c",
         "memmmu.h": "c",
         "debug.h": "c",
-        "inlineassembly.h": "c"
+        "inlineassembly.h": "c",
+        "cstdio": "c",
+        "cstring": "c",
+        "cwchar": "c",
+        "type_traits": "c",
+        "initializer_list": "c",
+        "new": "c",
+        "stdexcept": "c",
+        "system_error": "c",
+        "typeinfo": "c"
     }
 }

@@ -42,35 +42,5 @@ unsigned char keyboard_keys[128] =
     0,	/* All other keys are undefined */
 };
 
-ssfn_text_cursor_t* handler_text_cursor = NULL;
-int handler_ssfn_context_index = -1;
 void keyboard_handler(byte key, byte status) {
-if(!handler_text_cursor && handler_ssfn_context_index == -1) {
-    handler_ssfn_context_index = ssfn_init_new_context(&_binary_UbuntuBold_sfn_start);
-    if(handler_ssfn_context_index == -1) {
-            dprintf("ssfn_init_new_context() error!");
-            lfb_clear(0xFF0000);
-            return;
-        }
-        if(!ssfn_select_font(handler_ssfn_context_index,
-            SSFN_MY_FAMILY_SANS,
-            SSFN_MY_STYLE_BOLD,
-            16)) {
-                dprintf("ssfn_cache_glyphs() error!");
-                lfb_clear(0xFF0000);
-                return;
-            }
-        handler_text_cursor = ssfn_create_cursor(handler_ssfn_context_index);
-        if(!handler_text_cursor) {
-            dprintf("ssfn_create_cursor() error!");
-            lfb_clear(0xFF0000);
-            return;
-        }
-        ssfn_setup_cursor(handler_text_cursor, 5, 700, 20, 0xFFFFFF);
-    } else {
-        //if(keyboard_keys[key] >= 32 && keyboard_keys[key] >= 128) {
-            dprintf("%c(%i)\n", keyboard_keys[key], keyboard_keys[key]);
-            tprintf(handler_text_cursor, "%c", keyboard_keys[key]);
-        //}
-    }
 }

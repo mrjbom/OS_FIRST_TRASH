@@ -21,14 +21,18 @@ extern void lfb_draw_line(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, ui
 
 extern void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t color);
 
-//SSFN
+//SSFN 2.0
 /*
-    How do I use ssfn for text output?
+    How do I use SSFN 2.0 for text output?
+    call ssfn_setup_draw_buf()
+           |
+           |
+           |
     call ssfn_init_new_context() and save context index
            |
            |
            |
-    call ssfn_font_select(USE DEFINES WITH "MY", for example "SSFN_MY_FAMILY_SERIF"
+    call ssfn_select_font() USE DEFINES WITH "MY", for example "SSFN_MY_FAMILY_SERIF"
            |
            |
            |
@@ -44,42 +48,47 @@ extern void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y
            |
            |
            |
-    call kfree(text_cursor);
-           |
-           |
-           |
     call ssfn_free_context()
+           |
+           |
+           |
+    call kfree(text_cursor)
 
 
     EXAMPLE:
-    int ssfn_context_index = ssfn_init_new_context(&_binary_FreeSans_sfn_start);
-    if(ssfn_context_index == -1) {
-        dprintf("ssfn_init_new_context() error!");
+    ssfn_setup_draw_buf();
+    int context_index = ssfn_init_new_context(&_binary_FreeSans_sfn_start);
+    if(context_index == -1) {
+        dprintf("ssfn_init_new_context() error!\n");
         lfb_clear(0xFF0000);
         return;
     }
-    if(!ssfn_select_font(ssfn_context_index,
-        SSFN_MY_FAMILY_SANS,
-        SSFN_MY_STYLE_REGULAR,
-        16)) {
-            dprintf("ssfn_cache_glyphs() error!");
-            lfb_clear(0xFF0000);
-            return;
-        }
-        ssfn_text_cursor_t* text_cursor = ssfn_create_cursor(ssfn_context_index);
-        if(!text_cursor) {
-            dprintf("ssfn_create_cursor() error!");
-            lfb_clear(0xFF0000);
-            return;
-        }
-        ssfn_setup_cursor(text_cursor, 5, 15, 20, 0xFFFFFF);
 
-        tprintf(text_cursor, "TEXT\n");
-        ssfn_free_cursor(text_cursor);
-        kfree(text_cursor);
+    if(!ssfn_select_font(
+        context_index,
+        SSFN_MY_FAMILY_SANS, SSFN_MY_STYLE_REGULAR,
+        32)) {
+            dprintf("ssfn_select_font() error!\n");
+            lfb_clear(0xFF0000);
+            return;
+    }
+
+    ssfn_text_cursor_t* text_cursor = ssfn_create_cursor(context_index);
+    if(!text_cursor) {
+        dprintf("ssfn_create_cursor() error!\n");
+        lfb_clear(0xFF0000);
+        return;
+    }
+
+    ssfn_setup_cursor(text_cursor, 0, 30, 0xFF000000);
+
+    tprintf(text_cursor, "test1\ntest2");
+
+    ssfn_free_context(context_index);
+    kfree(text_cursor);
 */
 
-//sfn.o start addr from obj
+//from objects
 //FreeSans.sfn
 extern unsigned char _binary_FreeSans_sfn_start;
 //UbuntuBold.sfn
@@ -91,8 +100,12 @@ typedef struct ssfn_text_cursor {
     uint32_t y;
     uint32_t fgcolor;
     uint32_t context_index;
-    uint32_t newline_y_offset;
 } __attribute__((packed)) ssfn_text_cursor_t;
+
+extern void test_load();
+
+//called first of all
+extern void ssfn_setup_draw_buf();
 
 //return context_index if success
 //return -1 if error
@@ -100,14 +113,12 @@ extern int ssfn_init_new_context(unsigned char* binary_font_start);
 
 extern void ssfn_free_context(uint32_t context_index);
 
-//return false if error
 #define SSFN_MY_FAMILY_SERIF       0
 #define SSFN_MY_FAMILY_SANS        1
 #define SSFN_MY_FAMILY_DECOR       2
 #define SSFN_MY_FAMILY_MONOSPACE   3
 #define SSFN_MY_FAMILY_HAND        4
 
-/* font style flags */
 #define SSFN_MY_STYLE_REGULAR      0
 #define SSFN_MY_STYLE_BOLD         1
 #define SSFN_MY_STYLE_ITALIC       2
@@ -119,7 +130,7 @@ extern bool ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_
 //return 0x0 if error
 extern ssfn_text_cursor_t* ssfn_create_cursor(uint32_t context_index);
 
-extern void ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32_t y, uint32_t newline_y_offset, uint32_t fgcolor);
+extern void ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32_t y, uint32_t fgcolor);
 
 extern void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str);
 

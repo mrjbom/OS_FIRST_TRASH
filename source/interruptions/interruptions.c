@@ -2,6 +2,7 @@
 
 #include "../inlineassembly/inlineassembly.h"
 #include "../devices/keyboard/keyboard.h"
+#include "../devices/timer/timer.h"
 
 void idt_init(void) {
     extern int load_idt();
@@ -191,6 +192,7 @@ void idt_init(void) {
 }
 
 void irq0_handler(void) {
+	timer_handler();
     outb(0x20, 0x20); //EOI
 }
 

@@ -71,76 +71,13 @@ ssfn_t* ssfn_contexts[SSFN_CONTEXTS_MAX_NUMBER]; // the renderer contexts
 ssfn_buf_t ssfn_draw_buf;
 uint32_t ssfn_context_counter = 0;
 
-void test_load() {
-    
-    ssfn_draw_buf.ptr = (uint8_t*)lfb_framebuffer_addr;     /* address of the buffer */
-    ssfn_draw_buf.w = (uint16_t)MBI->framebuffer_width;      /* width */
-    ssfn_draw_buf.h = (uint16_t)MBI->framebuffer_height;     /* height */
-    ssfn_draw_buf.p = (uint16_t)MBI->framebuffer_pitch;      /* bytes per line */
-    ssfn_draw_buf.x = ssfn_draw_buf.y = 100;                   /* pen position */
-    ssfn_draw_buf.fg = 0xFF000000;    /* foreground color */
-
-    ssfn_t ctx;
-    memset(&ctx, 0, sizeof(ssfn_t));
-
-    int errorcode = ssfn_load(&ctx, &_binary_FreeSans_sfn_start);
-    if(errorcode != SSFN_OK) {
-        dprintf("ssfn_load error: %s\n", ssfn_error(errorcode));
-        return;
-    }
-
-    errorcode = ssfn_select(
-        &ctx,
-        SSFN_FAMILY_SANS, NULL,          // family
-        SSFN_STYLE_REGULAR, 16           // style and size
-    );
-    if(errorcode != SSFN_OK) {
-        dprintf("ssfn_select() error: %s\n", ssfn_error(errorcode));
-        return;
-    }
-
-    const char* str = "TEST\ntest 16";
-    {
-        size_t len = strlen(str);
-        int ret = 0;
-        int start_x = ssfn_draw_buf.x;
-        for(size_t i = 0; i < len; ++i) {
-            if(str[i] == '\n') {
-                int w = 0, h = 0, left = 0, top = 0;
-                errorcode = ssfn_bbox(&ctx, "a", &w, &h, &left, &top);
-                if(errorcode != SSFN_OK) {
-                    dprintf("ssfn_bbox() error: %s\n", ssfn_error(errorcode));
-                    return;
-                }
-                ssfn_draw_buf.x = start_x;
-                ssfn_draw_buf.y += top;
-                dprintf("\\n h = %i\n", h);
-                dprintf("\\n w = %i\n", w);
-                dprintf("\\n left = %i\n", left);
-                dprintf("\\n top = %i\n", top);
-            }
-            else {
-                ret = ssfn_render(&ctx, &ssfn_draw_buf, str + i);
-                if(ret < SSFN_OK) {
-                    dprintf("ssfn_render() error: %s\n", ssfn_error(errorcode));
-                    return;
-                }
-                //dprintf("try print %c \n", str[i]);
-            }
-        }
-        dprintf("end\n");
-    }
-
-    ssfn_free(&ctx);
-}
-
 void ssfn_setup_draw_buf() {
-    ssfn_draw_buf.ptr = (uint8_t*)lfb_framebuffer_addr;     /* address of the buffer */
-    ssfn_draw_buf.w = (uint16_t)MBI->framebuffer_width;      /* width */
-    ssfn_draw_buf.h = (uint16_t)MBI->framebuffer_height;     /* height */
-    ssfn_draw_buf.p = (uint16_t)MBI->framebuffer_pitch;      /* bytes per line */
-    ssfn_draw_buf.x = ssfn_draw_buf.y = 100;                   /* pen position */
-    ssfn_draw_buf.fg = 0x000000;    /* foreground color */
+    ssfn_draw_buf.ptr = (uint8_t*)lfb_framebuffer_addr;   /* address of the buffer */
+    ssfn_draw_buf.w = (uint16_t)MBI->framebuffer_width;   /* width */
+    ssfn_draw_buf.h = (uint16_t)MBI->framebuffer_height;  /* height */
+    ssfn_draw_buf.p = (uint16_t)MBI->framebuffer_pitch;   /* bytes per line */
+    ssfn_draw_buf.x = ssfn_draw_buf.y = 100;              /* pen position */
+    ssfn_draw_buf.fg = 0xFF000000;                        /* foreground color */
 }
 
 int ssfn_init_new_context(unsigned char* binary_font_start)

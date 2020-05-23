@@ -60,7 +60,8 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     ssfn_setup_cursor(text_cursor, 0, 30, 0xFF000000);
 
-    tprintf(text_cursor, "test1\ntest2");
+    tprintf(text_cursor, "test1"\
+                         "\ntest2");
 
     ssfn_free_context(context_index);
     kfree(text_cursor);

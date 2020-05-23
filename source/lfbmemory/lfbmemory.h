@@ -102,8 +102,6 @@ typedef struct ssfn_text_cursor {
     uint32_t context_index;
 } __attribute__((packed)) ssfn_text_cursor_t;
 
-extern void test_load();
-
 //called first of all
 extern void ssfn_setup_draw_buf();
 

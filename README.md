@@ -7,8 +7,8 @@ The simplest example of an operating system.
 3. Create **o** folder for .o files
 4. Download cross-compiler([i386-elf 4.9.1](https://wiki.osdev.org/GCC_Cross-Compiler#Prebuilt_Toolchains "i386-elf 4.9.1"))
 5. Install *nasm*
-6. Clone [scalable-font](https://gitlab.com/bztsrc/scalable-font "scalable-font")
-7. Run build_all_crosscompile.sh (add *-d* to use GDB)
+6. Clone [scalable-font2](https://gitlab.com/bztsrc/scalable-font2 "scalable-font")
+7. Run build_all_crosscompile.sh (add *-d* to use Visual Studio Code GDB)
 
 ### What do I need to do to use gdb?
 1. Add this line to the file *~/.gdbinit*
@@ -29,6 +29,6 @@ break kmain
 ### How do I debug the kernel using Visual Studio Code?
 0. (You may need to delete it *.gdbinit* files to avoid conflicts.)
 You must install Native Debugger from the extensions
-1. Run build_all_crosscompile.sh -d
+1. Run *build_all_crosscompile.sh -d*
 2. Run *Attach to QEMU* in Visual Studio Code
 3. Run *system_reset* in the qemu monitor

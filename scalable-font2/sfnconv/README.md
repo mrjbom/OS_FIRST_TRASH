@@ -1,6 +1,8 @@
 Scalable Screen Font 2.0 Converter Utility
 ==========================================
 
+This is a command line font converter tool. For further details, read the [documentation](https://gitlab.com/bztsrc/scalable-font2/blob/master/docs/sfnconv.md).
+
 ```
 Scalable Screen Font 2.0 by bzt Copyright (C) 2020 MIT license
  https://gitlab.com/bztsrc/scalable-font2

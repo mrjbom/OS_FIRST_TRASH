@@ -60,6 +60,9 @@ hate when I get totally different pixel sizes for different TTF fonts when I ask
 same size). Passing `SSFN_STYLE_ABS_SIZE` will avoid this scheme, and will scale the
 glyph's total height to size as usual in other renderers.
 
+`Line` is the line's height, calculated during rendering. With `SSFN_STYLE_ABS_SIZE` that
+equals to `size`, otherwise a bit bigger.
+
 You don't have to worry about text directions. The renderer handles vertical and horizontal
 fonts for you, but it can't mix differently oriented texts. The same applies to Right-to-Left
 scripting systems. You have to tell explicitly to render right-to-left by implementing
@@ -438,7 +441,8 @@ Error code (negative) or the number of bytes processed from the `str`. Zero mean
 generates the glyph and (if `SSFN_STYLE_NOCACHE` is not specified) stores it in the internal cache.
 After that ssfn_render will blit the glyph to the pixel buffer using scaling and alpha-blending. Finally
 it takes care of the advance and (if `SSFN_STYLE_NOKERN` not given) kerning offsets automatically, and
-updates `.x` and `.y` fields in `dst`.
+updates `.x` and `.y` fields in `dst`. The rendered line's height will be accumulated in `ctx->line` until
+you reset it.
 
 ## Get Bounding Box
 

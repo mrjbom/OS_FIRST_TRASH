@@ -191,6 +191,7 @@ typedef struct {
     int family;                         /* required family */
     int style;                          /* required style */
     int size;                           /* required size */
+    int line;                           /* calculate line height */
 #ifdef SSFN_PROFILING
     uint64_t lookup, raster, blit, kern;/* profiling accumulators */
 #endif
@@ -898,6 +899,7 @@ familyfound:
     ctx->family = family;
     ctx->style = style;
     ctx->size = size;
+    ctx->line = 0;
     return SSFN_OK;
 }
 
@@ -1177,6 +1179,7 @@ again:  if(p >= SSFN_FAMILY_BYNAME) { n = 0; m = 4; } else n = m = p;
         /* blit glyph from cache into buffer */
         h = (ctx->style & SSFN_STYLE_ABS_SIZE) || SSFN_TYPE_FAMILY(ctx->f->type) == SSFN_FAMILY_MONOSPACE || !ctx->f->baseline ?
             ctx->size : ctx->size * ctx->f->height / ctx->f->baseline;
+        if(h > ctx->line) ctx->line = h;
         w = ctx->style & SSFN_STYLE_NOAA ? ctx->g->p : ctx->g->p * h / ctx->g->h;
         s = ctx->g->x * h / ctx->f->height - ctx->g->o * h / ctx->f->height;
         n = ctx->size > 16 ? 2 : 1;

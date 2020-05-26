@@ -1,12 +1,12 @@
-TARGET = sfnconv
+TARGET = sfnedit
+MINGWSDL = ../..
 
 include ../libsfn/Makefile.env
 
 SRCS = $(filter-out $(wildcard ui_*.c),$(wildcard *.c))
 
 # SDL driver
-ifeq ("$(FORCEX11)","")
-ifeq ("$(DRIVER)","")
+ifeq ("$(USE_X11)","")
 # MacOSX
 ifneq ("$(wildcard /Library/Frameworks/SDL*)","")
 SRCS += ui_sdl.c
@@ -24,12 +24,21 @@ else
 ifneq ("$(wildcard $(MINGWSDL)/i686-w64-mingw32/include/SDL2/SDL.h)","")
 SRCS += ui_sdl.c
 CFLAGS += -I$(MINGWSDL)/i686-w64-mingw32/include/SDL2
-LIBDIRS = -static-libgcc -L$(MINGWSDL)/i686-w64-mingw32/lib
-LIBS += -lSDL2 -lcomdlg32
+LIBDIRS = -static-libgcc -L$(MINGWSDL)/i686-w64-mingw32/lib -L$(MINGWSDL)/i686-w64-mingw32/bin
+LIBS += -lSDL2
 DRIVER = sdl
 endif
 endif
 endif
+endif
+
+# OS/Z driver
+ifeq ("$(DRIVER)","")
+ifneq ("$(wildcard ../../include/osZ/osZ.h)","")
+SRCS += ui_osz.c
+CFLAGS += -I../../include
+LIBS += -lui
+DRIVER = osz
 endif
 endif
 
@@ -67,8 +76,8 @@ libsfn:
 	$(CC) $(CFLAGS) $< -c $@
 
 $(TARGET): libsfn $(OBJS)
-	$(CC) ../libsfn/*.o $(OBJS) -o $(TARGET)
+	$(CC) ../libsfn/*.o $(OBJS) -o $(TARGET) $(LIBDIRS) $(LIBS)
 
 clean:
-	@make -C ../libsfn clean || true
+	@#make -C ../libsfn clean || true
 	@rm $(TARGET) *.o 2>/dev/null || true

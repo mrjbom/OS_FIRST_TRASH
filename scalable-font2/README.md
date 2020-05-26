@@ -173,8 +173,14 @@ manually.
 Hinting is supported by the format, but not implementeted by the renderer. With the new bilinear interpolation
 scaler I'm not sure it's needed, we'll see how testing goes.
 
+Contributors
+------------
+
+I'd like to say thanks to @mrjbom, who tested the library throughfully and pointed out many usability issues and
+by that helped me a lot to improve this code.
+
 Authors
 -------
 
-SSFN format, converter, editor and renderers: bzt
-
+- SSFN format, converter, editor and renderers: bzt
+- STBI (original zlib decode): Sean Barrett

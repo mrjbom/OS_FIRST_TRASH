@@ -27,8 +27,6 @@
  *
  */
 
-#include <string.h>
-#include <stdlib.h>
 #include "lang.h"
 
 /**
@@ -37,7 +35,7 @@
 char *dict[NUMLANGS][NUMTEXTS + 1] = {
     {
         "en",
-        "Loading...",
+
         "memory allocation error",
         "unable to load %s",
         "bad file format %s",
@@ -46,10 +44,31 @@ char *dict[NUMLANGS][NUMTEXTS + 1] = {
         "Save modified font?",
         "unable to add color, should not happen",
         "unable to open display",
-        "Help",
+
+        "Measuring bounding box",
+        "Querying outlines",
+        "Querying all kerning combinations",
+        "Quantizing image",
+        "Reading bitmap",
+        "Reading tall pixel map",
+        "Reading wide pixel map",
+        "Generating fragments",
+        "Compressing fragments",
+        "Serializing fragments",
+        "Writing character map",
+        "Writing file",
+
+        "About",
+        "Load Font",
+        "Save Font",
         "Properties",
         "Ranges",
         "Characters",
+        "Measures",
+        "Layers",
+        "Kerning",
+
+        "Help",
         "Edit",
         "Kerning",
         "Family",
@@ -133,121 +152,5 @@ char *dict[NUMLANGS][NUMTEXTS + 1] = {
             "leftclick - select a point or turn on pixel\n"
             "leftclick and move - move selected point\n"
             "rightclick - turn pixel off or delete last countour\n",
-    },
-    {
-        "hu",
-        "Betöltés...",
-        "memória foglalási hiba",
-        "nem sikerült megnyitni: %s",
-        "nem megfelelő fájlformátum: %s",
-        "%s egy kollekció, előbb szedd szét sfn2sfn-el",
-        "nem tudom lementeni a fájlt",
-        "Elmented a módosításokat?",
-        "nem tudok színt hozzáadni, nem szabadna előfordulnia",
-        "nem sikerült ablakot nyitni",
-        "Súgó",
-        "Jellemzők",
-        "Tartományok",
-        "Karakterek",
-        "Szerkesztés",
-        "Igazítás",
-        "Család",
-        "Stílus",
-        "Rácsméret",
-        "Alapvonal",
-        "Aláhúzás",
-        "Egyedi név",
-        "Családnév",
-        "Alcsaládnév",
-        "Revizió",
-        "Készítő",
-        "Licensz",
-        "Új karakter hozzáadása",
-        "SSFN mentése",
-        "ASC mentése",
-        "Nem, kilépek",
-        "Serif",
-        "Sans Serif",
-        "Dekoratív",
-        "Monoköz",
-        "Kézírás",
-        "Félkövér",
-        "Dőlt",
-        "Rekalibrálás",
-        "Lefedetlen tartományok",
-        "Lefedettség",
-        "Tartomány",
-        "Teljes UNICODE tartomány",
-        "nincs glif",
-        "nem definiált",
-        "lokál0 / alapért",
-        "lokál1 / elején",
-        "lokál2 / középen",
-        "lokál3 / végén",
-        "lokál4",
-        "lokál5",
-        "lokál6",
-        "Biztos törölni szeretné?",
-        "Igen",
-        "Nem",
-
-        "A fő ablak csak egy példányban van, itt található a font adatlapja.",
-        "A glif ablakból több is nyitható, karakterenként egy.",
-        "A tulajdonságok tabon lehet állítani a font adatait, itt lehet új karaktert hozzáadni és a\nfontot elmenteni.\n\n"
-            "Általános billentyű kombinációk (bármelyik ablakban):\n[Esc] - bezárja az ablakot (főablakon a szerkesztőt is)\n"
-            "[Ctrl] + [S] - elmenti a fontot SSFN fotmátumban\n[Ctrl] + [Shift] + [S] - elmenti a fontot ASC formátumban\n"
-            "[Fel] / [Le] - beviteli mezőt vált\n[Jobbra] / [Balra] / [Szóköz] - beviteli érték változtatása",
-        "A tartomány tabon szűrhető, milyen karakterek vannak definiálva. Kereshető a tartománynév és\n"
-            "hexa kóddal az UNICODE kódpont is.\n\n[Szóköz] - a lefedetlen tartományok listázását kapcsolja ki/be\n"
-            "[Fel] / [Le] - szkrollozza a listát\n"
-            "Bármelyik másik gomb keresést kezdeményez.",
-        "A glif tábla tab listázza a karaktereket. Kereshető a karakter maga, a neve és a hexa kódpontja.\n"
-            "A lista a tartományok tabon kiválasztott tartományra van szűkítve.\n\n"
-            "[Fel] / [Le] - szkrolloza a táblát\n"
-            "[Jobbra] / [Balra] - variánsválasztás\n"
-            "[Ctrl] + [c] - vágólapra másolás\n"
-            "[Ctrl] + [x] - kivágás vágólapra\n"
-            "[Ctrl] + [v] - beillesztés vágólapról\n"
-            "balklikk és mozgatás - tartomány kijelölése",
-        "Szerkesztő tabon lehet módosítani a glif rétegeket.\n\n"
-            "[g] - be/kikapcsolja a rácsot\n"
-            "[l] - be/kikapcsolja a kontrol vonalakat\n"
-            "görgő - nagyítás/kicsinyítés\n"
-            "balklikk a háttéren és mozgatás - vászon mozgatása\n",
-        "Itt lehet két karakter relatív távolságát beállítani.\n"
-            "[r] - be/kikapcsolja a jobbról-balra írást a glifen\n",
-        "Az eltolás eszközzel lehet állítani a horizontális vagy\nvertikális eltolást.\n"
-            "[r] - be/kikapcsolja a jobbról-balra írást a glifen\n"
-            "balklikk - eltolás beállítása\n"
-            "[Shift] + balklikk - alapvonal beállítása (globális)\n"
-            "[Ctrl] + balklikk - aláhúzás helyének beállítása (globális)\n",
-        "Itt lehet beállítani mely oszlopokhoz igazítsa a glifet\n"
-            "balklikk és mozgatás - oszlop áthelyezése\n",
-        "Réteg szerkesztése módban lehet módosítani magát a glifet\n"
-            "[Shift] + görgő - színválasztás\n"
-            "[Shift] + balklikk - kijelölés\n"
-            "[Ctrl] + balklikk - pixmap esetén szín kivílasztás glifről\n"
-            "balklikk - pont kiválasztása vagy pixel beállítása\n"
-            "balklikk és mozgatás - pont áthelyezése\n"
-            "jobbklikk - pixel törlése vagy az utolsó kontúr törlése\n",
     }
 };
-char **lang = NULL;
-
-/**
- * Load a dictionary
- */
-void lang_init()
-{
-    int i;
-    char *env = getenv("LANG");
-
-    for(i = 0, lang = NULL; env && i < NUMLANGS; i++) {
-        if(!memcmp(env, dict[i][0], strlen(dict[i][0]))) {
-            lang = &dict[i][1];
-            break;
-        }
-    }
-    if(!lang)
-        lang = &dict[0][1];
-}

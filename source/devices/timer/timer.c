@@ -18,9 +18,7 @@ void init_timer(uint16_t freq) {
 }
 
 void timer_handler() {
-    tick++;
-    if(!(tick % 100)) {
-        //lfb_clear(0xFFFFFF);
-        lfb_put_pixel(tick / 100, 0, 0x000000);
+    ++tick;
+    if(!(tick % 100)) { //1 second
     }
 }

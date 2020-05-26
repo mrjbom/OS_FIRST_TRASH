@@ -153,6 +153,7 @@ ssfn_text_cursor_t* ssfn_create_cursor(uint32_t context_index)
     return text_cursor;
 }
 
+//specify the color in the format 0xAARRGGBB
 void ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32_t y, uint32_t fgcolor)
 {
     text_cursor->x = x;
@@ -174,26 +175,17 @@ void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str)
     int ret = 0;
     int errorcode = 0;
     int start_x = ssfn_draw_buf.x;
-    int context_index = text_cursor->context_index;
 
-    for(size_t i = 0; i < len; ++i) {
+    for(size_t i = 0; i < len; i += ret) {
         if(str[i] == '\n') {
-            int w = 0, h = 0, left = 0, top = 0;
-            errorcode = ssfn_bbox(ssfn_contexts[context_index], "a", &w, &h, &left, &top);
-            if(errorcode != SSFN_OK) {
-                dprintf("ssfn_bbox() error: %s\n", ssfn_error(errorcode));
-                return;
-            }
             ssfn_draw_buf.x = start_x;
-            ssfn_draw_buf.y += top;
-                //dprintf("\\n h = %i\n", h);
-                //dprintf("\\n w = %i\n", w);
-                //dprintf("\\n left = %i\n", left);
-                //dprintf("\\n top = %i\n", top);
+            ssfn_draw_buf.y += ssfn_contexts[text_cursor->context_index]->line;
+            text_cursor->y += ssfn_contexts[text_cursor->context_index]->line;
+            ret = 1;
         }
         else {
-            ret = ssfn_render(ssfn_contexts[context_index], &ssfn_draw_buf, str + i);
-            if(ret < SSFN_OK) {
+            ret = ssfn_render(ssfn_contexts[text_cursor->context_index], &ssfn_draw_buf, str + i);
+            if(ret < 0) {
                 dprintf("ssfn_render() error: %s\n", ssfn_error(errorcode));
                 return;
             }

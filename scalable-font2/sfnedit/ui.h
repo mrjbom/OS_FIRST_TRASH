@@ -1,7 +1,7 @@
 /*
  * sfnedit/ui.h
  *
- * Copyright (C) 2019 bzt (bztsrc@gitlab)
+ * Copyright (C) 2020 bzt (bztsrc@gitlab)
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,14 +28,20 @@
  */
 
 #include <stdint.h>
+/*#include "hist.h"*/
+
+enum {
+    THEME_BG,
+    THEME_FG,
+    THEME_LIGHT,
+    THEME_DARK
+};
 
 #define THEME_INPUT     0
 #define THEME_TABA      1
-#define THEME_FG        2
 #define THEME_TABU      3
 #define THEME_INACT     4
 #define THEME_BGLOGO    5
-#define THEME_BG        6
 #define THEME_INPBG     7
 #define THEME_TABBG     8
 #define THEME_SAVEACT   9
@@ -49,13 +55,40 @@
 #define MAIN_W          800
 #define MAIN_H          600
 
-#define CURSOR_LOADING  0
-#define CURSOR_PTR      1
-#define CURSOR_CROSS    2
-#define CURSOR_MOVE     3
-#define CURSOR_GRAB     4
+enum {
+    CURSOR_LOADING,
+    CURSOR_PTR,
+    CURSOR_CROSS,
+    CURSOR_MOVE,
+    CURSOR_GRAB
+};
 
-#define WINTYPE_MAIN    -1U
+enum {
+    ICON_ABOUT,
+    ICON_LOAD,
+    ICON_SAVE,
+    ICON_PROPS,
+    ICON_RANGERS,
+    ICON_GLYPHS,
+    ICON_MEASURES,
+    ICON_LAYERS,
+    ICON_KERNING,
+    ICON_FOLDER,
+    ICON_FILE,
+    ICON_SEARCH,
+    ICON_CHKBOX,
+    ICON_CHKBOX_ON,
+    ICON_VECTOR,
+    ICON_BITMAP,
+    ICON_PIXMAP,
+    ICON_DELETE,
+    ICON_BOUNDING,
+    ICON_HINTING,
+    ICON_VERT,
+    ICON_HORIZ
+};
+
+#define WINTYPE_MAIN  -1U
 
 #define E_NONE          0
 #define E_CLOSE         1
@@ -81,76 +114,37 @@
 #define K_F1            14
 #define K_ESC           27
 
-#define MAIN_TAB_PROPS  0
-#define MAIN_TAB_RANGES 1
-#define MAIN_TAB_GLYPHS 2
+enum {
+    MAIN_TOOL_ABOUT,
+    MAIN_TOOL_LOAD,
+    MAIN_TOOL_SAVE,
+    MAIN_TOOL_PROPS,
+    MAIN_TOOL_RANGES,
+    MAIN_TOOL_GLYPHS,
+    MAIN_TOOL_DOSAVE
+};
 
-#define GLYPH_TAB_EDIT  0
-#define GLYPH_TAB_KERN  1
-
-#define MAX_TAB         3
-
-typedef struct {
-    int type;
-    int px;
-    int py;
-    int c1x;
-    int c1y;
-    int c2x;
-    int c2y;
-} cont_t;
-
-typedef struct {
-    int type;
-    int frag;
-    int idx;
-    union {
-        struct {
-            uint8_t oldpix;
-            uint8_t newpix;
-        } pixel;
-        struct {
-            int oldx;
-            int oldy;
-            int newx;
-            int newy;
-        } adv;
-        cont_t cont;
-        struct {
-            cont_t *oldc;
-            int newidx;
-            cont_t *newc;
-        } contlist;
-        struct {
-            int *oldx;
-            int *newx;
-        } hintlist;
-    } data;
-} hist_t;
-
+enum {
+    GLYPH_TOOL_COORD,
+    GLYPH_TOOL_LAYER,
+    GLYPH_TOOL_KERN,
+    GLYPH_TOOL_COLOR
+};
 
 typedef struct {
     void *winid;
     void *surface;
     uint32_t *data;
     uint32_t unicode;
-    const char *uniname;
-    int v;
-    int chr;
+    char *uniname;
     int w;
     int h;
     int p;
-    int help;
-    int tab;
-    int tabpos[MAX_TAB];
-    int menu;
-    int frag;
-    int fscroll;
-    int cont, pt;
-    int zoom, zx, zy;
-    uint32_t *bg;
+    int field;
+    int tool, seltool;
+    int zoom;
     int histmin, histmax;
-    hist_t *hist;
+/*    hist_t *hist;*/
 } ui_win_t;
 
 typedef struct {
@@ -162,17 +156,16 @@ typedef struct {
     int h;
 } ui_event_t;
 
-extern uint32_t ssfn_fg, ssfn_bg, ssfn_x, ssfn_y;
-extern char nchr[], search[], gsearch[], gtmp[], ksearch[];
-extern uint32_t tool_icons[];
-extern ui_event_t event;
-extern ui_win_t *wins;
-
+extern char verstr[];
 extern uint32_t theme[];
-extern int savingmax;
+extern int numwin;
+extern ui_win_t *wins;
+extern ui_event_t event;
+extern uint8_t *icon16, *icon32, *tools, *numbers, *bga;
 
 /* driver specific */
-void *ui_createwin(char *title, int w, int h);
+void *ui_createwin(int w, int h);
+void ui_titlewin(ui_win_t *win, char *title);
 void ui_resizewin(ui_win_t *win, int w, int h);
 void ui_flushwin(ui_win_t *win, int x, int y, int w, int h);
 void ui_destroywin(ui_win_t *win);
@@ -182,44 +175,31 @@ void ui_init();
 void ui_fini();
 void ui_getevent();
 
+/* ui widgets */
+void ui_box(ui_win_t *win, int x, int y, int w, int h, uint32_t l, uint32_t b, uint32_t d);
+void ui_icon(ui_win_t *win, int x, int y, int icon, int inactive);
+void ui_text(ui_win_t *win, int x, int y, char *str);
+
 /* common */
-void ui_openwin(int v, uint32_t unicode);
+void ui_error(char *subsystem, int fmt, ...);
+void ui_openwin(uint32_t unicode);
+void ui_updatetitle(int idx);
 void ui_closewin(int idx);
-int ui_getwin(void *winid);
-int ui_textwidth(char *s, int len);
-void ui_icon(ui_win_t *win, uint32_t *icon, int x, int y, int ih);
-void ui_text(ui_win_t *win, char *s, uint32_t a, uint32_t u);
-void ui_scale(ui_win_t *win, char *s, int w, int th);
-void ui_bool(ui_win_t *win, char *s, int state, int th);
-void ui_button(ui_win_t *win, char *s, int w, int b, int th);
-int ui_input(ui_win_t *win, char *s, int w, int b, int th);
-void ui_progress(ui_win_t *win, int val, int max, int w, int h, int th);
-void ui_glyph(ui_win_t *win, int chr, uint32_t unicode, int u, int th);
-void ui_bright(ui_win_t *win, int x, int y, int w, int h, int all);
-void ui_box(ui_win_t *win, int x, int y, int w, int h, uint32_t c);
-void ui_argb(ui_win_t *win, int x, int y, int w, int h, uint32_t c);
-void ui_number(ui_win_t *win, int n, int x, int y, uint32_t c);
-void ui_tabs(ui_win_t *win, int idx);
-void ui_saving(int idx, int scale);
-void ui_refreshwin(int idx, int x, int y, int w, int h);
+int ui_getwin(void *wid);
+void ui_refreshwin(int idx, int wx, int wy, int ww, int wh);
 void ui_refreshall();
-void ui_updatewin(int v, uint32_t unicode, int diff);
 void ui_main(char *fn);
-void ui_forcequit(int sig);
-void view_help(ui_win_t *win);
+void ui_quit(int sig);
 
-/* main window tabs */
-void view_props(ui_win_t *win);
-int ctrl_props(ui_win_t *win, ui_event_t *evt);
-void view_ranges(ui_win_t *win);
-int ctrl_ranges(ui_win_t *win, ui_event_t *evt);
-void view_glyphs(ui_win_t *win);
-int ctrl_glyphs(ui_win_t *win, ui_event_t *evt);
-
-/* glyph window tabs */
-void view_edit(ui_win_t *win);
-int ctrl_edit(ui_win_t *win, ui_event_t *evt);
-void view_kern(ui_win_t *win);
-int ctrl_kern(ui_win_t *win, ui_event_t *evt);
-void view_color(ui_win_t *win, uint8_t c);
-int ctrl_color(ui_win_t *win, ui_event_t *evt, uint8_t *c);
+/* views */
+void view_toolbox(int idx);
+void view_about();
+void view_fileops(int save);
+void view_dosave();
+void view_props();
+void view_ranges();
+void view_glyphs();
+void view_coords(int idx);
+void view_layers(int idx);
+void view_kern(int idx);
+void view_color(int idx);

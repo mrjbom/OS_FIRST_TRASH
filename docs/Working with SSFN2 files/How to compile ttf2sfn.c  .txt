@@ -1,2 +1,0 @@
-gcc ttf2sfn.c -I/home/emilia/os/freetype-2.10.1/include -L/home/emilia/os/freetype-2.10.1/objs -lfreetype
-

@@ -33,7 +33,7 @@
 #include "util.h"
 #include "ui.h"
 
-extern unsigned int wm_icon[];
+extern uint8_t *icon32;
 SDL_Surface *icons = NULL;
 SDL_Cursor *cursors[3];
 int btnflags = 0, keyflags = 0, mx = 0, my = 0, ti = 0;
@@ -41,15 +41,23 @@ int btnflags = 0, keyflags = 0, mx = 0, my = 0, ti = 0;
 /**
  * Create a window
  */
-void *ui_createwin(char *title, int w, int h)
+void *ui_createwin(int w, int h)
 {
     SDL_Window *window;
 
-    if(!(window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_RESIZABLE)))
+    if(!(window = SDL_CreateWindow("sfnedit", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_RESIZABLE)))
         return NULL;
 
     SDL_SetWindowIcon(window, icons);
     return (void *)window;
+}
+
+/**
+ * Set window title
+ */
+void ui_titlewin(ui_win_t *win, char *title)
+{
+    SDL_SetWindowTitle((SDL_Window *)win->winid, title);
 }
 
 /**
@@ -110,8 +118,7 @@ void ui_init()
 
     if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS)) error("sdl", ERR_DISPLAY);
 
-    icons = SDL_CreateRGBSurfaceFrom((Uint32 *)&wm_icon[2], wm_icon[0], wm_icon[1], 32, wm_icon[0]*4,
-        0xFF0000, 0xFF00, 0xFF, 0xFF000000);
+    icons = SDL_CreateRGBSurfaceFrom((Uint32 *)icon32, 32, 32, 32, 32*4, 0xFF, 0xFF00, 0xFF0000, 0xFF000000);
     cursors[CURSOR_LOADING] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAITARROW);
     cursors[CURSOR_PTR]  = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     cursors[CURSOR_CROSS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
@@ -142,6 +149,7 @@ void ui_getevent()
 {
     SDL_Event e;
     if(SDL_WaitEvent(&e)) {
+        event.type = E_NONE;
         switch(e.type) {
             case SDL_QUIT: event.type = E_CLOSE; event.win = 0; break;
             case SDL_WINDOWEVENT:

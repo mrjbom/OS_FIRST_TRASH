@@ -44,7 +44,7 @@ Display *display;
 Visual *visual;
 Atom wmDel;
 Cursor cursors[3];
-extern unsigned int wm_icon[];
+extern uint8_t *icons, *icon32;
 #define ICON_LENGTH (2 + 16 * 16 + 2 + 32 * 32)
 long icons[ICON_LENGTH];
 int screen_num = 0, red_shift,green_shift,blue_shift, btnflags = 0, keyflags = 0, keypressed = 0;
@@ -52,12 +52,10 @@ int screen_num = 0, red_shift,green_shift,blue_shift, btnflags = 0, keyflags = 0
 /**
  * Create a window
  */
-void *ui_createwin(char *title, int w, int h)
+void *ui_createwin(int w, int h)
 {
     Window window;
     Atom net_wm_icon, cardinal;
-    XTextProperty title_property;
-    int i;
 
     if(!(window = XCreateSimpleWindow(display, RootWindow(display, screen_num), 0, 0, w, h, 0, theme[THEME_FG], theme[THEME_BG])))
         return 0;
@@ -68,13 +66,21 @@ void *ui_createwin(char *title, int w, int h)
     cardinal = XInternAtom(display, "CARDINAL", False);
     XChangeProperty(display, window, net_wm_icon, cardinal, 32, PropModeReplace, (unsigned char *)icons, ICON_LENGTH);
     XSetWMProtocols(display, window, &wmDel, 1);
+    return (void*)window;
+}
 
+/**
+ * Set window title
+ */
+void ui_titlewin(ui_win_t *win, char *title)
+{
+    XTextProperty title_property;
+    int i;
     i = XStringListToTextProperty(&title, 1, &title_property);
     if(i) {
-        XSetWMName(display, window, &title_property);
-        XSetWMIconName(display, window, &title_property);
+        XSetWMName(display, (Window)win->winid, &title_property);
+        XSetWMIconName(display, (Window)win->winid, &title_property);
     }
-    return (void*)window;
 }
 
 /**
@@ -92,7 +98,7 @@ void ui_resizewin(ui_win_t *win, int w, int h)
     }
     xi = XCreateImage(display, visual, DefaultDepth(display, screen_num), ZPixmap, 0, NULL, w, h, 8, w * 4);
     win->data = (uint32_t*)malloc(w * h * sizeof(uint32_t));
-    if(!win->data) error("x11", ERR_MEM);
+    if(!xi || !win->data) error("x11", ERR_MEM);
     xi->data = (char*)win->data;
     xi->byte_order= LSBFirst;
     xi->bits_per_pixel = 32;
@@ -112,7 +118,6 @@ void ui_flushwin(ui_win_t *win, int x, int y, int w, int h)
     XPutImage(display, (Window)win->winid, gc, (XImage*)win->surface, x, y, x, y, w, h);
     XFlush(display);
     XFreeGC(display, gc);
-
 }
 
 /**
@@ -153,7 +158,7 @@ void ui_cursorwin(ui_win_t *win, int cursor)
 void ui_init()
 {
     int i;
-    long *ptr;
+    long *ptr = icons;
 
     display = XOpenDisplay(getenv("DISPLAY"));
     if (!display) error("x11", ERR_DISPLAY);
@@ -166,7 +171,14 @@ void ui_init()
     for (i = visual->green_mask; !(i&0x80000000); i <<= 1) green_shift--;
     for (i = visual->blue_mask; !(i&0x80000000); i <<= 1) blue_shift--;
 
-    for(ptr = icons, i=0; i < ICON_LENGTH; i++) *ptr++ = wm_icon[i];
+    *ptr++ = 16;
+    *ptr++ = 16;
+    for(i=0; i < 16 * 16 * 4; i += 4)
+        *ptr++ = icons[i+2] | (icons[i+1] << 8) | (icons[i] << 16) | (icons[i+3] << 24);
+    *ptr++ = 32;
+    *ptr++ = 32;
+    for(i=0; i < 32 * 32 * 4; i += 4)
+        *ptr++ = icon32[i+2] | (icon32[i+1] << 8) | (icon32[i] << 16) | (icon32[i+3] << 24);
 
     cursors[CURSOR_LOADING] = XCreateFontCursor(display, XC_watch);
     cursors[CURSOR_PTR] = XCreateFontCursor(display, XC_left_ptr);
@@ -197,6 +209,7 @@ void ui_getevent()
     KeySym k;
 
     e.type = None;
+    event.type = E_NONE;
     XNextEvent(display, &e);
     event.win = ui_getwin((void*)e.xany.window);
     switch(e.type) {

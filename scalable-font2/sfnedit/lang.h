@@ -1,7 +1,7 @@
 /*
  * sfnedit/lang.h
  *
- * Copyright (C) 2019 bzt (bztsrc@gitlab)
+ * Copyright (C) 2020 bzt (bztsrc@gitlab)
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,8 +28,8 @@
  */
 
 enum {
-    LOADING = 0,
-    ERR_MEM,
+    /* error messages */
+    ERR_MEM = 0,
     ERR_LOAD,
     ERR_BADFILE,
     ERR_COLLECTION,
@@ -37,10 +37,31 @@ enum {
     ERR_UNSAVED,
     ERR_COLOR,
     ERR_DISPLAY,
+    /* status bar */
+    STAT_MEASURE,
+    STAT_OUTLINE,
+    STAT_GETKERN,
+    STAT_QUANT,
+    STAT_BITMAP,
+    STAT_TALLPIX,
+    STAT_WIDEPIX,
+    STAT_GENFRAG,
+    STAT_COMPFRAG,
+    STAT_SERFRAG,
+    STAT_WRTCHARS,
+    STAT_WRTFILE,
+
+    MTOOL_ABOUT,
+    MTOOL_LOAD,
+    MTOOL_SAVE,
+    MTOOL_PROPS,
+    MTOOL_RANGES,
+    MTOOL_GLYPHS,
+    GTOOL_MEASURES,
+    GTOOL_LAYERS,
+    GTOOL_KERN,
+
     HELP,
-    MMENU_PROPS,
-    MMENU_RANGES,
-    MMENU_GLYPHS,
     GMENU_EDIT,
     GMENU_KERN,
     PROP_FAMILY,
@@ -98,8 +119,7 @@ enum {
     NUMTEXTS
 };
 
-#define NUMLANGS         2
+#define NUMLANGS         1
 
 extern char *dict[NUMLANGS][NUMTEXTS + 1], **lang;
-void lang_init();
 

@@ -2,20 +2,16 @@
 #define __TASK_H__
 
 #include "../lib/stdint.h"
- 
-typedef struct {
+
+typedef struct registers {
     uint32_t eax, ebx, ecx, edx, esi, edi, esp, ebp, eip, eflags, cr3;
-} Registers;
+} registers_t;
  
-typedef struct Task {
-    Registers regs;
-    struct Task *next;
-} Task;
- 
-extern void init_tasking();
-extern void create_task(Task*, void(*)(), uint32_t, uint32_t*);
- 
-extern void yield(); // Switch task frontend
-extern void switch_task(Registers *old, Registers *new); // The function which actually switches
- 
+typedef struct task {
+    uint8_t pid;
+    registers_t regs;
+} tast_t;
+
+extern tast_t tasks_table[4];
+
 #endif /* __TASK_H__ */

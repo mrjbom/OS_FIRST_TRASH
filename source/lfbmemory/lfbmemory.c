@@ -2,7 +2,7 @@
 #include "../debug/debug.h"
 
 //for SSFN
-#include "../memory/memmmu/memmmu.h"
+#include "../memory/mmu/mmu.h"
 #include "../more/more.h"
 #define size_t size_t
 #define uint8_t uint8_t
@@ -22,12 +22,16 @@ void lfb_init()
 
 void lfb_clear(uint32_t color)
 {
-    for (uint32_t pixelPos = 0; pixelPos < MBI->framebuffer_width * MBI->framebuffer_height; pixelPos++)
-        lfb_framebuffer_addr[pixelPos] = color;
+    for(uint32_t y = 0; y < MBI->framebuffer_height; ++y) {
+        for(uint32_t x = 0; x < MBI->framebuffer_width; ++x) {
+            lfb_put_pixel(x, y, color);
+        }
+    }
 }
 
 void lfb_put_pixel(uint32_t x, uint32_t y, uint32_t color)
 {
+    //dprintf("%I %I = 0x%X\n", x, y, lfb_framebuffer_addr + (y * MBI->framebuffer_pitch / 4 + x));
     lfb_framebuffer_addr[y * MBI->framebuffer_pitch / 4 + x] = color;
 }
 
@@ -71,7 +75,7 @@ ssfn_t* ssfn_contexts[SSFN_CONTEXTS_MAX_NUMBER]; // the renderer contexts
 ssfn_buf_t ssfn_draw_buf;
 uint32_t ssfn_context_counter = 0;
 
-void ssfn_setup_draw_buf() {
+void print_ssfn_setup_draw_buf() {
     ssfn_draw_buf.ptr = (uint8_t*)lfb_framebuffer_addr;   /* address of the buffer */
     ssfn_draw_buf.w = (uint16_t)MBI->framebuffer_width;   /* width */
     ssfn_draw_buf.h = (uint16_t)MBI->framebuffer_height;  /* height */
@@ -80,7 +84,7 @@ void ssfn_setup_draw_buf() {
     ssfn_draw_buf.fg = 0xFF000000;                        /* foreground color */
 }
 
-int ssfn_init_new_context(unsigned char* binary_font_start)
+int print_ssfn_init_new_context(unsigned char* binary_font_start)
 {
     //checking the limit on creating SSFN contexts
     if(!(ssfn_context_counter < (SSFN_CONTEXTS_MAX_NUMBER - 1)))
@@ -108,16 +112,16 @@ int ssfn_init_new_context(unsigned char* binary_font_start)
     return ssfn_context_counter - 1;
 }
 
-void ssfn_free_context(uint32_t context_index)
+void print_ssfn_free_context(uint32_t context_index)
 {
     if(ssfn_contexts[context_index]) {
         ssfn_free(ssfn_contexts[context_index]);
+        kfree(ssfn_contexts[context_index]);
         ssfn_context_counter--;
     }
-    kfree(ssfn_contexts[ssfn_context_counter]);
 }
 
-bool ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t font_style, uint32_t font_size)
+bool print_ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t font_style, uint32_t font_size)
 {
     if(font_size < 8 || font_size > 192) {
         //dprintf("!set_ssfn_render_size() error: invalid size\n");
@@ -138,7 +142,7 @@ bool ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t font_
     return true;
 }
 
-ssfn_text_cursor_t* ssfn_create_cursor(uint32_t context_index)
+ssfn_text_cursor_t* print_ssfn_create_cursor(uint32_t context_index)
 {
     //checking the context is correct
     if(!ssfn_contexts[context_index])
@@ -154,7 +158,7 @@ ssfn_text_cursor_t* ssfn_create_cursor(uint32_t context_index)
 }
 
 //specify the color in the format 0xAARRGGBB
-void ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32_t y, uint32_t fgcolor)
+void print_ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32_t y, uint32_t fgcolor)
 {
     text_cursor->x = x;
     text_cursor->y = y;

@@ -18,12 +18,15 @@ extern void write_serial_ch(char ch);
 
 extern void write_serial_str(const char* str);
 
-//serial printf
+//debug serial printf
 //formats
 //c - char
 //i - int32
 //I - uint32
+//l - int64
+//L - uint64
 //X - uint32 address
+//Z - uint64 address
 //s - string
 extern void dprintf(const char* s2, ...);
 

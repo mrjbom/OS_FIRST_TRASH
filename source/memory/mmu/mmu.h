@@ -1,5 +1,5 @@
-#ifndef _MEMMMU_H_
-#define _MEMMMU_H_
+#ifndef _mmu_H_
+#define _mmu_H_
 
 #include "../../lib/cstdlib.h"
 #include "../../lib/stddef.h"
@@ -7,6 +7,10 @@
 #include "../../lib/string.h"
 
 //page frame allocator
+
+//from bootloader.asm
+extern char stack_bottom[];
+extern char stack_top[];
 
 //секция - то, на что делится оперативная память в memory_map
 //страница(фрейм) - то, на что делится доступная секция
@@ -49,30 +53,51 @@ extern uint32_t multiboot_reserved_end;
 //--------------------------
 extern uint8_t memory_section_number;
 
-//секции RAM
-extern memory_section_data_t memory_sections[255];
+//секции RAMz
+extern memory_section_data_t memory_sections[32];
 
 //кол-во доступных секций которые мы делим на страницы(фреймы)
 extern uint8_t memory_paging_sections_number;
 
 //доступные секции которые мы разбили на страницы(фреймы)
-extern memory_paging_data_t memory_paging[255];
+extern memory_paging_data_t memory_paging[32];
 
 //все страницы
 //(4GB / 4096)
-extern memory_page_t memory_pages_table[1048575];
+extern memory_page_t memory_pages_table[1048576];
 
 //сколько страниц(фреймов) есть в таблице(если память меньше 4GB)
 extern uint32_t memory_pages_table_count;
 
+//physical memory
 extern bool init_memory_page_allocator();
 extern void* kmalloc(uint32_t nbytes);
 extern void* search_npages(uint32_t n);
 extern void kfree(void* ptr);
 extern void* krealloc(void* ptr, size_t size);
 extern uint32_t ksizeof(void* ptr);
-
 extern void show_npages_table(uint32_t to_n);
+
+//---------------------------
+//virtual memory
+enum PagingFlags {
+	PAGE_PRESENT = 1,
+	PAGE_RW = 2,
+	PAGE_SUPERVISOR = 4
+};
+
+uint32_t* current_directory_table;
+uint32_t* kernel_page_directory_table;
+
+
+extern void* get_physaddr(uint32_t *pd, void* virtualaddr);
+extern bool map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flags);
+extern bool unmap_vpage(uint32_t* pd, void* virtualaddr);
+extern void set_current_page_directory(uint32_t* pd);
+extern bool init_vm_paging();
+extern void load_page_directory(uint32_t*);
+extern void enable_paging();
+extern void tlb_flush();
 //---------------------------
 
 #endif

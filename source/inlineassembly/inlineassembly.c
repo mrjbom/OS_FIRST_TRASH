@@ -38,7 +38,7 @@ uint8_t inb(uint16_t port)
     return ret;
 }
 
-uint16_t inw( uint16_t p_port)
+uint16_t inw(uint16_t p_port)
 {
     uint16_t l_ret;
     __asm__ volatile ( "inw %1, %0"

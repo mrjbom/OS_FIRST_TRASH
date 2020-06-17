@@ -15,16 +15,18 @@ multiboot_header:
     dd 0
     dd 0
     dd 0
-    dd 1280 ; width
-    dd 1024 ; height
+    dd 800 ; width
+    dd 600 ; height
     dd 32 ; bbp
 
 global start
 extern kmain
 
+global stack_bottom
+global stack_top
 start:
   cli
-  mov esp, stack_space
+  mov esp, stack_top
   push ebx
   push eax
 
@@ -77,5 +79,6 @@ start:
   jmp .hltloop
 
 section .bss
+stack_bottom:
 resb 8192
-stack_space:
+stack_top:

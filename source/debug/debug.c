@@ -22,8 +22,7 @@ void write_serial_ch(char ch) {
 
 void write_serial_str(const char* str) {
    size_t str_size = strlen(str);
-   for(size_t i = 0; i < str_size; i++)
-   {
+   for(size_t i = 0; i < str_size; i++) {
       write_serial_ch(str[i]);
    }
 }

@@ -45,13 +45,10 @@ void* memcpy(void* buf1, const void* buf2, uint32_t bytes)
 
 void* memset(void* buf1, uint8_t value, size_t bytes)
 {
-    uint8_t* buf_dst = buf1;
-
-    for (unsigned int i = 0; i < bytes; ++i) {
-        *buf_dst++ = (uint8_t)value;
-    }
-
-    return buf1;
+    unsigned char* p = buf1;
+    while(bytes--)
+        *p++ = value;
+    return p;
 }
 
 int memcmp(const void* s1, const void* s2, size_t n)
@@ -311,7 +308,7 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
 {
     uint32_t j = 0;
     size_t count = 0;
-    char number[128];
+    char number[256];
     char* cur = s1;
     char* str;
 
@@ -340,21 +337,27 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
                 break;
             case 'l':
             //NOT WORKING!
-            //    /* int64_t */
-            //    itoaINT64(va_arg(list, int64_t), number, 10);
-            //    strcpy(cur, number);
-            //    cur += strlen(number);
-            //    break;
+                /* int64_t */
+                itoaINT64(va_arg(list, int64_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
             case 'L':
             //NOT WORKING!
-            //    /* uint64_t */
-            //    itoaUINT64(va_arg(list, uint64_t), number, 10);
-            //    strcpy(cur, number);
-            //    cur += strlen(number);
-            //    break;
+                /* uint64_t */
+                itoaUINT64(va_arg(list, uint64_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
             case 'X':
                 /* unsigned hexedecimal */
                 itoaUINT32(va_arg(list, uint32_t), number, 16);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'Z':
+                /* unsigned hexedecimal */
+                itoaUINT64(va_arg(list, uint64_t), number, 16);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;

@@ -3,8 +3,11 @@
 #include "../inlineassembly/inlineassembly.h"
 #include "../devices/keyboard/keyboard.h"
 #include "../devices/timer/timer.h"
+#include "exceptions/exceptions.h"
 
 void idt_init(void) {
+	extern int page_fault();
+
     extern int load_idt();
     extern int irq0();
     extern int irq1();
@@ -22,6 +25,8 @@ void idt_init(void) {
     extern int irq13();
     extern int irq14();
     extern int irq15();
+
+	unsigned long page_fault_address;
  
 	unsigned long irq0_address;
     unsigned long irq1_address;
@@ -70,6 +75,13 @@ void idt_init(void) {
 	/* mask interrupts */
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
+
+	page_fault_address = (unsigned long)page_fault; 
+	IDT[14].offset_lowerbits = page_fault_address & 0xffff;
+	IDT[14].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+	IDT[14].zero = 0;
+	IDT[14].type_attr = 0x8f; /* TRAP_GATE */
+	IDT[14].offset_higherbits = (page_fault_address & 0xffff0000) >> 16;
 
 	irq0_address = (unsigned long)irq0; 
 	IDT[32].offset_lowerbits = irq0_address & 0xffff;
@@ -189,6 +201,11 @@ void idt_init(void) {
 	idt_ptr[1] = idt_address >> 16;
 
 	load_idt(idt_ptr);
+}
+
+void page_fault_handler(void) {
+	page_fault_exception();
+	outb(0x20, 0x20); //EOI
 }
 
 void irq0_handler(void) {

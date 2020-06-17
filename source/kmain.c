@@ -2,10 +2,10 @@
 #include "interruptions/interruptions.h"
 #include "devices/cpu/cpu.h"
 #include "more/more.h"
-#include "memory/memmmu/memmmu.h"
+#include "memory/mmu/mmu.h"
 #include "memory/memdetect/memdetect.h"
 #include "devices/timer/timer.h"
-
+#include "task/task.h"
 
 void kmain(unsigned long magic, multiboot_info_t* mbi) {
     (void)magic;
@@ -23,45 +23,40 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     init_memory();
     calclulate_memory();
+
     if(!init_memory_page_allocator()) {
         dprintf("init_memory_page_allocator() error!\n");
         lfb_clear(0xFF0000);
         return;
     }
+    
+    if(!init_vm_paging()) {
+        dprintf("init_memory_page_allocator() error!\n");
+        lfb_clear(0xFF0000);
+        return;
+    }
+
+    uint32_t* ptr = (uint32_t*)kmalloc(4096);
+    uint32_t* ptr2 = (uint32_t*)kmalloc(4096);
+    dprintf("ptr 0x%X = %I\n", ptr, *ptr = 123);
+    dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2 = 456);
+
+    if(!map_page(current_directory_table, ptr, ptr2, PAGE_PRESENT)
+        ) lfb_clear(0xFF0000);
+
+    dprintf("ptr 0x%X = %I\n", ptr, *ptr);
+    dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2);
+
+    dprintf("map_page\n");
+
+    if(!map_page(current_directory_table, ptr, ptr2, 0)
+        ) lfb_clear(0xFF0000);
+
+    dprintf("ptr 0x%X = %I\n", ptr, *ptr);
+    dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2);
 
     //100 Hz = 10 millisecond
     init_timer(100);
-
-    ssfn_setup_draw_buf();
-    int context_index = ssfn_init_new_context(&_binary_FreeSans_sfn_start);
-    if(context_index == -1) {
-        dprintf("ssfn_init_new_context() error!\n");
-        lfb_clear(0xFF0000);
-        return;
-    }
-
-    if(!ssfn_select_font(
-        context_index,
-        SSFN_MY_FAMILY_SANS, SSFN_MY_STYLE_REGULAR,
-        32)) {
-            dprintf("ssfn_select_font() error!\n");
-            lfb_clear(0xFF0000);
-            return;
-    }
-
-    ssfn_text_cursor_t* text_cursor = ssfn_create_cursor(context_index);
-    if(!text_cursor) {
-        dprintf("ssfn_create_cursor() error!\n");
-        lfb_clear(0xFF0000);
-        return;
-    }
-
-    ssfn_setup_cursor(text_cursor, 0, 30, 0xFF000000);
-
-    tprintf(text_cursor, "test1\ntest2\n");
-
-    ssfn_free_context(context_index);
-    kfree(text_cursor);
 
     dprintf("end of kmain()\n");
 }

@@ -16,6 +16,8 @@ struct IDT_entry{
 
 struct IDT_entry IDT[256];
 
+extern void page_fault_handler(void);
+
 extern void idt_init(void);
 
 extern void irq0_handler(void);

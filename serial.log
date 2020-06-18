@@ -1,1 +1,9 @@
+ptr 0x1549000 = 123
+ptr2 0x154a000 = 456
+map_page ptr2 to ptr
+ptr 0x1549000 = 123
+ptr2 0x154a000 = 123
+map_page ptr2 to ptr2 and write 456 to ptr2
+ptr 0x1549000 = 123
+ptr2 0x154a000 = 456
 end of kmain()

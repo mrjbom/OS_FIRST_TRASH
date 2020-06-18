@@ -30,5 +30,6 @@ break kmain
 0. (You may need to delete it *.gdbinit* files to avoid conflicts.)
 You must install Native Debugger from the extensions
 1. Run *build_all_crosscompile.sh -d*
-2. Run *Attach to QEMU* in Visual Studio Code
-3. Run *system_reset* in the qemu monitor
+2. Open *OS* folder in Visual Studio Code 
+3. Run *Attach to QEMU* in Visual Studio Code
+4. Run *system_reset* in the qemu monitor

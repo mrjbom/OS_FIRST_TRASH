@@ -3,7 +3,7 @@
 #include "../mmu/mmu.h"
 #include "../../debug/debug.h"
 
-//page frame allocator
+//physical memory
 uint32_t multiboot_reserved_start;
 uint32_t multiboot_reserved_end;
 
@@ -27,14 +27,19 @@ memory_page_t memory_pages_table[1048576];
 //сколько страниц(фреймов) есть в таблице(если память меньше 4GB)
 uint32_t memory_pages_table_count = 0;
 
-//bool init_memory_page_allocator();
-//void* kmalloc(uint32_t nbytes);
-//void* search_npages(uint32_t number);
-//void kfree(void* ptr);
-
-void show_page_table(uint32_t to_n);
-
-bool init_memory_page_allocator() {
+/*
+ * pm_init_memory_page_allocator
+ * Collects information about sections of RAM and saves it.
+ * Divides the section into frames and enters it in a single table.
+ * Protects the kernel data.
+ * 
+ * @No parameters
+ * 
+ * Returns false if:
+ * Multiboot memory map not found
+ * Returns true if all OK.
+ */
+bool pm_init_memory_page_allocator() {
     if ((MBI->flags & (1<<6)) == false) {
         dprintf("Error: memory map not detected!\n");
         return false;
@@ -70,7 +75,7 @@ bool init_memory_page_allocator() {
 			uint32_t unavailable_page_counter = 0;
 			//делим текущую доступную секцию на страницы(фреймы)
 			for (uint32_t page_index = 0; page_index < memory_paging[memory_paging_sections_number].count; ++page_index) {
-				//проверяем не заденем ли мы ядро и его память, также резервируем память выше ниже 1 МБ
+				//проверяем не заденем ли мы ядро и multiboot информацию, также резервируем память выше ниже 1 МБ
 				if (
 				       (
 					       (memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)startkernel || memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) > (uint32_t)endkernel)
@@ -104,26 +109,44 @@ bool init_memory_page_allocator() {
     return true;
 }
 
-void* kmalloc(uint32_t nbytes) {
+/*
+ * pm_malloc
+ * Allocates physical memory.
+ * Guarantees that no less than the value specified in the first parameter will be selected.
+ * 
+ * @Number of bytes to be allocated.
+ * 
+ * Returns a pointer to the first byte of the allocated memory area if successful.
+ * Returns 0x0 in case of an error.
+ */
+void* pm_malloc(uint32_t nbytes) {
 	//dprintf("kmalloc()\n");
 	//dprintf("\nkmalloc try allocate %I bytes\n", nbytes);
-	void* first_page_address = search_npages((nbytes / (4096 + 1)) + 1);
-	if (first_page_address != 0x0) {
+	void* first_page_address = pm_search_npages((nbytes / (4096 + 1)) + 1);
+	if (first_page_address) {
 		//dprintf("kmalloc return 0x%X\n", first_page_address);
-		//memset(first_page_address, 0, ksizeof(first_page_address));
+		//memset(first_page_address, 0, (nbytes / (4096 + 1)) + 1);
 		return first_page_address;
 	}
-	else
-		return 0x0;
+	return 0x0;
 }
 
-void* search_npages(uint32_t n) {
+/*
+ * pm_search_npages
+ * Allocates physical memory frames.
+ * 
+ * @Number of pages to be allocated.
+ * 
+ * Returns a pointer to the first frame of the allocated memory area if successful.
+ * Returns 0x0 in case of an error.
+ */
+void* pm_search_npages(uint32_t npages) {
 	//dprintf("search_npages try search %I pages\n", n);
 	//счётчик идущих друг за другом страниц(если надо выделить больше 1 страницы(фрейма))
 	uint32_t placed_one_after_the_other = 0;
 	void* first_page_address = 0x0;
 	for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
-		if (n == 1) {
+		if (npages == 1) {
 			if (memory_pages_table[page_index].is_busy == 0) {
 				memory_pages_table[page_index].is_busy = 1;
 				return (void*)memory_pages_table[page_index].physical_address;
@@ -138,7 +161,7 @@ void* search_npages(uint32_t n) {
 			if (memory_pages_table[page_index].is_busy == 0 && first_page_address != 0x0) {
 				++placed_one_after_the_other;
 			}
-			if (n == placed_one_after_the_other) {
+			if (npages == placed_one_after_the_other) {
 				for (uint32_t i = page_index - (placed_one_after_the_other - 1); i <= page_index; ++i) {
 					memory_pages_table[i].is_busy = 1;
 				}
@@ -154,8 +177,16 @@ void* search_npages(uint32_t n) {
 	return 0x0;
 }
 
-void kfree(void* ptr) {
-	if((uint32_t)ptr == 0x0) {
+/*
+ * pm_free
+ * Frees up memory allocated using pm_malloc.
+ * 
+ * @Pointer to the first byte of the allocated memory area.
+ * 
+ * No return value.
+ */
+void pm_free(void* ptr) {
+	if(!ptr) {
 		return;
 	}
 	//dprintf("kfree()\n");
@@ -177,17 +208,28 @@ void kfree(void* ptr) {
 	}
 }
 
-void* krealloc(void* ptr, size_t size) {
+/*
+ * pm_realloc
+ * Typical realloc
+ * 
+ * @Pointer to the first byte of the allocated memory area.
+ * 
+ * Returns pointer to a reallocated memory block
+ * that can either be the same as the ptrmem argument or refer to a new location.
+ * Returns 0x0 if the function failed to allocate the required memory block,
+ * the memory block that the ptr argument points to remains unchanged.
+ */
+void* pm_realloc(void* ptr, size_t size) {
 	void* newptr = 0;
-	size_t ptr_size = ksizeof(ptr);
+	size_t ptr_size = pm_getsize(ptr);
 	if(size == 0) {
-		kfree(ptr);
-		//dprintf("krealloc return 0x%X\n", 0x0);
+		pm_free(ptr);
+		//dprintf("pm_realloc return 0x%X\n", 0x0);
 		return 0x0;
 	}
 	//          == size in bytes(blocks * block_size)
 	if(ptr_size == (((size / 4096) + 1) * 4096)) {
-		//dprintf("krealloc return 0x%X\n", ptr);
+		//dprintf("pm_realloc return 0x%X\n", ptr);
 		return ptr;
 	}
 	else
@@ -200,13 +242,13 @@ void* krealloc(void* ptr, size_t size) {
 		//
 		//if you need more memory
 		if(ptr_size < (((size / 4096) + 1) * 4096)) {
-			newptr = kmalloc(size);
+			newptr = pm_malloc(size);
 			if(!newptr) {
 				return 0x0;
 			}
 			memcpy(newptr, ptr, ptr_size);
-			kfree(ptr);
-			//dprintf("krealloc return 0x%X\n", newptr);
+			pm_free(ptr);
+			//dprintf("pm_realloc return 0x%X\n", newptr);
 			return newptr;
 		}
 		//if you need less memory
@@ -218,35 +260,43 @@ void* krealloc(void* ptr, size_t size) {
 							memory_pages_table[page_index + j].is_busy = 0;
 						}
 						memory_pages_table[page_index].next_pages -= ((size / 4096) + 1);
-						memcpy(newptr, ptr, size);
-						//dprintf("krealloc return 0x%X\n", ptr);
+						//memcpy(newptr, ptr, size);
+						//dprintf("pm_realloc return 0x%X\n", ptr);
 						return ptr;
 					}
 					else {
-						//dprintf("\n!!!realloc error!!!\n");
+						//dprintf("\n!!!pm_realloc error!!!\n");
 						//dprintf("((size / 4096) + 1) = %I\n", ((size / 4096) + 1));
 						//dprintf("(memory_pages_table[page_index].next_pages + 1) = %I\n", (memory_pages_table[page_index].next_pages + 1));
-						//dprintf("krealloc return 0x%X\n", 0x0);
+						//dprintf("pm_realloc return 0x%X\n", 0x0);
 						return 0x0;
 					}
 					
 				}
 			}
 			//memcpy(newptr, ptr, size);
-			//dprintf("krealloc return 0x%X\n", 0x0);
+			//dprintf("pm_realloc return 0x%X\n", 0x0);
 			return 0x0;
 		}
-		kfree(ptr);
-		//dprintf("krealloc return 0x%X\n", newptr);
+		pm_free(ptr);
+		//dprintf("pm_realloc return 0x%X\n", newptr);
 		return newptr;
 	}
 }
 
-//return size as (4096 * number of blocks in the pointer)
-uint32_t ksizeof(void* ptr) {
+/*
+ * pm_getsize
+ * Calculates the size of the memory area in frames.
+ * 
+ * @Pointer to the first byte of the allocated memory area.
+ * 
+ * Returns the size in bytes of the memory area allocated using pm_malloc.
+ * Returns 0 if the size cannot be calculated.
+ */
+uint32_t pm_getsize(void* ptr) {
 	//dprintf("ksizeof()\n");
 	for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
-		if((void*)memory_pages_table[page_index].physical_address == ptr) {
+		if((void*)memory_pages_table[page_index].physical_address == ptr && memory_pages_table[page_index].is_busy) {
 			return (memory_pages_table[page_index].next_pages + 1) * 4096;
 		}
 	}
@@ -264,7 +314,17 @@ void show_npages_table(uint32_t to_n) {
 
 //-------------------------
 //virtual memory
-void* get_physaddr(uint32_t *pd, void *virtualaddr)
+
+/*
+ * NAME
+ * WRITE THIS SOMETHICalculates the size of the memory area in frames.
+ * 
+ * @PARAM DESCRIPTION to the first byte of the allocated memory area.
+ * 
+ * RETURN DESCR the size in bytes of the memory area allocated using pm_malloc.
+ * RETURN DESCR 0 if the size cannot be calculated.
+ */
+void* vm_get_physaddr(uint32_t *pd, void *virtualaddr)
 {
 	uint32_t pdindex = (uint32_t)virtualaddr >> 22;
 	uint32_t ptindex = (uint32_t)virtualaddr >> 12 & 0x03FF;
@@ -280,10 +340,10 @@ void* get_physaddr(uint32_t *pd, void *virtualaddr)
 	return NULL;
 }
 
-bool map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flags)
+bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flags)
 {
 	//dprintf("flags = %I\n", flags);
-	if (pd == NULL || (uint32_t)pd % 4096)
+	if ((uint32_t)pd % 4096 || !pd) //check addr
 		return false;
 	// Make sure that both addresses are page-aligned.
 	if((uint32_t)physaddr % 4096 || (uint32_t)virtualaddr % 4096)
@@ -298,10 +358,10 @@ bool map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flag
 
 	//If the PD entry is not present, create it
 	if(!pd[pdindex]) {
-		pd[pdindex] = (uint32_t)kmalloc(sizeof(uint32_t) * 1024);
+		pd[pdindex] = (uint32_t)pm_malloc(sizeof(uint32_t) * 1024);
 		if ((uint32_t)pd[pdindex] % 4096) {
 			//dprintf("pd[pdindex] address is not aligned!\n");
-			kfree((void*)pd[pdindex]);
+			pm_free((void*)pd[pdindex]);
 			return false;
 		}
 		memset((void*)pd[pdindex], 0, sizeof(uint32_t) * 1024);
@@ -325,15 +385,15 @@ bool map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flag
     	// or you might not notice the change.
 
 		//Flush the entry in the TLB
-		tlb_flush();
+		vm_tlb_flush();
 		return true;
 	}
 	return false;
 }
 
-bool unmap_vpage(uint32_t* pd, void* virtualaddr)
+bool vm_unmap_vpage(uint32_t* pd, void* virtualaddr)
 {
-	if (pd == NULL || (uint32_t)pd % 4096)
+	if ((uint32_t)pd % 4096 && !pd)
 		return false;
 	// Make sure that addresses are page-aligned.
 	if((uint32_t)virtualaddr % 4096)
@@ -353,22 +413,26 @@ bool unmap_vpage(uint32_t* pd, void* virtualaddr)
 	if (pt[ptindex]) {
 		pt[ptindex] = (uint32_t)NULL;
 		// Flush the entry in the TLB
-		tlb_flush();
+		vm_tlb_flush();
 		return true;
 	}
 	//not exist
 	return false;
 }
 
-void set_current_page_directory(uint32_t* pd) {
+bool vm_set_current_page_directory(uint32_t* pd) {
+	if((uint32_t)pd % 4096 && !pd) { //check addr
+		return false;
+	}
 	current_directory_table = pd;
+	return true;
 }
 
-bool init_vm_paging() {
-	kernel_page_directory_table = (uint32_t*)kmalloc(sizeof(uint32_t) * 1024);
-	if ((uint32_t)kernel_page_directory_table % 4096) {
+bool vm_init_paging() {
+	kernel_page_directory_table = (uint32_t*)pm_malloc(sizeof(uint32_t) * 1024);
+	if ((uint32_t)kernel_page_directory_table % 4096 && !kernel_page_directory_table) { //check addr
 		dprintf("kernel_page_directory_table address is not aligned!\n");
-		kfree(kernel_page_directory_table);
+		pm_free(kernel_page_directory_table);
 		return false;
 	}
 	memset(kernel_page_directory_table, 0, sizeof(uint32_t) * 1024);
@@ -379,17 +443,17 @@ bool init_vm_paging() {
 			uint32_t* physaddr = (uint32_t*)((j + (i * 1024)) * 0x1000);
 			//dprintf("%I physaddr = 0x%X(%I)\n", j, physaddr, physaddr);
 			//dprintf("kernel_page_directory_table[%I] = %I\n", i, kernel_page_directory_table[i]);
-			if(!map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_SUPERVISOR | PAGE_RW)) {
+			if(!vm_map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_SUPERVISOR | PAGE_RW)) {
 				dprintf("error map_page()!\n");
-				kfree(kernel_page_directory_table);
+				pm_free(kernel_page_directory_table);
 				return false;
 			}
 		}
 		//dprintf("--------\n", i);
 	}
-	set_current_page_directory(kernel_page_directory_table);
+	vm_set_current_page_directory(kernel_page_directory_table);
 
-	load_page_directory(current_directory_table);
-	enable_paging();
+	vm_load_page_directory(current_directory_table);
+	vm_enable_paging();
 	return true;
 }

@@ -15,7 +15,7 @@
         "stddef.h": "c",
         "string.h": "c",
         "math.h": "c",
-        "memmmu.h": "c",
+        "mmu.h": "c",
         "debug.h": "c",
         "inlineassembly.h": "c",
         "cstdio": "c",

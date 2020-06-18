@@ -316,7 +316,7 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
         if (s2[j] != '%') {
             /* text */
             *cur++ = s2[j++];
-        } else if (s2[j] == '%') {
+        } else {
             /* control character */
             switch (s2[++j]) {
             case 'c':
@@ -336,14 +336,12 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
                 cur += strlen(number);
                 break;
             case 'l':
-            //NOT WORKING!
                 /* int64_t */
                 itoaINT64(va_arg(list, int64_t), number, 10);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'L':
-            //NOT WORKING!
                 /* uint64_t */
                 itoaUINT64(va_arg(list, uint64_t), number, 10);
                 strcpy(cur, number);

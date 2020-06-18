@@ -24,33 +24,37 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     init_memory();
     calclulate_memory();
 
-    if(!init_memory_page_allocator()) {
-        dprintf("init_memory_page_allocator() error!\n");
+    if(!pm_init_memory_page_allocator()) {
+        dprintf("pm_init_memory_page_allocator() error!\n");
         lfb_clear(0xFF0000);
         return;
     }
     
-    if(!init_vm_paging()) {
-        dprintf("init_memory_page_allocator() error!\n");
+    if(!vm_init_paging()) {
+        dprintf("vm_init_paging() error!\n");
         lfb_clear(0xFF0000);
         return;
     }
 
-    uint32_t* ptr = (uint32_t*)kmalloc(4096);
-    uint32_t* ptr2 = (uint32_t*)kmalloc(4096);
+    uint32_t* ptr = (uint32_t*)pm_malloc(4096);
+    uint32_t* ptr2 = (uint32_t*)pm_malloc(4096);
     dprintf("ptr 0x%X = %I\n", ptr, *ptr = 123);
     dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2 = 456);
 
-    if(!map_page(current_directory_table, ptr, ptr2, PAGE_PRESENT)
+    if(!vm_map_page(current_directory_table, ptr, ptr2, PAGE_PRESENT)
         ) lfb_clear(0xFF0000);
+
+    dprintf("map_page ptr2 to ptr\n");
 
     dprintf("ptr 0x%X = %I\n", ptr, *ptr);
     dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2);
 
-    dprintf("map_page\n");
+    dprintf("map_page ptr2 to ptr2 and write 456 to ptr2\n");
 
-    if(!map_page(current_directory_table, ptr, ptr2, 0)
+    if(!vm_map_page(current_directory_table, ptr2, ptr2, PAGE_PRESENT)
         ) lfb_clear(0xFF0000);
+
+    *ptr2 = 456;
 
     dprintf("ptr 0x%X = %I\n", ptr, *ptr);
     dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2);

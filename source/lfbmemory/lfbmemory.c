@@ -8,8 +8,8 @@
 #define uint8_t uint8_t
 #define SSFN_memcmp memcmp
 #define SSFN_memset memset
-#define SSFN_realloc krealloc
-#define SSFN_free kfree
+#define SSFN_realloc pm_realloc
+#define SSFN_free pm_free
 #define SSFN_IMPLEMENTATION //normal render
 #include "../../scalable-font2/ssfn.h"
 
@@ -91,7 +91,7 @@ int print_ssfn_init_new_context(unsigned char* binary_font_start)
         return -1;
     
     //the memory allocation for the context
-    ssfn_contexts[ssfn_context_counter] = (ssfn_t*)kmalloc(sizeof(ssfn_t));
+    ssfn_contexts[ssfn_context_counter] = (ssfn_t*)pm_malloc(sizeof(ssfn_t));
 
     //checking memory was allocated successfully
     if(!ssfn_contexts[ssfn_context_counter])
@@ -105,7 +105,7 @@ int print_ssfn_init_new_context(unsigned char* binary_font_start)
     //if there is an error in loading the font
     if(errorcode != SSFN_OK) {
         dprintf("ssfn_load error: %s\n!", ssfn_error(errorcode));
-        kfree(ssfn_contexts[ssfn_context_counter]);
+        pm_free(ssfn_contexts[ssfn_context_counter]);
         return -1;
     }
     ssfn_context_counter++;
@@ -116,7 +116,7 @@ void print_ssfn_free_context(uint32_t context_index)
 {
     if(ssfn_contexts[context_index]) {
         ssfn_free(ssfn_contexts[context_index]);
-        kfree(ssfn_contexts[context_index]);
+        pm_free(ssfn_contexts[context_index]);
         ssfn_context_counter--;
     }
 }
@@ -147,7 +147,7 @@ ssfn_text_cursor_t* print_ssfn_create_cursor(uint32_t context_index)
     //checking the context is correct
     if(!ssfn_contexts[context_index])
         return 0x0;
-    ssfn_text_cursor_t* text_cursor = kmalloc(sizeof(ssfn_text_cursor_t));
+    ssfn_text_cursor_t* text_cursor = pm_malloc(sizeof(ssfn_text_cursor_t));
     //checking the cursor is correct
     if(!text_cursor)
         return 0x0;
@@ -168,8 +168,8 @@ void print_ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32
 void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str)
 {
     if(!text_cursor) {
-        return;
         dprintf("text_cursor invalid\n");
+        return;
     }
     ssfn_draw_buf.x = text_cursor->x;
     ssfn_draw_buf.y = text_cursor->y;

@@ -52,7 +52,7 @@ extern void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y
            |
            |
            |
-    call kfree(text_cursor)
+    call pm_free(text_cursor)
 
 
     EXAMPLE:
@@ -85,7 +85,7 @@ extern void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y
     tprintf(text_cursor, "test1\ntest2");
 
     print_ssfn_free_context(context_index);
-    kfree(text_cursor);
+    pm_free(text_cursor);
 */
 
 //from objects

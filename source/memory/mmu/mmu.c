@@ -122,7 +122,13 @@ bool pm_init_memory_page_allocator() {
 void* pm_malloc(uint32_t nbytes) {
 	//dprintf("kmalloc()\n");
 	//dprintf("\nkmalloc try allocate %I bytes\n", nbytes);
-	void* first_page_address = pm_search_npages((nbytes / (4096 + 1)) + 1);
+	void* first_page_address = 0x0;
+	if(!(nbytes % 4096)) {
+		first_page_address = pm_search_npages(nbytes / 4096);
+	}
+	else {
+		first_page_address = pm_search_npages((nbytes / 4096) + 1);
+	}
 	if (first_page_address) {
 		//dprintf("kmalloc return 0x%X\n", first_page_address);
 		//memset(first_page_address, 0, (nbytes / (4096 + 1)) + 1);
@@ -213,6 +219,7 @@ void pm_free(void* ptr) {
  * Typical realloc
  * 
  * @Pointer to the first byte of the allocated memory area.
+ * @Required size in bytes.
  * 
  * Returns pointer to a reallocated memory block
  * that can either be the same as the ptrmem argument or refer to a new location.
@@ -303,9 +310,9 @@ uint32_t pm_getsize(void* ptr) {
 	return 0;
 }
 
-void show_npages_table(uint32_t to_n) {
+void show_npages_table(uint32_t from, uint32_t to) {
 	//dprintf("\nPAGES_TABLE:\n");
-	for (uint32_t i = 0; i < to_n; ++i) {
+	for (uint32_t i = from; i <= to; ++i) {
 		if(i == memory_pages_table_count - 1)
 			return;
 		dprintf("%I: Physical address: 0x%X is_busy: %I next_pages: %I\n", i, memory_pages_table[i].physical_address, memory_pages_table[i].is_busy, memory_pages_table[i].next_pages);

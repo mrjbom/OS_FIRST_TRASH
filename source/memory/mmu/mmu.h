@@ -76,7 +76,7 @@ extern void* pm_search_npages(uint32_t npages);
 extern void pm_free(void* ptr);
 extern void* pm_realloc(void* ptr, size_t size);
 extern uint32_t pm_getsize(void* ptr);
-extern void show_npages_table(uint32_t to_n);
+extern void show_npages_table(uint32_t from, uint32_t to);
 
 //---------------------------
 //virtual memory

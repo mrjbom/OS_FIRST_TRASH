@@ -36,31 +36,13 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         return;
     }
 
-    uint32_t* ptr = (uint32_t*)pm_malloc(4096);
-    uint32_t* ptr2 = (uint32_t*)pm_malloc(4096);
-    dprintf("ptr 0x%X = %I\n", ptr, *ptr = 123);
-    dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2 = 456);
-
-    if(!vm_map_page(current_directory_table, ptr, ptr2, PAGE_PRESENT)
-        ) lfb_clear(0xFF0000);
-
-    dprintf("map_page ptr2 to ptr\n");
-
-    dprintf("ptr 0x%X = %I\n", ptr, *ptr);
-    dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2);
-
-    dprintf("map_page ptr2 to ptr2 and write 456 to ptr2\n");
-
-    if(!vm_map_page(current_directory_table, ptr2, ptr2, PAGE_PRESENT)
-        ) lfb_clear(0xFF0000);
-
-    *ptr2 = 456;
-
-    dprintf("ptr 0x%X = %I\n", ptr, *ptr);
-    dprintf("ptr2 0x%X = %I\n", ptr2, *ptr2);
-
     //100 Hz = 10 millisecond
-    init_timer(100);
+    pit_init(100);
+
+    for(uint32_t i = 0; i < 10; ++i) {
+        pit_sleep(5000);
+        dprintf("%I\n", i);
+    }
 
     dprintf("end of kmain()\n");
 }

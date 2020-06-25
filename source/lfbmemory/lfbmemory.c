@@ -69,7 +69,11 @@ void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint
     }
 }
 
-//---------------------ssfn 2.0---------------------
+uint32_t lfb_rgb_to_hex(uint32_t r, uint32_t g, uint32_t b) {
+    return (r << 16) | (g << 8) | b;
+}
+
+//---------------------ssfn 2.0 text printing---------------------
 #define SSFN_CONTEXTS_MAX_NUMBER 32
 ssfn_t* ssfn_contexts[SSFN_CONTEXTS_MAX_NUMBER]; // the renderer contexts
 ssfn_buf_t ssfn_draw_buf;

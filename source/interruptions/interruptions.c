@@ -209,7 +209,7 @@ void page_fault_handler(void) {
 }
 
 void irq0_handler(void) {
-	timer_handler();
+	pit_handler();
     outb(0x20, 0x20); //EOI
 }
 

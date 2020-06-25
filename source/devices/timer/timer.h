@@ -6,8 +6,10 @@
 #include "../../lib/stdint.h"
 #include "../../lib/string.h"
 
-void init_timer(uint16_t freq);
+void pit_init(uint16_t freq);
 
-void timer_handler();
+void pit_handler();
+
+void pit_sleep(uint32_t milliseconds);
 
 #endif

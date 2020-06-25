@@ -21,6 +21,7 @@ extern void lfb_draw_line(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, ui
 
 extern void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t color);
 
+extern uint32_t lfb_rgb_to_hex(uint32_t r, uint32_t g, uint32_t b);
 //SSFN 2.0
 /*
     How do I use SSFN 2.0 for text output?
@@ -28,30 +29,37 @@ extern void lfb_draw_rectangle(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y
            |
            |
            |
+           V
     call print_ssfn_init_new_context() and save context index
            |
            |
            |
+           V
     call print_ssfn_select_font() USE DEFINES WITH "MY", for example "SSFN_MY_FAMILY_SERIF"
            |
            |
            |
+           V
     call print_ssfn_create_cursor() set the index of the cursor and save the cursor
            |
            |
            |
+           V
     call print_ssfn_setup_cursor()
            |
            |
            |
+           V
     call tprintf()
            |
            |
            |
+           V
     call print_ssfn_free_context()
            |
            |
            |
+           V
     call pm_free(text_cursor)
 
 

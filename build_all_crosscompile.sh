@@ -82,9 +82,9 @@ if [[ $1 == "info" ]]
 then
 	echo "-d compiles the kernel and prepares it for debugging using Visual Studio Code"
 	echo "-d -s \"qemu parameters\" compiles the kernel and prepares it for debugging,"
-	echo "adds parameters for QEMU, example:"
+	echo "adds parameters for QEMU(Only works with the \"-d\" flag), example:"
 	echo "-d -s \"-m G1\""
-	echo "without parameters it just compiles the kernel"
+	echo "without parameters it just compiles the kernel and run in qemu"
 fi
 #DEBUGING
 #Compilation with writing debug symbols for gdb and preparing for debugging,
@@ -178,7 +178,7 @@ then
 		./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-objcopy --only-keep-debug kernel-0 kernel.sym
 		qemu-system-i386 -serial file:serial.log -s -monitor stdio bootable.iso
 	#fi
-	#-s -special arguments for qemu
+	#-s - special arguments for qemu
 	#example (starts the VM in debug mode and 1 GB of RAM)
 	#-d -s -m G1
 	elif [[ $2 == "-s" ]]
@@ -200,11 +200,6 @@ then
 		clear
 		exit;
 	fi
-		#while [[ -n "$3" ]]
-		#do
-		#	echo "$3"
-		#	shift
-		#done
 fi
 ################################################################################
 ################################################################################

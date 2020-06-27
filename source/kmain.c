@@ -36,13 +36,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         return;
     }
 
-    //100 Hz = 10 millisecond
     pit_init(100);
-
-    for(uint32_t i = 0; i < 10; ++i) {
-        pit_sleep(5000);
-        dprintf("%I\n", i);
-    }
 
     dprintf("end of kmain()\n");
 }

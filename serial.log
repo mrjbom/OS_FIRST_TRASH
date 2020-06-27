@@ -1,1 +1,20 @@
-end of kmain()
+ptr 0x154a000 = 123
+ptr2 0x154b000 = 456
+map_page ptr2 to ptr
+ptr 0x154a000 = 123
+ptr2 0x154b000 = 123
+map_page ptr2 to ptr2 and write 456 to ptr2
+ptr 0x154a000 = 123
+page_fault_exception!
+------
+virtualaddr: 0x154b000
+virtualaddr_aligned: 0x154b000
+error_code = 1
+error P bit = 1
+error RW bit = 0
+error US bit = 0
+virtual P bit = 0
+virtual W bit = 0
+virtual U bit = 0
+virtual R bit = 0
+virtual I bit = 0

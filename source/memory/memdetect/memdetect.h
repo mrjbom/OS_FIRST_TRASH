@@ -27,8 +27,8 @@ extern uint32_t memory_sections_types[6];
 extern char startkernel[];
 extern char endkernel[];
 
-extern void init_memory();
+extern void memory_map_init();
 
-extern void calclulate_memory();
+extern void memory_map_calculate();
 
 #endif

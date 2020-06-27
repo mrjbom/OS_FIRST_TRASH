@@ -21,8 +21,8 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     detect_cpu();
 
-    init_memory();
-    calclulate_memory();
+    memory_map_init();
+    memory_map_calculate();
 
     if(!pm_init_memory_page_allocator()) {
         dprintf("pm_init_memory_page_allocator() error!\n");

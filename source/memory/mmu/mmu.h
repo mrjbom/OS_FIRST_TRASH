@@ -8,41 +8,43 @@
 
 //page frame allocator
 
-//from bootloader.asm
+//stack data from bootloader.asm
 extern char stack_bottom[];
 extern char stack_top[];
 
-//секция - то, на что делится оперативная память в memory_map
-//страница(фрейм) - то, на что делится доступная секция
+//section - what RAM is divided into in memory_map
+//frame - what the available section is divided into within physical memory
+//4096-byte areas
 
-//информация о секциях в RAM определяемых с помощью GRUB memory map
+//information about sections into RAM is determined using the GRUB memory map
 typedef struct memory_section_data
 {
-	//адрес начала секции памяти
+	//address of the beginning of the memory section
 	uint32_t address;
-	//длина секции в байтах
+	//section length in bytes
 	uint32_t length;
-	//тип секции
+	//section type
 	uint8_t type;
 } memory_section_data_t;
 
-//информация о доступных секциях в котором мы создаём страницы(фреймы)
-typedef struct memory_paging_data
+//information about available sections in which we create frames
+typedef struct memory_framing_data
 {
-	//адрес начала доступной секции для разметки на страницы(фреймы)
+	//address of the beginning of the available section for page markup(frames)
 	uint32_t address;
-	//in bytes(суммарный размер страниц в этом секторе (длина доступной секции в рамках блоков, то есть небольшая часть памяти в конце(которая не вместилась в блок) отбрасывается))
+	//in bytes (the total size of frames in this sector (the length of the available section within blocks
+	//that is, a small portion of memory at the end(that did not fit in the block) is discarded))
 	uint32_t length;
-	//кол-во блоков в доступном секторе
+	//number of blocks in the available sector
 	uint32_t count;
-} memory_paging_data_t;
+} memory_framing_data_t;
 
 typedef struct memory_page
 {
 	uint32_t physical_address;
 	bool is_busy;
-	//если выделяли несколько страниц подряд то тут запоминаем сколько страниц идёт следом для освобождения
-	uint32_t next_pages;
+	//if you selected several frames in a row then here we remember how many pages follow to release
+	uint32_t next_frames;
 	uint32_t owner;
 } memory_page_t;
 
@@ -53,20 +55,20 @@ extern uint32_t multiboot_reserved_end;
 //--------------------------
 extern uint8_t memory_section_number;
 
-//секции RAMz
+//RAM sections data
 extern memory_section_data_t memory_sections[32];
 
-//кол-во доступных секций которые мы делим на страницы(фреймы)
-extern uint8_t memory_paging_sections_number;
+//number of available sections that we divide into frames
+extern uint8_t memory_framing_sections_number;
 
-//доступные секции которые мы разбили на страницы(фреймы)
-extern memory_paging_data_t memory_paging[32];
+//available sections that we have divided into frames
+extern memory_framing_data_t memory_paging[32];
 
-//все страницы
+//all pages
 //(4GB / 4096)
 extern memory_page_t memory_pages_table[1048576];
 
-//сколько страниц(фреймов) есть в таблице(если память меньше 4GB)
+//how many frames are in the table(if memory is less than 4GB)
 extern uint32_t memory_pages_table_count;
 
 //physical memory

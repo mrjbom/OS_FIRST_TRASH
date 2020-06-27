@@ -15,10 +15,10 @@ uint8_t memory_section_number = 0;
 memory_section_data_t memory_sections[32];
 
 //кол-во доступных секций которые мы делим на страницы(фреймы)
-uint8_t memory_paging_sections_number = 0;
+uint8_t memory_framing_sections_number = 0;
 
 //доступные секции которые мы разбили на страницы(фреймы)
-memory_paging_data_t memory_paging[32];
+memory_framing_data_t memory_framing[32];
 
 //все страницы
 //(4GB / 4096)
@@ -62,32 +62,32 @@ bool pm_init_memory_page_allocator() {
 				memory_sections[section_index].length = memory_sections[section_index].length - (memory_sections[section_index].address - old_addr);
 			}
 			else {
-				memory_paging[memory_paging_sections_number].address = memory_sections[section_index].address;
-				memory_paging[memory_paging_sections_number].count = memory_sections[section_index].length / 4096;
+				memory_framing[memory_framing_sections_number].address = memory_sections[section_index].address;
+				memory_framing[memory_framing_sections_number].count = memory_sections[section_index].length / 4096;
 			}
-			memory_paging[memory_paging_sections_number].count = memory_sections[section_index].length / 4096;
-			memory_paging[memory_paging_sections_number].length = 4096 * memory_paging[memory_paging_sections_number].count;
+			memory_framing[memory_framing_sections_number].count = memory_sections[section_index].length / 4096;
+			memory_framing[memory_framing_sections_number].length = 4096 * memory_framing[memory_framing_sections_number].count;
 
-			//dprintf("Avaiable section address: 0x%X - 0x%X\n", memory_paging[memory_paging_sections_number].address, memory_paging[memory_paging_sections_number].address + memory_paging[memory_paging_sections_number].length);
-			//dprintf("Avaiable section count: %I\n", memory_paging[memory_paging_sections_number].count);
-			//dprintf("Avaiable section length: %I bytes(%I kilobytes)\n\n", memory_paging[memory_paging_sections_number].length, memory_paging[memory_paging_sections_number].length / 1024);
+			//dprintf("Avaiable section address: 0x%X - 0x%X\n", memory_framing[memory_framing_sections_number].address, memory_framing[memory_framing_sections_number].address + memory_framing[memory_framing_sections_number].length);
+			//dprintf("Avaiable section count: %I\n", memory_framing[memory_framing_sections_number].count);
+			//dprintf("Avaiable section length: %I bytes(%I kilobytes)\n\n", memory_framing[memory_framing_sections_number].length, memory_framing[memory_framing_sections_number].length / 1024);
 
 			uint32_t unavailable_page_counter = 0;
 			//делим текущую доступную секцию на страницы(фреймы)
-			for (uint32_t page_index = 0; page_index < memory_paging[memory_paging_sections_number].count; ++page_index) {
+			for (uint32_t page_index = 0; page_index < memory_framing[memory_framing_sections_number].count; ++page_index) {
 				//проверяем не заденем ли мы ядро и multiboot информацию, также резервируем память выше ниже 1 МБ
 				if (
 				       (
-					       (memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)startkernel || memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) > (uint32_t)endkernel)
+					       (memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)startkernel || memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) > (uint32_t)endkernel)
 				   	   ) && 
 					   (
-						   (memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)multiboot_reserved_start || memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) > (uint32_t)multiboot_reserved_end)
+						   (memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)multiboot_reserved_start || memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) > (uint32_t)multiboot_reserved_end)
 					   ) && 
 					   		//Memory below 1 MB may be used by devices
-					   		memory_paging[memory_paging_sections_number].address + (0x1000 * page_index) > 0x100000
+					   		memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) > 0x100000
 					) {
 					if(page_index + memory_pages_table_count < 1048575) {
-						memory_pages_table[page_index + memory_pages_table_count].physical_address = memory_paging[memory_paging_sections_number].address + (0x1000 * page_index);
+						memory_pages_table[page_index + memory_pages_table_count].physical_address = memory_framing[memory_framing_sections_number].address + (0x1000 * page_index);
 					}
 				}
 				else {
@@ -95,9 +95,9 @@ bool pm_init_memory_page_allocator() {
 					--memory_pages_table_count;
 				}
 			}
-			memory_pages_table_count += memory_paging[memory_paging_sections_number].count;
-			memory_paging[memory_paging_sections_number].count -= unavailable_page_counter;
-			++memory_paging_sections_number;
+			memory_pages_table_count += memory_framing[memory_framing_sections_number].count;
+			memory_framing[memory_framing_sections_number].count -= unavailable_page_counter;
+			++memory_framing_sections_number;
 		}
 	}
 	/*
@@ -171,7 +171,7 @@ void* pm_search_npages(uint32_t npages) {
 				for (uint32_t i = page_index - (placed_one_after_the_other - 1); i <= page_index; ++i) {
 					memory_pages_table[i].is_busy = 1;
 				}
-				memory_pages_table[page_index - (placed_one_after_the_other - 1)].next_pages = placed_one_after_the_other - 1;
+				memory_pages_table[page_index - (placed_one_after_the_other - 1)].next_frames = placed_one_after_the_other - 1;
 				return first_page_address;
 			}
 			if (memory_pages_table[page_index].is_busy == 1 && first_page_address != 0x0) {
@@ -199,15 +199,15 @@ void pm_free(void* ptr) {
 	//dprintf("\nkfree try free 0x%X\n", (uint32_t)ptr);
 	for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
 		if ((void*)memory_pages_table[page_index].physical_address == ptr) {
-			if (memory_pages_table[page_index].next_pages == 0) {
+			if (memory_pages_table[page_index].next_frames == 0) {
 				memory_pages_table[page_index].is_busy = 0;
 				return;
 			}
 			else {
-				for (uint32_t i = page_index; i <= page_index + memory_pages_table[page_index].next_pages; ++i) {
+				for (uint32_t i = page_index; i <= page_index + memory_pages_table[page_index].next_frames; ++i) {
 					memory_pages_table[i].is_busy = 0;
 				}
-				memory_pages_table[page_index].next_pages = 0;
+				memory_pages_table[page_index].next_frames = 0;
 			}
 			return;
 		}
@@ -262,11 +262,11 @@ void* pm_realloc(void* ptr, size_t size) {
 		else if(ptr_size > (((size / 4096) + 1) * 4096)) {
 			for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
 				if((void*)memory_pages_table[page_index].physical_address == ptr) {
-					if(((size / 4096) + 1) < (memory_pages_table[page_index].next_pages + 1)) {
-						for(uint32_t j = ((size / 4096) + 1); j < (memory_pages_table[page_index].next_pages + 1); ++j) {
+					if(((size / 4096) + 1) < (memory_pages_table[page_index].next_frames + 1)) {
+						for(uint32_t j = ((size / 4096) + 1); j < (memory_pages_table[page_index].next_frames + 1); ++j) {
 							memory_pages_table[page_index + j].is_busy = 0;
 						}
-						memory_pages_table[page_index].next_pages -= ((size / 4096) + 1);
+						memory_pages_table[page_index].next_frames -= ((size / 4096) + 1);
 						//memcpy(newptr, ptr, size);
 						//dprintf("pm_realloc return 0x%X\n", ptr);
 						return ptr;
@@ -274,7 +274,7 @@ void* pm_realloc(void* ptr, size_t size) {
 					else {
 						//dprintf("\n!!!pm_realloc error!!!\n");
 						//dprintf("((size / 4096) + 1) = %I\n", ((size / 4096) + 1));
-						//dprintf("(memory_pages_table[page_index].next_pages + 1) = %I\n", (memory_pages_table[page_index].next_pages + 1));
+						//dprintf("(memory_pages_table[page_index].next_frames + 1) = %I\n", (memory_pages_table[page_index].next_frames + 1));
 						//dprintf("pm_realloc return 0x%X\n", 0x0);
 						return 0x0;
 					}
@@ -304,7 +304,7 @@ uint32_t pm_getsize(void* ptr) {
 	//dprintf("ksizeof()\n");
 	for (uint32_t page_index = 0; page_index < memory_pages_table_count; ++page_index) {
 		if((void*)memory_pages_table[page_index].physical_address == ptr && memory_pages_table[page_index].is_busy) {
-			return (memory_pages_table[page_index].next_pages + 1) * 4096;
+			return (memory_pages_table[page_index].next_frames + 1) * 4096;
 		}
 	}
 	return 0;
@@ -315,7 +315,7 @@ void show_npages_table(uint32_t from, uint32_t to) {
 	for (uint32_t i = from; i <= to; ++i) {
 		if(i == memory_pages_table_count - 1)
 			return;
-		dprintf("%I: Physical address: 0x%X is_busy: %I next_pages: %I\n", i, memory_pages_table[i].physical_address, memory_pages_table[i].is_busy, memory_pages_table[i].next_pages);
+		dprintf("%I: Physical address: 0x%X is_busy: %I next_frames: %I\n", i, memory_pages_table[i].physical_address, memory_pages_table[i].is_busy, memory_pages_table[i].next_frames);
 	}
 }
 

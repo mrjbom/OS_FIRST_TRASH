@@ -27,11 +27,13 @@ break kmain
 ```
 
 ### How do I debug the kernel using Visual Studio Code and gdb?
-0. (You may need to delete it *.gdbinit* files to avoid conflicts.)
+0. (You may need to delete it *.gdbinit* files to avoid conflicts.)<br>
 You must install Native Debugger from the extensions
-1. Run *build_all_crosscompile.sh -d*
 
-You can also add -s "qemu parameters string" to change the qemu startup settings. (run. *build_all_crosscompile.sh info* to find out more)
+1. Run *build_all_crosscompile.sh -d*<br>
+You can also add -s "qemu parameters string" to change the qemu startup settings.<br>
+(run. *build_all_crosscompile.sh info* to find out more)
+
 2. Open *OS* folder in Visual Studio Code
-3. Run *Attach to QEMU* in Visual Studio Code
+3. Run *Attach to QEMU* in Visual Studio Code Debug
 4. Run *system_reset* in the qemu monitor

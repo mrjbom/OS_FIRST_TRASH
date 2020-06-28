@@ -7,6 +7,7 @@
 #include "../lib/stddef.h"
 #include "../lib/stdint.h"
 #include "../lib/string.h"
+#include "../lib/printf.h"
 
 #define PORT_COM1 0x3f8   /* COM1 */
 
@@ -20,14 +21,14 @@ extern void serial_write_str(const char* str);
 
 //debug serial printf
 //formats
-//c - char
-//i - int32
-//I - uint32
-//l - int64
-//L - uint64
-//X - uint32 address
-//Z - uint64 address
-//s - string
-extern void serial_printf(const char* s2, ...);
+//%c - char
+//%i/%d - int32
+//%u - uint32
+//%ll - int64
+//%llu - uint64
+//%x - uint32 address
+//%llx - uint64 address
+//%s - string
+extern void serial_printf(const char* fmt, ...);
 
 #endif

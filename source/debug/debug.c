@@ -27,10 +27,10 @@ void serial_write_str(const char* str) {
    }
 }
 
-void serial_printf(const char* s2, ...) {
+void serial_printf(const char* fmt, ...) {
    char outstr[1024];
    va_list list;
-   va_start(list, s2);
-   vsprintf(outstr, s2, list);
+   va_start(list, fmt);
+   vsnprintf(outstr, 1024, fmt, list);
    serial_write_str(outstr);
 }

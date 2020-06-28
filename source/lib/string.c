@@ -283,6 +283,13 @@ char* strinv(char* str)
     return str;
 }
 
+//for printf
+void _putchar(char character)
+{
+  // send char to console etc.
+}
+
+/*
 unsigned int sprintf(char* s1, const char* s2, ...)
 {
     va_list list;
@@ -301,7 +308,8 @@ unsigned int snprintf(char* s1, unsigned int n, const char* s2, ...)
 
 unsigned int vsprintf(char* s1, const char* s2, va_list list)
 {
-    return vsnprintf(s1, 4 * 1024, s2, list);
+    //return vsnprintf(s1, 4 * 1024, s2, list);
+    return vsnprintf_v2(s1, 4 * 1024, s2, list);
 }
 
 unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
@@ -314,53 +322,53 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
 
     while (s2[j] != '\0' && j < n) {
         if (s2[j] != '%') {
-            /* text */
+            //text
             *cur++ = s2[j++];
         } else {
-            /* control character */
+            //ontrol character
             switch (s2[++j]) {
             case 'c':
-                /* character */
+                //character
                 *cur++ = va_arg(list, char);
                 break;
             case 'i':
-                /* int32_t */
+                //int32_t
                 itoaINT32(va_arg(list, int32_t), number, 10);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'I':
-                /* uint32_t */
+                //uint32_t
                 itoaUINT32(va_arg(list, uint32_t), number, 10);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'l':
-                /* int64_t */
+                //int64_t
                 itoaINT64(va_arg(list, int64_t), number, 10);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'L':
-                /* uint64_t */
+                //uint64_t
                 itoaUINT64(va_arg(list, uint64_t), number, 10);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'X':
-                /* unsigned hexedecimal */
+                //unsigned hexedecimal
                 itoaUINT32(va_arg(list, uint32_t), number, 16);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'Z':
-                /* unsigned hexedecimal */
+                //unsigned hexedecimal
                 itoaUINT64(va_arg(list, uint64_t), number, 16);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 's':
-                /* string */
+                //string
                 str = va_arg(list, char*);
                 strcpy(cur, str);
                 cur += strlen(str);
@@ -377,3 +385,78 @@ unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
 
     return count;
 }
+
+unsigned int vsnprintf_v2(char* s1, unsigned int n, const char* s2, va_list list)
+{
+    uint32_t j = 0;
+    size_t count = 0;
+    char number[256];
+    char* cur = s1;
+    char* str;
+
+    while (s2[j] != '\0' && j < n) {
+        if (s2[j] != '%') {
+            //text
+            *cur++ = s2[j++];
+        } else {
+            //control character
+            switch (s2[++j]) {
+            case 'c':
+                //character
+                *cur++ = va_arg(list, char);
+                break;
+            case 'i': case 'd':
+                //int32_t
+                itoaINT32(va_arg(list, int32_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'u':
+                //uint32_t
+                itoaUINT32(va_arg(list, uint32_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'l':
+                //int64_t
+                itoaINT64(va_arg(list, int64_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'L':
+                //uint64_t
+                itoaUINT64(va_arg(list, uint64_t), number, 10);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'X':
+                //unsigned hexedecimal
+                itoaUINT32(va_arg(list, uint32_t), number, 16);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 'Z':
+                //unsigned hexedecimal
+                itoaUINT64(va_arg(list, uint64_t), number, 16);
+                strcpy(cur, number);
+                cur += strlen(number);
+                break;
+            case 's':
+                //string
+                str = va_arg(list, char*);
+                strcpy(cur, str);
+                cur += strlen(str);
+                break;
+            }
+            j += 1;
+        }
+    }
+
+    count = ((size_t)cur - (size_t)s1);
+    *cur++ = '\0';
+
+    va_end(list);
+
+    return count;
+}
+*/

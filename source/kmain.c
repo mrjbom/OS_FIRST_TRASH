@@ -39,4 +39,5 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     pit_init(100);
 
     serial_printf("end of kmain()\n");
+    return;
 }

@@ -6,6 +6,7 @@
 #include "../lib/stdint.h"
 #include "../lib/string.h"
 #include "../lib/math.h"
+#include "../lib/printf.h"
 
 extern uint32_t* lfb_framebuffer_addr;
 

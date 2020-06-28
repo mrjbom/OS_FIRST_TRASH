@@ -205,6 +205,7 @@ void tprintf(ssfn_text_cursor_t* text_cursor, const char* s2, ...) {
    char outstr[1024];
    va_list list;
    va_start(list, s2);
-   vsprintf(outstr, s2, list);
+   //vsprintf(outstr, s2, list);
+   vsnprintf(outstr, 1024, s2, list);
    lfb_draw_ssfn_str(text_cursor, outstr);
 }

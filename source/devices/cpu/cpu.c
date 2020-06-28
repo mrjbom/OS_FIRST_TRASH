@@ -53,10 +53,9 @@ void detect_cpu(void) { /* or main() if your trying to port this as an independa
 		do_amd();
 		break;
 		default:
-		write_serial_str("Unknown x86 CPU Detected\n");
+		serial_printf("Unknown x86 CPU Detected\n");
 		break;
 	}
-	//return rcpuinfo;
 }
 
 /* Intel Specific brand list */
@@ -164,15 +163,15 @@ int do_intel(void) {
 	//sprintf(forprint, "Family %i - ", family);
 	switch(family) {
 		case 3:
-		write_serial_str("i386");
+		//write_serial_str("i386");
 		cpu_info.intel_family_str = "i386";
 		break;
 		case 4:
-		write_serial_str("i486");
+		//write_serial_str("i486");
 		cpu_info.intel_family_str = "i486";
 		break;
 		case 5:
-		write_serial_str("Pentium");
+		//write_serial_str("Pentium");
 		cpu_info.intel_family_str = "Pentium";
 		break;
 		case 6:
@@ -344,7 +343,7 @@ void printregs(int eax, int ebx, int ecx, int edx) {
 		stringregs[j + 8] = ecx >> (8 * j);
 		stringregs[j + 12] = edx >> (8 * j);
 	}
-	//dprintf("%s", stringregs);
+	//serial_printf("%s", stringregs);
 	//printf("%s", string);
 }
 

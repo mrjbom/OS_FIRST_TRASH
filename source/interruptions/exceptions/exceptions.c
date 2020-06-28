@@ -3,7 +3,7 @@
 #include "../../memory/mmu/mmu.h"
 
 void page_fault_exception() {
-    dprintf("page_fault_exception!\n");
+    serial_printf("page_fault_exception!\n");
 
     uint32_t cr2 = 0;
     uint32_t error_code = 0;
@@ -37,7 +37,7 @@ void page_fault_exception() {
     bool virtual_u_bit = (virtualaddr >> 2) & 1;
     bool virtual_r_bit = (virtualaddr >> 3) & 1;
     bool virtual_i_bit = (virtualaddr >> 4) & 1;
-    dprintf("------\n"
+    serial_printf("------\n"
             "virtualaddr: 0x%X\n"
             "virtualaddr_aligned: 0x%X\n"
             "error_code = %I\n"

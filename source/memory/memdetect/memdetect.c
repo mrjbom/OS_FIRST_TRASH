@@ -25,8 +25,8 @@ void memory_map_calculate() {
         ram_len += memory_map->len;
         //saving data about sections
         //limit memory to 4 GB
-        //dprintf("addr = 0x%Z\n", memory_map->addr);
-        //dprintf("length = %L\n", memory_map->len);
+        //serial_printf("addr = 0x%Z\n", memory_map->addr);
+        //serial_printf("length = %L\n", memory_map->len);
         if(memory_map->addr + memory_map->len > MAX_MEMORY_SIZE) {
             //if the address is outside of 4 GB, then skip it
             if(memory_map->addr > MAX_MEMORY_SIZE) {

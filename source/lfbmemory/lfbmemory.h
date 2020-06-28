@@ -67,7 +67,7 @@ extern uint32_t lfb_rgb_to_hex(uint32_t r, uint32_t g, uint32_t b);
     print_ssfn_setup_draw_buf();
     int context_index = print_ssfn_init_new_context(&_binary_FreeSans_sfn_start);
     if(context_index == -1) {
-        dprintf("print_ssfn_init_new_context() error!\n");
+        serial_printf("print_ssfn_init_new_context() error!\n");
         lfb_clear(0xFF0000);
         return;
     }
@@ -76,14 +76,14 @@ extern uint32_t lfb_rgb_to_hex(uint32_t r, uint32_t g, uint32_t b);
         context_index,
         SSFN_MY_FAMILY_SANS, SSFN_MY_STYLE_REGULAR,
         32)) {
-            dprintf("print_ssfn_select_font() error!\n");
+            serial_printf("print_ssfn_select_font() error!\n");
             lfb_clear(0xFF0000);
             return;
     }
 
     ssfn_text_cursor_t* text_cursor = print_ssfn_create_cursor(context_index);
     if(!text_cursor) {
-        dprintf("print_ssfn_create_cursor() error!\n");
+        serial_printf("print_ssfn_create_cursor() error!\n");
         lfb_clear(0xFF0000);
         return;
     }

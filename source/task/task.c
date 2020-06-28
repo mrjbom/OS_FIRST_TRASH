@@ -3,7 +3,7 @@
 #include "../lfbmemory/lfbmemory.h"
 
 void task1() {
-    dprintf("task1 working\n");
+    serial_printf("task1 working\n");
 }
 
 void task_colored_square() {

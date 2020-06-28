@@ -14,7 +14,7 @@ buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/task/switch.S"
 "./source/debug/debug.c"
 "./source/devices/keyboard/keyboard.c"
-"./source/devices/timer/timer.c"
+"./source/devices/pit/pit.c"
 "./source/devices/cpu/cpu.c")
 
 declare -a buildObjectRoutes
@@ -31,7 +31,7 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/switchS.o"
 "./o/debug.o"
 "./o/deviceskeyboard.o"
-"./o/devicestimer.o"
+"./o/devicespit.o"
 "./o/devicescpu.o")
 
 declare -a clearRoutes
@@ -49,7 +49,7 @@ clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
 "./o/switchS.o"
 "./o/debug.o" 
 "./o/deviceskeyboard.o"
-"./o/devicestimer.o"
+"./o/devicespit.o"
 "./o/devicescpu.o"
 "./kernel-0" "./iso/boot/kernel-0")
 

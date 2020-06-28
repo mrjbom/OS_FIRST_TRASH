@@ -10,13 +10,13 @@
 
 #define PORT_COM1 0x3f8   /* COM1 */
 
-extern void init_serial();
+extern void serial_init();
 
-extern int is_transmit_empty();
+extern int serial_is_transmit_empty();
 
-extern void write_serial_ch(char ch);
+extern void serial_write_symbol(char ch);
 
-extern void write_serial_str(const char* str);
+extern void serial_write_str(const char* str);
 
 //debug serial printf
 //formats
@@ -28,6 +28,6 @@ extern void write_serial_str(const char* str);
 //X - uint32 address
 //Z - uint64 address
 //s - string
-extern void dprintf(const char* s2, ...);
+extern void serial_printf(const char* s2, ...);
 
 #endif

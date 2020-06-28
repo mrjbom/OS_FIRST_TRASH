@@ -2,7 +2,7 @@
 
 #include "../inlineassembly/inlineassembly.h"
 #include "../devices/keyboard/keyboard.h"
-#include "../devices/timer/timer.h"
+#include "../devices/pit/pit.h"
 #include "exceptions/exceptions.h"
 
 void idt_init(void) {

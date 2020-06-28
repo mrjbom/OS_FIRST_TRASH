@@ -31,7 +31,7 @@ void lfb_clear(uint32_t color)
 
 void lfb_put_pixel(uint32_t x, uint32_t y, uint32_t color)
 {
-    //dprintf("%I %I = 0x%X\n", x, y, lfb_framebuffer_addr + (y * MBI->framebuffer_pitch / 4 + x));
+    //serial_printf("%I %I = 0x%X\n", x, y, lfb_framebuffer_addr + (y * MBI->framebuffer_pitch / 4 + x));
     lfb_framebuffer_addr[y * MBI->framebuffer_pitch / 4 + x] = color;
 }
 
@@ -108,7 +108,7 @@ int print_ssfn_init_new_context(unsigned char* binary_font_start)
 
     //if there is an error in loading the font
     if(errorcode != SSFN_OK) {
-        dprintf("ssfn_load error: %s\n!", ssfn_error(errorcode));
+        serial_printf("ssfn_load error: %s\n!", ssfn_error(errorcode));
         pm_free(ssfn_contexts[ssfn_context_counter]);
         return -1;
     }
@@ -128,7 +128,7 @@ void print_ssfn_free_context(uint32_t context_index)
 bool print_ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t font_style, uint32_t font_size)
 {
     if(font_size < 8 || font_size > 192) {
-        //dprintf("!set_ssfn_render_size() error: invalid size\n");
+        //serial_printf("!set_ssfn_render_size() error: invalid size\n");
         return false;
     }
 
@@ -139,7 +139,7 @@ bool print_ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t
     );
 
     if(errorcode != SSFN_OK) {
-        dprintf("!ssfn_select() error: %s\n!", ssfn_error(errorcode));
+        serial_printf("!ssfn_select() error: %s\n!", ssfn_error(errorcode));
         return false;
     }
 
@@ -172,7 +172,7 @@ void print_ssfn_setup_cursor(ssfn_text_cursor_t* text_cursor, uint32_t x, uint32
 void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str)
 {
     if(!text_cursor) {
-        dprintf("text_cursor invalid\n");
+        serial_printf("text_cursor invalid\n");
         return;
     }
     ssfn_draw_buf.x = text_cursor->x;
@@ -194,7 +194,7 @@ void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str)
         else {
             ret = ssfn_render(ssfn_contexts[text_cursor->context_index], &ssfn_draw_buf, str + i);
             if(ret < 0) {
-                dprintf("ssfn_render() error: %s\n", ssfn_error(errorcode));
+                serial_printf("ssfn_render() error: %s\n", ssfn_error(errorcode));
                 return;
             }
         }

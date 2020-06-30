@@ -5,11 +5,11 @@
 
 multiboot_memory_map_t* memory_map = NULL;
 
-uint64_t ram_len = NULL;
-uint64_t ram_available = NULL;
+uint64_t ram_len = 0;
+uint64_t ram_available = 0;
 
-uint32_t memory_map_addr = NULL;
-uint32_t memory_map_len = NULL;
+uint32_t memory_map_addr = 0;
+uint32_t memory_map_len = 0;
 
 void memory_map_init() {
     memory_map = (multiboot_memory_map_t*)MBI->mmap_addr;
@@ -25,8 +25,8 @@ void memory_map_calculate() {
         ram_len += memory_map->len;
         //saving data about sections
         //limit memory to 4 GB
-        //serial_printf("addr = 0x%Z\n", memory_map->addr);
-        //serial_printf("length = %L\n", memory_map->len);
+        //serial_printf("addr = 0x%llx\n", memory_map->addr);
+        //serial_printf("length = %llu\n", memory_map->len);
         if(memory_map->addr + memory_map->len > MAX_MEMORY_SIZE) {
             //if the address is outside of 4 GB, then skip it
             if(memory_map->addr > MAX_MEMORY_SIZE) {

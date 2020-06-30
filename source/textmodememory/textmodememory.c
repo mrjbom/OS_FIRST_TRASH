@@ -1,6 +1,6 @@
 #include "textmodememory.h"
 
-byte* BASETEXTMODE_ADDR = (byte*)BASE_TEXTBUFFER_ADDRESS;
+unsigned char* BASETEXTMODE_ADDR = (unsigned char*)BASE_TEXTBUFFER_ADDRESS;
 
 void clear_base_text_mem(uint32_t color) {
     for(size_t byteIndex = 0; byteIndex < 80 * 25 * 2; byteIndex += 2)

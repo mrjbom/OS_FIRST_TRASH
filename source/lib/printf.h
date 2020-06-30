@@ -32,8 +32,10 @@
 #ifndef _PRINTF_H_
 #define _PRINTF_H_
 
-#include "stdarg.h"
-#include "stddef.h"
+#include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdarg.h"
+#include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stddef.h"
+#include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdbool.h"
+#include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 
 #ifdef __cplusplus
 extern "C" {

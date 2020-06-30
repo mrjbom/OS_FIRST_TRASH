@@ -29,13 +29,13 @@ uint32_t memory_frames_table_size = 0;
 
 bool pm_init_memory_page_allocator() {
     if ((MBI->flags & (1<<6)) == false) {
-        serial_printf("Error: memory map not detected!\n");
+        serial_printf("memory map not detected!\n");
         return false;
     }
     multiboot_reserved_start = (uint32_t)MBI;
     multiboot_reserved_end = (uint32_t)(MBI + sizeof(multiboot_info_t));
 
-	//serial_printf("\nstartkernel: 0x%X\nendkernel: 0x%X\n", startkernel, endkernel);
+	//serial_printf("\nstartkernel: 0x%x\nendkernel: 0x%x\n", startkernel, endkernel);
 	for (uint8_t section_index = 0; section_index < memory_section_number; ++section_index) {
 		if (memory_sections[section_index].type == MULTIBOOT_MEMORY_AVAILABLE) {
 			//saving data for the available section
@@ -56,9 +56,9 @@ bool pm_init_memory_page_allocator() {
 			memory_framing[memory_framing_sections_number].count = memory_sections[section_index].length / 4096;
 			memory_framing[memory_framing_sections_number].length = 4096 * memory_framing[memory_framing_sections_number].count;
 
-			//serial_printf("Avaiable section address: 0x%X - 0x%X\n", memory_framing[memory_framing_sections_number].address, memory_framing[memory_framing_sections_number].address + memory_framing[memory_framing_sections_number].length);
-			//serial_printf("Avaiable section count: %I\n", memory_framing[memory_framing_sections_number].count);
-			//serial_printf("Avaiable section length: %I bytes(%I kilobytes)\n\n", memory_framing[memory_framing_sections_number].length, memory_framing[memory_framing_sections_number].length / 1024);
+			//serial_printf("Avaiable section address: 0x%x - 0x%x\n", memory_framing[memory_framing_sections_number].address, memory_framing[memory_framing_sections_number].address + memory_framing[memory_framing_sections_number].length);
+			//serial_printf("Avaiable section count: %u\n", memory_framing[memory_framing_sections_number].count);
+			//serial_printf("Avaiable section length: %u bytes(%u kilobytes)\n\n", memory_framing[memory_framing_sections_number].length, memory_framing[memory_framing_sections_number].length / 1024);
 
 			uint32_t unavailable_page_counter = 0;
 			//dividing the current available section into frames
@@ -99,7 +99,7 @@ bool pm_init_memory_page_allocator() {
 
 void* pm_malloc(uint32_t nbytes) {
 	//serial_printf("kmalloc()\n");
-	//serial_printf("\nkmalloc try allocate %I bytes\n", nbytes);
+	//serial_printf("\nkmalloc try allocate %u bytes\n", nbytes);
 	void* first_page_address = 0x0;
 	if(!(nbytes % 4096)) {
 		first_page_address = pm_search_nframes(nbytes / 4096);
@@ -108,7 +108,7 @@ void* pm_malloc(uint32_t nbytes) {
 		first_page_address = pm_search_nframes((nbytes / 4096) + 1);
 	}
 	if (first_page_address) {
-		//serial_printf("kmalloc return 0x%X\n", first_page_address);
+		//serial_printf("kmalloc return 0x%x\n", first_page_address);
 		//memset(first_page_address, 0, (nbytes / (4096 + 1)) + 1);
 		return first_page_address;
 	}
@@ -157,7 +157,7 @@ void pm_free(void* ptr) {
 		return;
 	}
 	//serial_printf("kfree()\n");
-	//serial_printf("\nkfree try free 0x%X\n", (uint32_t)ptr);
+	//serial_printf("\nkfree try free 0x%x\n", (uint32_t)ptr);
 	for (uint32_t page_index = 0; page_index < memory_frames_table_size; ++page_index) {
 		if ((void*)memory_frames_table[page_index].physical_address == ptr) {
 			if (memory_frames_table[page_index].next_frames == 0) {
@@ -180,12 +180,12 @@ void* pm_realloc(void* ptr, size_t size) {
 	size_t ptr_size = pm_getsize(ptr);
 	if(size == 0) {
 		pm_free(ptr);
-		//serial_printf("pm_realloc return 0x%X\n", 0x0);
+		//serial_printf("pm_realloc return 0x%x\n", 0x0);
 		return 0x0;
 	}
 	//          == size in bytes(blocks * block_size)
 	if(ptr_size == (((size / 4096) + 1) * 4096)) {
-		//serial_printf("pm_realloc return 0x%X\n", ptr);
+		//serial_printf("pm_realloc return 0x%x\n", ptr);
 		return ptr;
 	}
 	else
@@ -204,7 +204,7 @@ void* pm_realloc(void* ptr, size_t size) {
 			}
 			memcpy(newptr, ptr, ptr_size);
 			pm_free(ptr);
-			//serial_printf("pm_realloc return 0x%X\n", newptr);
+			//serial_printf("pm_realloc return 0x%x\n", newptr);
 			return newptr;
 		}
 		//if you need less memory
@@ -217,25 +217,25 @@ void* pm_realloc(void* ptr, size_t size) {
 						}
 						memory_frames_table[page_index].next_frames -= ((size / 4096) + 1);
 						//memcpy(newptr, ptr, size);
-						//serial_printf("pm_realloc return 0x%X\n", ptr);
+						//serial_printf("pm_realloc return 0x%x\n", ptr);
 						return ptr;
 					}
 					else {
-						//serial_printf("\n!!!pm_realloc error!!!\n");
-						//serial_printf("((size / 4096) + 1) = %I\n", ((size / 4096) + 1));
-						//serial_printf("(memory_frames_table[page_index].next_frames + 1) = %I\n", (memory_frames_table[page_index].next_frames + 1));
-						//serial_printf("pm_realloc return 0x%X\n", 0x0);
+						//serial_printf("pm_realloc error\n");
+						//serial_printf("((size / 4096) + 1) = %u\n", ((size / 4096) + 1));
+						//serial_printf("(memory_frames_table[page_index].next_frames + 1) = %u\n", (memory_frames_table[page_index].next_frames + 1));
+						//serial_printf("pm_realloc return 0x%x\n", 0x0);
 						return 0x0;
 					}
 					
 				}
 			}
 			//memcpy(newptr, ptr, size);
-			//serial_printf("pm_realloc return 0x%X\n", 0x0);
-			return 0x0;
+			//serial_printf("pm_realloc return 0x%x\n", 0x0);
+			return NULL;
 		}
 		pm_free(ptr);
-		//serial_printf("pm_realloc return 0x%X\n", newptr);
+		//serial_printf("pm_realloc return 0x%x\n", newptr);
 		return newptr;
 	}
 }
@@ -255,7 +255,7 @@ void pm_show_nframes_table(uint32_t from, uint32_t to) {
 	for (uint32_t i = from; i <= to; ++i) {
 		if(i == memory_frames_table_size - 1)
 			return;
-		serial_printf("%I: Physical address: 0x%X is_busy: %I next_frames: %I\n", i, memory_frames_table[i].physical_address, memory_frames_table[i].is_busy, memory_frames_table[i].next_frames);
+		serial_printf("%u: Physical address: 0x%x is_busy: %i next_frames: %u\n", i, memory_frames_table[i].physical_address, memory_frames_table[i].is_busy, memory_frames_table[i].next_frames);
 	}
 }
 
@@ -289,7 +289,7 @@ void* vm_get_physaddr(uint32_t *pd, void *virtualaddr)
 
 bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flags)
 {
-	//serial_printf("flags = %I\n", flags);
+	//serial_printf("flags = %u\n", flags);
 	if ((uint32_t)pd % 4096 || !pd) //check addr
 		return false;
 	// Make sure that both addresses are page-aligned.
@@ -327,7 +327,7 @@ bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int f
 	{
 		//pt[ptindex] = ((uint32_t)physaddr) | (flags & 0xFFF) | PAGE_PRESENT;
 		pt[ptindex] = ((uint32_t)physaddr) | flags;
-		//serial_printf("0x%X\n", pt[ptindex]);
+		//serial_printf("0x%x\n", pt[ptindex]);
 		// Now you need to flush the entry in the TLB
     	// or you might not notice the change.
 
@@ -388,15 +388,15 @@ bool vm_init_paging() {
 		//serial_printf("----%I----\n", i);
 		for (uint32_t j = 0; j < 1024; ++j) {
 			uint32_t* physaddr = (uint32_t*)((j + (i * 1024)) * 0x1000);
-			//serial_printf("%I physaddr = 0x%X(%I)\n", j, physaddr, physaddr);
-			//serial_printf("kernel_page_directory_table[%I] = %I\n", i, kernel_page_directory_table[i]);
+			//serial_printf("%u physaddr = 0x%x(%u)\n", j, physaddr, physaddr);
+			//serial_printf("kernel_page_directory_table[%u] = %u\n", i, kernel_page_directory_table[i]);
 			if(!vm_map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_SUPERVISOR | PAGE_RW)) {
 				serial_printf("error map_page()!\n");
 				pm_free(kernel_page_directory_table);
 				return false;
 			}
 		}
-		//serial_printf("--------\n", i);
+		//serial_printf("--------\n");
 	}
 	vm_set_current_page_directory(kernel_page_directory_table);
 

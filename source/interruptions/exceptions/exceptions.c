@@ -32,32 +32,17 @@ void page_fault_exception() {
     bool error_us_bit = (error_code >> 2) & 1;
     //uint32_t pdindex = (uint32_t)virtualaddr_aligned >> 22;
 	//uint32_t ptindex = (uint32_t)virtualaddr_aligned >> 12 & 0x03FF;
-    bool virtual_p_bit = (virtualaddr >> 0) & 1;
-    bool virtual_w_bit = (virtualaddr >> 1) & 1;
-    bool virtual_u_bit = (virtualaddr >> 2) & 1;
-    bool virtual_r_bit = (virtualaddr >> 3) & 1;
-    bool virtual_i_bit = (virtualaddr >> 4) & 1;
-    serial_printf("------\n"
-            "virtualaddr: 0x%X\n"
-            "virtualaddr_aligned: 0x%X\n"
-            "error_code = %I\n"
-            "error P bit = %I\n"
-            "error RW bit = %I\n"
-            "error US bit = %I\n"
-            "virtual P bit = %I\n"
-            "virtual W bit = %I\n"
-            "virtual U bit = %I\n"
-            "virtual R bit = %I\n"
-            "virtual I bit = %I\n",
+    serial_printf(
+            "virtualaddr: 0x%x\n"
+            "virtualaddr_aligned: 0x%x\n"
+            "error_code = %i\n"
+            "error P bit = %i\n"
+            "error RW bit = %i\n"
+            "error US bit = %i\n",
             virtualaddr,
             virtualaddr_aligned,
             error_code,
             error_p_bit,
             error_rw_bit,
-            error_us_bit,
-            virtual_p_bit,
-            virtual_w_bit,
-            virtual_u_bit,
-            virtual_r_bit,
-            virtual_i_bit);
+            error_us_bit);
 }

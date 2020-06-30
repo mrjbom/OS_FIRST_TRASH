@@ -1,13 +1,12 @@
 #ifndef _KEYBOARD_H_
 #define _KEYBOARD_H_
 
-#include "../../lib/cstdlib.h"
-#include "../../lib/stddef.h"
-#include "../../lib/stdint.h"
+#include "../../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stddef.h"
+#include "../../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 #include "../../lib/string.h"
 
 extern unsigned char keyboard_keys[128];
 
-extern void keyboard_handler(byte key, byte status);
+extern void keyboard_handler(unsigned char key, unsigned char status);
 
 #endif

@@ -31,7 +31,6 @@ void lfb_clear(uint32_t color)
 
 void lfb_put_pixel(uint32_t x, uint32_t y, uint32_t color)
 {
-    //serial_printf("%I %I = 0x%X\n", x, y, lfb_framebuffer_addr + (y * MBI->framebuffer_pitch / 4 + x));
     lfb_framebuffer_addr[y * MBI->framebuffer_pitch / 4 + x] = color;
 }
 
@@ -128,7 +127,7 @@ void print_ssfn_free_context(uint32_t context_index)
 bool print_ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t font_style, uint32_t font_size)
 {
     if(font_size < 8 || font_size > 192) {
-        //serial_printf("!set_ssfn_render_size() error: invalid size\n");
+        serial_printf("font invalid size\n");
         return false;
     }
 
@@ -139,7 +138,7 @@ bool print_ssfn_select_font(uint32_t context_index, uint8_t font_family, uint8_t
     );
 
     if(errorcode != SSFN_OK) {
-        serial_printf("!ssfn_select() error: %s\n!", ssfn_error(errorcode));
+        serial_printf("ssfn_select() error: %s\n!", ssfn_error(errorcode));
         return false;
     }
 

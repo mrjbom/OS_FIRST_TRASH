@@ -1,9 +1,8 @@
 #ifndef _STRING_H_
 #define _STRING_H_
 
-#include "../lib/stdint.h"
-#include "../lib/stdarg.h"
-#include "../lib/cstdlib.h"
+#include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stddef.h"
+#include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 #include "../debug/debug.h"
 
 extern size_t strlen(const char *s);
@@ -21,7 +20,7 @@ extern int strcspn(char* str, const char* rejected);
 extern char* strchr(const char* str, char ch);
 extern char* strtok_r(char* str, const char* delims, char** save_ptr);
 extern char* memext(void* buff_dst, uint32_t n, const void* buff_src, char sym);
-extern char* itoa(unsigned int value, char* str, unsigned int base);
+//extern char* itoa(unsigned int value, char* str, unsigned int base);
 extern unsigned int atou(char* str);
 extern char* strinv(char* str);
 

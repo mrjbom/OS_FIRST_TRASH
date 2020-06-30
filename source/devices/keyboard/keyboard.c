@@ -42,5 +42,5 @@ unsigned char keyboard_keys[128] =
     0,	/* All other keys are undefined */
 };
 
-void keyboard_handler(byte key, byte status) {
+void keyboard_handler(unsigned char key, unsigned char status) {
 }

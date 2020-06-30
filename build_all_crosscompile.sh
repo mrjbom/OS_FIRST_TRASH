@@ -2,7 +2,7 @@
 
 declare -a buildCRoutes
 buildCRoutes=("./source/kmain.c" "./source/more/more.c"
-"./source/lib/cstdlib.c" "./source/lib/string.c" "./source/lib/math.c"
+"./source/lib/string.c" "./source/lib/math.c"
 "./source/lib/printf.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
 "./source/inlineassembly/inlineassembly.c"
@@ -20,7 +20,7 @@ buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 
 declare -a buildObjectRoutes
 buildObjectRoutes=("./o/kmain.o" "./o/more.o"
-"./o/cstdlib.o" "./o/string.o" "./o/math.o"
+"./o/string.o" "./o/math.o"
 "./o/printf.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o" 
@@ -39,7 +39,7 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 declare -a clearRoutes
 clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
 "./o/kmain.o" "./o/more.o"
-"./o/cstdlib.o" "./o/string.o" "./o/math.o"
+"./o/string.o" "./o/math.o"
 "./o/printf.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o" 

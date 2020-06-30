@@ -214,8 +214,8 @@ void irq0_handler(void) {
 }
 
 void irq1_handler(void) {
-	byte key = inb(0x60);
-	byte status = inb(0x64);
+	unsigned char key = inb(0x60);
+	unsigned char status = inb(0x64);
 	keyboard_handler(key, status);
 	outb(0x20, 0x20); //EOI
 }

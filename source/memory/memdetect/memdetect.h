@@ -1,9 +1,8 @@
 #ifndef _MEMDETECT_H_
 #define _MEMDETECT_H_
 
-#include "../../lib/cstdlib.h"
-#include "../../lib/stddef.h"
-#include "../../lib/stdint.h"
+#include "../../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stddef.h"
+#include "../../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 #include "../../lib/string.h"
 
 #include "../../more/more.h"

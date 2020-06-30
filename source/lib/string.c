@@ -217,6 +217,7 @@ char* memext(void* buff_dst, uint32_t n, const void* buff_src, char sym)
     return buff_dst;
 }
 
+/*
 char* itoa(uint32_t value, char* str, uint32_t base)
 {
     char* original = str;
@@ -226,24 +227,24 @@ char* itoa(uint32_t value, char* str, uint32_t base)
         digit = value % base;
         value = value / base;
         if (digit < 10) {
-            *str++ = digit | 0x30; /* number */
+            *str++ = digit | 0x30; //number
         } else if (digit < 16) {
-            *str++ = ((digit - 10) | 0x40) + 1; /* alpha */
+            *str++ = ((digit - 10) | 0x40) + 1; //alpha
         } else {
             *str++ = '?';
         }
     } while (value > 0);
 
     if (base == 16) {
-        /* hexedecimal integer */
+        //hexedecimal integer
         *str++ = 'x';
         *str++ = '0';
     } else if (base == 8) {
-        /* octal integer */
+        //octal integer
         *str++ = 'o';
         *str++ = '0';
     } else if (base == 2) {
-        /* binary integer */
+        //binary integer
         *str++ = 'b';
         *str++ = '0';
     }
@@ -253,6 +254,7 @@ char* itoa(uint32_t value, char* str, uint32_t base)
 
     return str;
 }
+*/
 
 unsigned int atou(char* str)
 {
@@ -288,175 +290,3 @@ void _putchar(char character)
 {
   // send char to console etc.
 }
-
-/*
-unsigned int sprintf(char* s1, const char* s2, ...)
-{
-    va_list list;
-    va_start(list, s2);
-
-    return vsprintf(s1, s2, list);
-}
-
-unsigned int snprintf(char* s1, unsigned int n, const char* s2, ...)
-{
-    va_list list;
-    va_start(list, s2);
-
-    return vsnprintf(s1, n, s2, list);
-}
-
-unsigned int vsprintf(char* s1, const char* s2, va_list list)
-{
-    //return vsnprintf(s1, 4 * 1024, s2, list);
-    return vsnprintf_v2(s1, 4 * 1024, s2, list);
-}
-
-unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
-{
-    uint32_t j = 0;
-    size_t count = 0;
-    char number[256];
-    char* cur = s1;
-    char* str;
-
-    while (s2[j] != '\0' && j < n) {
-        if (s2[j] != '%') {
-            //text
-            *cur++ = s2[j++];
-        } else {
-            //ontrol character
-            switch (s2[++j]) {
-            case 'c':
-                //character
-                *cur++ = va_arg(list, char);
-                break;
-            case 'i':
-                //int32_t
-                itoaINT32(va_arg(list, int32_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'I':
-                //uint32_t
-                itoaUINT32(va_arg(list, uint32_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'l':
-                //int64_t
-                itoaINT64(va_arg(list, int64_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'L':
-                //uint64_t
-                itoaUINT64(va_arg(list, uint64_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'X':
-                //unsigned hexedecimal
-                itoaUINT32(va_arg(list, uint32_t), number, 16);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'Z':
-                //unsigned hexedecimal
-                itoaUINT64(va_arg(list, uint64_t), number, 16);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 's':
-                //string
-                str = va_arg(list, char*);
-                strcpy(cur, str);
-                cur += strlen(str);
-                break;
-            }
-            j += 1;
-        }
-    }
-
-    count = ((size_t)cur - (size_t)s1);
-    *cur++ = '\0';
-
-    va_end(list);
-
-    return count;
-}
-
-unsigned int vsnprintf_v2(char* s1, unsigned int n, const char* s2, va_list list)
-{
-    uint32_t j = 0;
-    size_t count = 0;
-    char number[256];
-    char* cur = s1;
-    char* str;
-
-    while (s2[j] != '\0' && j < n) {
-        if (s2[j] != '%') {
-            //text
-            *cur++ = s2[j++];
-        } else {
-            //control character
-            switch (s2[++j]) {
-            case 'c':
-                //character
-                *cur++ = va_arg(list, char);
-                break;
-            case 'i': case 'd':
-                //int32_t
-                itoaINT32(va_arg(list, int32_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'u':
-                //uint32_t
-                itoaUINT32(va_arg(list, uint32_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'l':
-                //int64_t
-                itoaINT64(va_arg(list, int64_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'L':
-                //uint64_t
-                itoaUINT64(va_arg(list, uint64_t), number, 10);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'X':
-                //unsigned hexedecimal
-                itoaUINT32(va_arg(list, uint32_t), number, 16);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 'Z':
-                //unsigned hexedecimal
-                itoaUINT64(va_arg(list, uint64_t), number, 16);
-                strcpy(cur, number);
-                cur += strlen(number);
-                break;
-            case 's':
-                //string
-                str = va_arg(list, char*);
-                strcpy(cur, str);
-                cur += strlen(str);
-                break;
-            }
-            j += 1;
-        }
-    }
-
-    count = ((size_t)cur - (size_t)s1);
-    *cur++ = '\0';
-
-    va_end(list);
-
-    return count;
-}
-*/

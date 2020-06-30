@@ -91,7 +91,7 @@ extern uint32_t lfb_rgb_to_hex(uint32_t r, uint32_t g, uint32_t b);
 
     print_ssfn_setup_cursor(text_cursor, 0, 30, 0xFF000000);
 
-    tprintf(text_cursor, "test1\ntest2");
+    lfb_printf(text_cursor, "test1\ntest2");
 
     print_ssfn_free_context(context_index);
     pm_free(text_cursor);
@@ -151,6 +151,6 @@ extern void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str);
 //X - uint32 address
 //Z - uint64 address
 //s - string
-extern void tprintf(ssfn_text_cursor_t* text_cursor, const char* s2, ...);
+extern void lfb_printf(ssfn_text_cursor_t* text_cursor, const char* s2, ...);
 
 #endif

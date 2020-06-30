@@ -200,11 +200,11 @@ void lfb_draw_ssfn_str(ssfn_text_cursor_t* text_cursor, const char* str)
     }
 }
 
-void tprintf(ssfn_text_cursor_t* text_cursor, const char* s2, ...) {
+void lfb_printf(ssfn_text_cursor_t* text_cursor, const char* fmt, ...) {
    char outstr[1024];
    va_list list;
-   va_start(list, s2);
+   va_start(list, fmt);
    //vsprintf(outstr, s2, list);
-   vsnprintf(outstr, 1024, s2, list);
+   vsnprintf(outstr, 1024, fmt, list);
    lfb_draw_ssfn_str(text_cursor, outstr);
 }

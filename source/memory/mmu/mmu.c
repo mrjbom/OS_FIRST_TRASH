@@ -262,17 +262,14 @@ void pm_show_nframes_table(uint32_t from, uint32_t to) {
 //-------------------------
 //virtual memory
 
-/*
- * NAME
- * WRITE THIS SOMETHICalculates the size of the memory area in frames.
- * 
- * @PARAM DESCRIPTION to the first byte of the allocated memory area.
- * 
- * RETURN DESCR the size in bytes of the memory area allocated using pm_malloc.
- * RETURN DESCR 0 if the size cannot be calculated.
- */
 void* vm_get_physaddr(uint32_t *pd, void *virtualaddr)
 {
+	//check addresses
+	if (!addr32_is_page_aligned(pd) || !pd)
+		return NULL;
+	if (!addr32_is_page_aligned(virtualaddr) || !virtualaddr)
+		return NULL;
+
 	uint32_t pdindex = (uint32_t)virtualaddr >> 22;
 	uint32_t ptindex = (uint32_t)virtualaddr >> 12 & 0x03FF;
 
@@ -287,13 +284,13 @@ void* vm_get_physaddr(uint32_t *pd, void *virtualaddr)
 	return NULL;
 }
 
-bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flags)
+bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, uint32_t flags)
 {
 	//serial_printf("flags = %u\n", flags);
-	if ((uint32_t)pd % 4096 || !pd) //check addr
+	if (!addr32_is_page_aligned(pd) || !pd) //check addr
 		return false;
 	// Make sure that both addresses are page-aligned.
-	if((uint32_t)physaddr % 4096 || (uint32_t)virtualaddr % 4096)
+	if(!addr32_is_page_aligned(physaddr) || !addr32_is_page_aligned(virtualaddr))
 		return false;
 	
     uint32_t pdindex = (uint32_t)virtualaddr >> 22;
@@ -306,7 +303,7 @@ bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int f
 	//If the PD entry is not present, create it
 	if(!pd[pdindex]) {
 		pd[pdindex] = (uint32_t)pm_malloc(sizeof(uint32_t) * 1024);
-		if ((uint32_t)pd[pdindex] % 4096 || !pd[pdindex]) {
+		if (!addr32_is_page_aligned(pd[pdindex]) || !pd[pdindex]) {
 			//serial_printf("pd[pdindex] address is not aligned!\n");
 			pm_free((void*)pd[pdindex]);
 			return false;
@@ -340,10 +337,9 @@ bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int f
 
 bool vm_unmap_vpage(uint32_t* pd, void* virtualaddr)
 {
-	if ((uint32_t)pd % 4096 || !pd)
+	if (!addr32_is_page_aligned(pd) || !pd)
 		return false;
-	// Make sure that addresses are page-aligned.
-	if((uint32_t)virtualaddr % 4096)
+	if(!addr32_is_page_aligned(virtualaddr))
 		return false;
 
 	uint32_t pdindex = (uint32_t)virtualaddr >> 22;
@@ -368,7 +364,7 @@ bool vm_unmap_vpage(uint32_t* pd, void* virtualaddr)
 }
 
 bool vm_set_current_page_directory(uint32_t* pd) {
-	if((uint32_t)pd % 4096 && !pd) { //check addr
+	if(!addr32_is_page_aligned(pd) && !pd) { //check addr
 		return false;
 	}
 	current_directory_table = pd;
@@ -377,7 +373,7 @@ bool vm_set_current_page_directory(uint32_t* pd) {
 
 bool vm_init_paging() {
 	kernel_page_directory_table = (uint32_t*)pm_malloc(sizeof(uint32_t) * 1024);
-	if ((uint32_t)kernel_page_directory_table % 4096 || !kernel_page_directory_table) { //check addr
+	if (!addr32_is_page_aligned(kernel_page_directory_table) || !kernel_page_directory_table) { //check addr
 		serial_printf("kernel_page_directory_table address is not aligned!\n");
 		pm_free(kernel_page_directory_table);
 		return false;
@@ -390,7 +386,7 @@ bool vm_init_paging() {
 			uint32_t* physaddr = (uint32_t*)((j + (i * 1024)) * 0x1000);
 			//serial_printf("%u physaddr = 0x%x(%u)\n", j, physaddr, physaddr);
 			//serial_printf("kernel_page_directory_table[%u] = %u\n", i, kernel_page_directory_table[i]);
-			if(!vm_map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_SUPERVISOR | PAGE_RW)) {
+			if(!vm_map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_RW)) {
 				serial_printf("error map_page()!\n");
 				pm_free(kernel_page_directory_table);
 				return false;

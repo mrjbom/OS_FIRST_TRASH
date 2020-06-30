@@ -1,9 +1,9 @@
 #include "inlineassembly/inlineassembly.h"
 #include "interruptions/interruptions.h"
-#include "devices/cpu/cpu.h"
 #include "more/more.h"
-#include "memory/mmu/mmu.h"
 #include "memory/memdetect/memdetect.h"
+#include "memory/mmu/mmu.h"
+#include "devices/cpu/cpu.h"
 #include "devices/pit/pit.h"
 #include "task/task.h"
 
@@ -39,5 +39,6 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     pit_init(100);
 
     serial_printf("end of kmain()\n");
+
     return;
 }

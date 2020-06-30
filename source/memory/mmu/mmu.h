@@ -148,19 +148,88 @@ extern void pm_show_nframes_table(uint32_t from, uint32_t to);
 
 //---------------------------
 //virtual memory
+
+#define addr32_is_page_aligned(addr) !((uint32_t)(addr) % 4096)
+#define addr64_is_page_aligned(addr) !((uint64_t)(addr) % 4096)
+
 enum PagingFlags {
 	PAGE_PRESENT = 1,
+	//if set, the page is displayed in virtual memory.
+ 	//if not set, a page fault exception will occur when trying to access the address.
+	
 	PAGE_RW = 2,
-	PAGE_SUPERVISOR = 4
+	//If set, the page is available for writing and reading.
+ 	//If not set, it is read-only. a page fault exception occurs when trying to write.
+ 	//(The WP bit in CR0 determines if this is only applied to userland, always giving the kernel write access (the default) or both userland and the kernel).
+	
+	PAGE_USERSPACE_AVAILABLE = 4
+	//If set, the page is available everywhere (even in userspace).
+ 	//If not set, the page is only available in kernel mode.
 };
 
 uint32_t* current_directory_table;
 uint32_t* kernel_page_directory_table;
 
+/*
+ * vm_get_physaddr
+ * Converting the virtual address of the page to the physical address of the frame.
+ * 
+ * @Pointer to the page directory
+ * @Virtual address
+ * 
+ * Returns the physical address if all OK.
+ * Returns NULL if the physical address could not be found
+ */
 extern void* vm_get_physaddr(uint32_t *pd, void* virtualaddr);
-extern bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, unsigned int flags);
+
+/*
+ * vm_map_page
+ * Maps a physical page to a virtual page and sets the necessary flags.
+ * 
+ * @Pointer to the page directory
+ * @Physical address
+ * @Virtual address
+ * @Flags of the virtual page that you want to install.
+ * See PagingFlags enum.
+ * (PAGE_PRESENT or PAGE_RW or PAGE_USERSPACE_AVAILABLE)
+ * Are separated by a binary or '|'
+ * for example: PAGE_PRESENT | PAGE_USERSPACE_AVAILABLE
+ * 
+ * Returns true if all OK.
+ * Returns false if errors occurred.
+ */
+extern bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, uint32_t flags);
+
+/*
+ * vm_unmap_vpage
+ * Unmaps a virtual page.
+ * 
+ * @Pointer to the page directory
+ * @Virtual address
+ * 
+ * Returns true if all OK.
+ * Returns false if errors occurred.
+ */
 extern bool vm_unmap_vpage(uint32_t* pd, void* virtualaddr);
+
+/*
+ * vm_set_current_page_directory
+ * Sets the current page directory.
+ * 
+ * @Pointer to the page directory
+ * 
+ * Returns true if all OK.
+ * Returns false if errors occurred.
+ */
 extern bool vm_set_current_page_directory(uint32_t* pd);
+
+/*
+ * vm_set_current_page_directory
+ * Sets and load the current page directory.
+ * 
+ * Returns true if all OK.
+ * Returns false if errors occurred.
+ */
 extern bool vm_init_paging();
 
 //assembler functions

@@ -49,5 +49,6 @@ void page_fault_exception() {
             error_p_bit,
             error_rw_bit,
             error_us_bit);
+    
     lfb_clear(0xFF0000);
 }

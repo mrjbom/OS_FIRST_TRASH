@@ -80,8 +80,7 @@ extern uint32_t memory_frames_table_size;
  * 
  * @No parameters
  * 
- * Returns false if:
- * Multiboot memory map not found
+ * Returns false if multiboot memory map not found
  * Returns true if all OK.
  */
 extern bool pm_init_memory_page_allocator();
@@ -152,6 +151,10 @@ extern void pm_show_nframes_table(uint32_t from, uint32_t to);
 #define addr32_is_page_aligned(addr) !((uint32_t)(addr) % 4096)
 #define addr64_is_page_aligned(addr) !((uint64_t)(addr) % 4096)
 
+//Gets some bits from the value
+//n is the number of bit position
+#define get_n_bit(value, n) ((value) >> (n)) & 1
+
 enum PagingFlags {
 	PAGE_PRESENT = 1,
 	//if set, the page is displayed in virtual memory.
@@ -189,7 +192,7 @@ extern void* vm_get_physaddr(uint32_t *pd, void* virtualaddr);
  * @Pointer to the page directory
  * @Physical address
  * @Virtual address
- * @Flags of the virtual page that you want to install.
+ * @Flags of the virtual page that you want to set.
  * See PagingFlags enum.
  * (PAGE_PRESENT or PAGE_RW or PAGE_USERSPACE_AVAILABLE)
  * Are separated by a binary or '|'
@@ -231,6 +234,38 @@ extern bool vm_set_current_page_directory(uint32_t* pd);
  * Returns false if errors occurred.
  */
 extern bool vm_init_paging();
+
+/*
+ * vm_set_page_flags
+ * Sets new flags for the page.
+ * If the changes relate to a page that is currently loaded in TLB,
+ * the TLB flush occurs automatically.
+ * 
+ * @Pointer to the page directory
+ * @Virtual address
+ * @Flags of the virtual page that you want to set.
+ * See PagingFlags enum.
+ * (PAGE_PRESENT or PAGE_RW or PAGE_USERSPACE_AVAILABLE)
+ * Are separated by a binary or '|'
+ * for example: PAGE_PRESENT | PAGE_USERSPACE_AVAILABLE
+ * 
+ * Returns true if all OK.
+ * Returns false if errors occurred.
+ */
+extern bool vm_set_page_flags(uint32_t* pd, void* virtualaddr, uint32_t flags);
+
+/*
+ * vm_get_page_flags
+ * Get the flags of page
+ * 
+ * @Pointer to the page directory
+ * @Virtual address
+ * @Pointer to the variable that the flags will be written to.
+ * 
+ * Returns true if all OK.
+ * Returns false if errors occurred.
+ */
+extern bool vm_get_page_flags(uint32_t* pd, void* virtualaddr, uint32_t* flags);
 
 //assembler functions
 extern void vm_load_page_directory(uint32_t*);

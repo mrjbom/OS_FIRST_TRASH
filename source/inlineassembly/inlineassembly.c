@@ -66,7 +66,7 @@ bool are_interrupts_enabled()
     __asm__ volatile ( "pushf\n\t"
                    "pop %0"
                    : "=g"(flags) );
-    return !!(flags & (1 << 9));
+    return flags & (1 << 9);
 }
 
 unsigned long save_irqdisable(void)

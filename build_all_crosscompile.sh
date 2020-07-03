@@ -16,7 +16,8 @@ buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/debug/debug.c"
 "./source/devices/keyboard/keyboard.c"
 "./source/devices/pit/pit.c"
-"./source/devices/cpu/cpu.c")
+"./source/devices/cpu/cpu.c"
+"./source/devices/pcspeaker/pcspeaker.c")
 
 declare -a buildObjectRoutes
 buildObjectRoutes=("./o/kmain.o" "./o/more.o"
@@ -32,9 +33,10 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/task.o"
 "./o/switchS.o"
 "./o/debug.o"
-"./o/deviceskeyboard.o"
-"./o/devicespit.o"
-"./o/devicescpu.o")
+"./o/devkeyboard.o"
+"./o/devpit.o"
+"./o/devcpu.o"
+"./o/devpcspeaker.o")
 
 declare -a clearRoutes
 clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
@@ -51,9 +53,10 @@ clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
 "./o/task.o"
 "./o/switchS.o"
 "./o/debug.o" 
-"./o/deviceskeyboard.o"
-"./o/devicespit.o"
-"./o/devicescpu.o"
+"./o/devkeyboard.o"
+"./o/devpit.o"
+"./o/devcpu.o"
+"./o/devpcspeaker.o"
 "./kernel-0" "./iso/boot/kernel-0")
 
 #default flags

@@ -7,6 +7,7 @@
 
 extern unsigned char keyboard_keys[128];
 
+//0x60 and 0x64 ports
 extern void keyboard_handler(unsigned char key, unsigned char status);
 
 #endif

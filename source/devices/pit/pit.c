@@ -22,9 +22,6 @@ void pit_init(uint16_t freq) {
 
 void pit_handler() {
     ++pit_tick_counter;
-    if(!(pit_tick_counter % 100)) { //1 second
-        
-    }
 }
 
 void pit_sleep(uint32_t milliseconds) {

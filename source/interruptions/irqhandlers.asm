@@ -55,106 +55,148 @@ extern irq14_handler
 extern irq15_handler
 
 page_fault:
-  pusha
+  cli
+  ;save error code from stack to eax
+  pop eax
+  ;return error code to stack
+  push eax
+  ;save all 32bit registers
+  pushad
   call page_fault_handler
-  popa
-  iret
+  ;return all 32bit registers
+  popad
+  ;delete error code from stack
+  add esp, 4
+  sti
+  iretd
 
 irq0:
-  pusha
+  cli
+  pushad
   call irq0_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq1:
-  pusha
+  cli
+  pushad
   call irq1_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq2:
-  pusha
+  cli
+  pushad
   call irq2_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq3:
-  pusha
+  cli
+  pushad
   call irq3_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq4:
-  pusha
+  cli
+  pushad
   call irq4_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq5:
-  pusha
+  cli
+  pushad
   call irq5_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq6:
-  pusha
+  cli
+  pushad
   call irq6_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq7:
-  pusha
+  cli
+  pushad
   call irq7_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq8:
-  pusha
+  cli
+  pushad
   call irq8_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq9:
-  pusha
+  cli
+  pushad
   call irq9_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq10:
-  pusha
+  cli
+  pushad
   call irq10_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq11:
-  pusha
+  cli
+  pushad
   call irq11_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq12:
-  pusha
+  cli
+  pushad
   call irq12_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq13:
-  pusha
+  cli
+  pushad
   call irq13_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq14:
-  pusha
+  cli
+  pushad
   call irq14_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 irq15:
-  pusha
+  cli
+  pushad
   call irq15_handler
-  popa
-  iret
+  popad
+  sti
+  iretd
  
 load_idt:
 	mov edx, [esp + 4]

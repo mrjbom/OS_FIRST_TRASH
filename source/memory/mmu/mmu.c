@@ -381,7 +381,7 @@ bool vm_init_paging() {
 	memset(kernel_page_directory_table, 0, sizeof(uint32_t) * 1024);
 
 	for(uint32_t i = 0; i < 1024; ++i) {
-		//serial_printf("----%I----\n", i);
+		//serial_printf("----%u----\n", i);
 		for (uint32_t j = 0; j < 1024; ++j) {
 			uint32_t* physaddr = (uint32_t*)((j + (i * 1024)) * 0x1000);
 			//serial_printf("%u physaddr = 0x%x(%u)\n", j, physaddr, physaddr);
@@ -399,4 +399,78 @@ bool vm_init_paging() {
 	vm_load_page_directory(current_directory_table);
 	vm_enable_paging();
 	return true;
+}
+
+bool vm_set_page_flags(uint32_t* pd, void* virtualaddr, uint32_t flags) {
+	if(!addr32_is_page_aligned(pd) || !pd)
+		return false;
+	if(!addr32_is_page_aligned(virtualaddr))
+		return false;
+
+	uint32_t pdindex = (uint32_t)virtualaddr >> 22;
+	uint32_t ptindex = (uint32_t)virtualaddr >> 12 & 0x03FF;
+
+	// If the PD entry is not present
+	if (!pd[pdindex]) {
+		return false;
+	}
+
+	uint32_t* pt = (uint32_t*)(pd[pdindex] & ~0xFFF);
+
+	// If the PT entry is present, set flags
+	if (pt[ptindex]) {
+		pt[ptindex] = ((uint32_t)vm_get_physaddr(pd, virtualaddr)) | flags;
+		if(pd == current_directory_table) {
+			vm_tlb_flush();
+		}
+		return true;
+	}
+	//not exist
+	return false;
+}
+
+bool vm_get_page_flags(uint32_t* pd, void* virtualaddr, uint32_t* flags) {
+	if(!addr32_is_page_aligned(pd) || !pd)
+		return false;
+	if(!addr32_is_page_aligned(virtualaddr))
+		return false;
+
+	uint32_t pdindex = (uint32_t)virtualaddr >> 22;
+	uint32_t ptindex = (uint32_t)virtualaddr >> 12 & 0x03FF;
+
+	// If the PD entry is not present
+	if (!pd[pdindex]) {
+		return false;
+	}
+
+	uint32_t* pt = (uint32_t*)(pd[pdindex] & ~0xFFF);
+
+	// If the PT entry is present, get flags
+	if (pt[ptindex]) {
+		*flags = 0;
+		//PAGE_PRESENT
+		if(get_n_bit(pt[ptindex], 0)) {
+			*flags += PAGE_PRESENT;
+		}
+		//PAGE_RW
+		if(get_n_bit(pt[ptindex], 1)) {
+			*flags += PAGE_RW;
+		}
+		//PAGE_USERSPACE_AVAILABLE
+		if(get_n_bit(pt[ptindex], 2)) {
+			*flags += PAGE_USERSPACE_AVAILABLE;
+		}
+		
+		//serial_printf(
+		//	"PAGE_PRESENT = %u\n"
+		//	"PAGE_RW = %u\n"
+		//	"PAGE_USERSPACE_AVAILABLE = %u\n",
+		//	((pt[ptindex] >> 0) & 1),
+		//	((pt[ptindex] >> 1) & 1),
+		//	((pt[ptindex] >> 2) & 1)
+		//	);
+		return true;
+	}
+	//not exist
+	return false;
 }

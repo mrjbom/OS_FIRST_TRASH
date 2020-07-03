@@ -1,18 +1,1 @@
-0x154c000, 0, 3
-set new flags
-page_fault_exception!
-virtualaddr: 0x154c000
-virtualaddr_aligned: 0x154c000
-error_code = 22331392
-error P bit = 0
-error RW bit = 0
-error US bit = 0
-page_fault_exception!
-virtualaddr: 0x154c000
-virtualaddr_aligned: 0x154c000
-error_code = 22331392
-error P bit = 0
-error RW bit = 0
-error US bit = 0
-0x154c000, 673105, 3
 end of kmain()

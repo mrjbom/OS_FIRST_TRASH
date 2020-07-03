@@ -39,6 +39,11 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
 
     pit_init(100);
 
+    uint32_t* ptr = (uint32_t*)pm_malloc(4096);
+    vm_set_page_flags(current_directory_table, ptr, 0);
+    *ptr = 10;
+    pm_free(ptr);
+
     serial_printf("end of kmain()\n");
     return;
 }

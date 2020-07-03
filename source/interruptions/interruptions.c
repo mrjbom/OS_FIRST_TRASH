@@ -203,8 +203,8 @@ void idt_init(void) {
 	load_idt(idt_ptr);
 }
 
-void page_fault_handler(void) {
-	page_fault_exception();
+void page_fault_handler(uint32_t error_code) {
+	page_fault_exception(error_code);
 	outb(0x20, 0x20); //EOI
 }
 

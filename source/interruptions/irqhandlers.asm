@@ -56,13 +56,12 @@ extern irq15_handler
 
 page_fault:
   cli
-  ;save error code from stack to eax
-  pop eax
-  ;return error code to stack
-  push eax
   ;save all 32bit registers
   pushad
+  ;pass error code in function argument
+  push dword [esp + 32]
   call page_fault_handler
+  pop dword [esp + 32]
   ;return all 32bit registers
   popad
   ;delete error code from stack

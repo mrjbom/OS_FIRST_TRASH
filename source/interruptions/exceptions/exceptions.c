@@ -3,12 +3,10 @@
 #include "../../memory/mmu/mmu.h"
 #include "../../lfbmemory/lfbmemory.h"
 
-void page_fault_exception() {
+void page_fault_exception(uint32_t error_code) {
     serial_printf("page_fault_exception!\n");
     uint32_t cr2 = 0;
-    uint32_t error_code = 0;
     __asm__ volatile ("mov %%cr2, %0" : "=r"(cr2));
-    __asm__ volatile ("mov %%eax, %0" : "=r"(error_code));
 
     uint32_t virtualaddr = cr2;
     uint32_t virtualaddr_aligned = virtualaddr - (virtualaddr % 4096);
@@ -49,6 +47,10 @@ void page_fault_exception() {
             error_p_bit,
             error_rw_bit,
             error_us_bit);
-    
+
     lfb_clear(0xFF0000);
+
+    //you must handle the error or exception will loop.
+    //for example
+    //vm_set_page_flags(current_directory_table, (void*)virtualaddr_aligned, PAGE_PRESENT);
 }

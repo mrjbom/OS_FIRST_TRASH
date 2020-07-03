@@ -43,6 +43,7 @@ unsigned char keyboard_keys[128] =
     0,	/* All other keys are undefined */
 };
 
+//http://www.brokenthorn.com/Resources/OSDev9.html
 /*
 8043 Keyboard Controller Status Register
 0x64 port
@@ -78,6 +79,35 @@ Bit 6: Timeout
 Bit 7: Parity error
     0: OK flag, no error
     1: Parity error with last byte
+*/
+
+//http://www.brokenthorn.com/Resources/OSDev9.html
+/*
+            Keyboard Controller Commands (send to 0x64)
+/---------------------------------------------------------------\
+| Keyboard Command  |  Descripton                               |
+|---------------------------------------------------------------|
+| 0x20	            |  Read Keyboard Controller Command Byte    |
+| 0x60	            |  Write Keyboard Controller Command Byte   |
+| 0xAA	            |  Self Test                                |
+| 0xAB	            |  Interface Test                           |
+| 0xAD	            |  Disable Keyboard                         |
+| 0xAE	            |  Enable Keyboard                          |
+| 0xC0	            |  Read Input Port                          |
+| 0xD0	            |  Read Output Port                         |
+| 0xD1	            |  Write Output Port                        |
+| 0xDD	            |  Enable A20 Address Line                  |
+| 0xDF	            |  Disable A20 Address Line                 |
+| 0xE0	            |  Read Test Inputs                         |
+| 0xFE	            |  System Reset                             |
+|-------------------|-------------------------------------------|
+| Mouse             |  Command	Descripton                      |
+|---------------------------------------------------------------|
+| 0xA7	            |  Disable Mouse Port                       |
+| 0xA8	            |  Enable Mouse Port                        |
+| 0xA9	            |  Test Mouse Port                          |
+| 0xD4	            |  Write to mouse                           |
+\---------------------------------------------------------------/
 */
 
 void keyboard_handler(unsigned char key, unsigned char status) {

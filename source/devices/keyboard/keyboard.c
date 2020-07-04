@@ -106,12 +106,12 @@ Bit 7: Parity error
 | 0xA7	            |  Disable Mouse Port                       |
 | 0xA8	            |  Enable Mouse Port                        |
 | 0xA9	            |  Test Mouse Port                          |
-| 0xD4	            |  Write to mouse                           |
+| 0xD4	            |  Write to mouse                           |pit_sleep(1000);
 \---------------------------------------------------------------/
 */
 
 void keyboard_handler(unsigned char key, unsigned char status) {
-
+    serial_printf("%c\n", keyboard_keys[key]);
 }
 
 void keyboard_disable() {

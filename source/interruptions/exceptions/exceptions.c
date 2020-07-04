@@ -3,6 +3,16 @@
 #include "../../memory/mmu/mmu.h"
 #include "../../lfbmemory/lfbmemory.h"
 
+void general_protection_fault_exception(uint32_t error_code) {
+    serial_printf("general_protection_fault_exception!\n");
+    serial_printf("error_code = %u\n", error_code);
+    for(uint32_t i = 31; i != 0; --i) {
+        serial_printf("%u", get_n_bit(error_code, i));
+    }
+    serial_printf("\n");
+    lfb_clear(0xFF0000);
+}
+
 void page_fault_exception(uint32_t error_code) {
     serial_printf("page_fault_exception!\n");
     uint32_t cr2 = 0;
@@ -37,10 +47,10 @@ void page_fault_exception(uint32_t error_code) {
     serial_printf(
             "virtualaddr: 0x%x\n"
             "virtualaddr_aligned: 0x%x\n"
-            "error_code = %i\n"
-            "error P bit = %i\n"
-            "error RW bit = %i\n"
-            "error US bit = %i\n",
+            "error_code = %u\n"
+            "error P bit = %u\n"
+            "error RW bit = %u\n"
+            "error US bit = %u\n",
             virtualaddr,
             virtualaddr_aligned,
             error_code,

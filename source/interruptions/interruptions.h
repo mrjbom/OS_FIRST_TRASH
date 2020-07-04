@@ -15,6 +15,8 @@ struct IDT_entry{
 
 struct IDT_entry IDT[256];
 
+extern void general_protection_fault_handler(uint32_t error_code);
+
 extern void page_fault_handler(uint32_t error_code);
 
 extern void idt_init(void);

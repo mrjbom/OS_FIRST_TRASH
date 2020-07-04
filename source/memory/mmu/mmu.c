@@ -332,7 +332,7 @@ bool vm_map_page(uint32_t* pd, void* physaddr, void* virtualaddr, uint32_t flags
 		vm_tlb_flush();
 		return true;
 	}
-	return false;
+	//return false;
 }
 
 bool vm_unmap_vpage(uint32_t* pd, void* virtualaddr)

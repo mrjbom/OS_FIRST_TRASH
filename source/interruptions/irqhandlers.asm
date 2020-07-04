@@ -1,4 +1,5 @@
 global page_fault
+global general_protection_fault
 global irq0
 global irq1
 global irq2
@@ -15,10 +16,10 @@ global irq12
 global irq13
 global irq14
 global irq15
- 
 global load_idt
 
 global page_fault_handler
+global general_protection_fault_handler
 global irq0_handler
 global irq1_handler
 global irq2_handler
@@ -37,6 +38,7 @@ global irq14_handler
 global irq15_handler
 
 extern page_fault_handler
+extern general_protection_fault_handler
 extern irq0_handler
 extern irq1_handler
 extern irq2_handler
@@ -53,6 +55,21 @@ extern irq12_handler
 extern irq13_handler
 extern irq14_handler
 extern irq15_handler
+
+general_protection_fault:
+  cli
+  ;save all 32bit registers
+  pushad
+  ;pass error code in function argument
+  push dword [esp + 32]
+  call page_fault_handler
+  pop dword [esp + 32]
+  ;return all 32bit registers
+  popad
+  ;delete error code from stack
+  add esp, 4
+  sti
+  iretd
 
 page_fault:
   cli

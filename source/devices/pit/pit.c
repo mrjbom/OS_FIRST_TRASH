@@ -32,6 +32,6 @@ void pit_sleep(uint32_t milliseconds) {
     //Number of ticks to wait for
     uint32_t ticks_to_wait = (float)milliseconds / tick_in_milliseconds;
     uint32_t local_tick_finish = local_tick_start + ticks_to_wait;
-    serial_printf("ticks_to_wait %u\n", ticks_to_wait);
+    //serial_printf("ticks_to_wait %u\n", ticks_to_wait);
     while (pit_tick_counter < local_tick_finish);
 }

@@ -6,8 +6,8 @@
 #include "exceptions/exceptions.h"
 
 void idt_init(void) {
+	extern int general_protection_fault();
 	extern int page_fault();
-
     extern int load_idt();
     extern int irq0();
     extern int irq1();
@@ -27,7 +27,7 @@ void idt_init(void) {
     extern int irq15();
 
 	unsigned long page_fault_address;
- 
+	unsigned long general_protection_fault_address;
 	unsigned long irq0_address;
     unsigned long irq1_address;
     unsigned long irq2_address;
@@ -75,6 +75,13 @@ void idt_init(void) {
 	/* mask interrupts */
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
+
+	general_protection_fault_address = (unsigned long)general_protection_fault;
+	IDT[13].offset_lowerbits = general_protection_fault_address & 0xffff;
+	IDT[13].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+	IDT[13].zero = 0;
+	IDT[13].type_attr = 0x8f; /* TRAP_GATE */
+	IDT[13].offset_higherbits = (general_protection_fault_address & 0xffff0000) >> 16;
 
 	page_fault_address = (unsigned long)page_fault; 
 	IDT[14].offset_lowerbits = page_fault_address & 0xffff;
@@ -195,12 +202,26 @@ void idt_init(void) {
 	IDT[47].type_attr = 0x8e; /* INTERRUPT_GATE */
 	IDT[47].offset_higherbits = (irq15_address & 0xffff0000) >> 16;
 
+	//Table 6-1.  Exceptions and Interrupts in Intel manual
+	//!!!!!!!!!!!!!!!!!!!!!!!!! 32 - 255 free for use(use for syscall?)
+	//The IA-32 Architecture defines 18 predefined interrupts and exceptions and 224 user defined interrupts, which are 
+	//associated with entries in the IDT. Each interrupt and exception in the IDT is identified with a number, called a 
+	//vector. Table 6-1 lists the interrupts and exceptions with entries in the IDT and their respective vectors. Vectors 0 
+	//through 8, 10 through 14, and 16 through 19 are the predefined interrupts and exceptions; vectors 32 through 255 
+	//are for software-defined interrupts, which are for either software interrupts or maskable hardware interrupts.
+
+
 	/* fill the IDT descriptor */
 	idt_address = (unsigned long)IDT;
 	idt_ptr[0] = (sizeof (struct IDT_entry) * 256) + ((idt_address & 0xffff) << 16);
 	idt_ptr[1] = idt_address >> 16;
 
 	load_idt(idt_ptr);
+}
+
+void general_protection_fault_handler(uint32_t error_code) {
+	page_fault_exception(error_code);
+	outb(0x20, 0x20); //EOI
 }
 
 void page_fault_handler(uint32_t error_code) {

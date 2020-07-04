@@ -106,7 +106,7 @@ Bit 7: Parity error
 | 0xA7	            |  Disable Mouse Port                       |
 | 0xA8	            |  Enable Mouse Port                        |
 | 0xA9	            |  Test Mouse Port                          |
-| 0xD4	            |  Write to mouse                           |pit_sleep(1000);
+| 0xD4	            |  Write to mouse                           |
 \---------------------------------------------------------------/
 */
 

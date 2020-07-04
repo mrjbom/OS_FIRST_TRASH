@@ -62,7 +62,7 @@ general_protection_fault:
   pushad
   ;pass error code in function argument
   push dword [esp + 32]
-  call page_fault_handler
+  call general_protection_fault_handler
   pop dword [esp + 32]
   ;return all 32bit registers
   popad

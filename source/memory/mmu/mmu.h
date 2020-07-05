@@ -5,7 +5,19 @@
 #include "../../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 #include "../../lib/string.h"
 
+#define addr32_is_page_aligned(addr) !((uint32_t)(addr) % 4096)
+#define addr64_is_page_aligned(addr) !((uint64_t)(addr) % 4096)
+
 //page frame allocator
+
+//Get some bits from the value
+//n is the number of bit position
+#define get_n_bit(value, n) ((value) >> (n)) & 1
+
+//Set some bits from the value
+//n is the number of bit position
+//bit is new bit
+#define set_n_bit(value, n, bit) (bit) ? ((value) |= 1 << (n)) : ((value) &= ~(1 << (n)))
 
 //stack data from bootloader.asm
 extern char stack_bottom[];
@@ -147,13 +159,6 @@ extern void pm_show_nframes_table(uint32_t from, uint32_t to);
 
 //---------------------------
 //virtual memory
-
-#define addr32_is_page_aligned(addr) !((uint32_t)(addr) % 4096)
-#define addr64_is_page_aligned(addr) !((uint64_t)(addr) % 4096)
-
-//Gets some bits from the value
-//n is the number of bit position
-#define get_n_bit(value, n) ((value) >> (n)) & 1
 
 enum PagingFlags {
 	PAGE_PRESENT = 1,

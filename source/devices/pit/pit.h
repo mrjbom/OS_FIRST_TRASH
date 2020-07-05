@@ -5,7 +5,7 @@
 #include "../../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 #include "../../lib/string.h"
 
-extern uint32_t freq_copy;
+extern uint64_t freq_copy;
 
 void pit_init(uint16_t freq);
 

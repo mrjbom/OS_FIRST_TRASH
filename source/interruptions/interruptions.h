@@ -5,14 +5,26 @@
 #include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
 #include "../lib/string.h"
 
-struct IDT_entry{
+//GDT
+
+//gdt data from bootloader.asm
+extern char gdt[];
+
+struct gdt_ptr_struct
+{
+	unsigned short limit;
+	unsigned int base;
+};
+//struct gdt_ptr_struct* GDT_kernel = (struct gdt_ptr_struct*)gdt_kernel;
+
+//IDT
+struct IDT_entry {
 	unsigned short int offset_lowerbits;
 	unsigned short int selector;
 	unsigned char zero;
 	unsigned char type_attr;
 	unsigned short int offset_higherbits;
 };
-
 struct IDT_entry IDT[256];
 
 extern void general_protection_fault_handler(uint32_t error_code);

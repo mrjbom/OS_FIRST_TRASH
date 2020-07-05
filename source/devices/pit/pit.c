@@ -1,10 +1,11 @@
 #include "pit.h"
 #include "../../inlineassembly/inlineassembly.h"
 #include "../../lfbmemory/lfbmemory.h"
+#include "../../scheduler/scheduler.h"
 
-uint32_t pit_tick_counter = 0;
+uint64_t pit_tick_counter = 0;
 //using for timer
-uint32_t freq_copy = 0;
+uint64_t freq_copy = 0;
 
 void pit_init(uint16_t freq) {
     //freq: >= 19 && <= 65535
@@ -22,16 +23,21 @@ void pit_init(uint16_t freq) {
 
 void pit_handler() {
     ++pit_tick_counter;
+    serial_printf("pit_handler called\n");
+    if(!(pit_tick_counter % 100)) {
+        serial_printf("try switch task...\n");
+        switch_task();
+    }
 }
 
 void pit_sleep(uint32_t milliseconds) {
-    uint32_t local_tick_start = pit_tick_counter;
+    uint64_t local_tick_start = pit_tick_counter;
     //The frequency of interruption in milliseconds
     //float work faster
     float tick_in_milliseconds = (double)1000 / freq_copy;
     //Number of ticks to wait for
-    uint32_t ticks_to_wait = (float)milliseconds / tick_in_milliseconds;
-    uint32_t local_tick_finish = local_tick_start + ticks_to_wait;
+    uint64_t ticks_to_wait = (float)milliseconds / tick_in_milliseconds;
+    uint64_t local_tick_finish = local_tick_start + ticks_to_wait;
     //serial_printf("ticks_to_wait %u\n", ticks_to_wait);
     while (pit_tick_counter < local_tick_finish);
 }

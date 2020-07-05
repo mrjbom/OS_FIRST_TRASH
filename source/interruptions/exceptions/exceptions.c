@@ -3,6 +3,8 @@
 #include "../../memory/mmu/mmu.h"
 #include "../../lfbmemory/lfbmemory.h"
 
+//Intel® 64 and IA-32 architectures software developer’s manual combined volumes 1, 2A, 2B, 2C, 2D, 3A, 3B, 3C, 3D, and 4
+//6-42 Vol. 3A
 void general_protection_fault_exception(uint32_t error_code) {
     serial_printf("general_protection_fault_exception!\n");
     serial_printf("error_code = %u\n", error_code);
@@ -21,6 +23,7 @@ void page_fault_exception(uint32_t error_code) {
     uint32_t virtualaddr = cr2;
     uint32_t virtualaddr_aligned = virtualaddr - (virtualaddr % 4096);
     /*
+    error code
     Bit 0 (P) is the Present flag.
     Bit 1 (R/W) is the Read/Write flag.
     Bit 2 (U/S) is the User/Supervisor flag.

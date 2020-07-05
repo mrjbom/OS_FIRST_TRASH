@@ -339,7 +339,7 @@ bool vm_unmap_vpage(uint32_t* pd, void* virtualaddr)
 {
 	if (!addr32_is_page_aligned(pd) || !pd)
 		return false;
-	if(!addr32_is_page_aligned(virtualaddr))
+	if (!addr32_is_page_aligned(virtualaddr))
 		return false;
 
 	uint32_t pdindex = (uint32_t)virtualaddr >> 22;
@@ -449,17 +449,11 @@ bool vm_get_page_flags(uint32_t* pd, void* virtualaddr, uint32_t* flags) {
 	if (pt[ptindex]) {
 		*flags = 0;
 		//PAGE_PRESENT
-		if(get_n_bit(pt[ptindex], 0)) {
-			*flags += PAGE_PRESENT;
-		}
+		set_n_bit(*flags, 0, get_n_bit(pt[ptindex], 0));
 		//PAGE_RW
-		if(get_n_bit(pt[ptindex], 1)) {
-			*flags += PAGE_RW;
-		}
+		set_n_bit(*flags, 1, get_n_bit(pt[ptindex], 1));
 		//PAGE_USERSPACE_AVAILABLE
-		if(get_n_bit(pt[ptindex], 2)) {
-			*flags += PAGE_USERSPACE_AVAILABLE;
-		}
+		set_n_bit(*flags, 2, get_n_bit(pt[ptindex], 2));
 		
 		//serial_printf(
 		//	"PAGE_PRESENT = %u\n"

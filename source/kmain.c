@@ -19,7 +19,7 @@ void task02(void)
     //while (1) serial_printf("#2 true...\n");
 }
 
-/* Указатели на структуры потоков */
+//pointers to thread structures
 thread_t* thread01;
 thread_t* thread02;
 

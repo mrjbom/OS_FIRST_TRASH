@@ -6,6 +6,7 @@
 #include "exceptions/exceptions.h"
 
 void idt_init(void) {
+	extern int invalid_opcode();
 	extern int general_protection_fault();
 	extern int page_fault();
     extern int load_idt();
@@ -26,6 +27,7 @@ void idt_init(void) {
     extern int irq14();
     extern int irq15();
 
+	unsigned long invalid_opcode_address;
 	unsigned long page_fault_address;
 	unsigned long general_protection_fault_address;
 	unsigned long irq0_address;
@@ -75,6 +77,13 @@ void idt_init(void) {
 	/* mask interrupts */
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
+
+	invalid_opcode_address = (unsigned long)invalid_opcode;
+	IDT[6].offset_lowerbits = invalid_opcode_address & 0xffff;
+	IDT[6].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+	IDT[6].zero = 0;
+	IDT[6].type_attr = 0x8f; /* TRAP_GATE */
+	IDT[6].offset_higherbits = (invalid_opcode_address & 0xffff0000) >> 16;
 
 	general_protection_fault_address = (unsigned long)general_protection_fault;
 	IDT[13].offset_lowerbits = general_protection_fault_address & 0xffff;
@@ -217,6 +226,11 @@ void idt_init(void) {
 	idt_ptr[1] = idt_address >> 16;
 
 	load_idt(idt_ptr);
+}
+
+void invalid_opcode_handler(uint32_t error_code) {
+	invalid_opcode_exception(error_code);
+	outb(0x20, 0x20); //EOI
 }
 
 void general_protection_fault_handler(uint32_t error_code) {

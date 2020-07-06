@@ -8,7 +8,7 @@
 void general_protection_fault_exception(uint32_t error_code) {
     serial_printf("general_protection_fault_exception!\n");
     serial_printf("error_code = %u\n", error_code);
-    for(uint32_t i = 31; i != 0; --i) {
+    for(int32_t i = 31; i >= 0; --i) {
         serial_printf("%u", get_n_bit(error_code, i));
     }
     serial_printf("\n");

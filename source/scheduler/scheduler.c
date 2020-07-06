@@ -151,36 +151,11 @@ void task_manager_init()
     __asm__ volatile ("sti");
 }
 
-void switch_task()
-{
-    //if the scheduler is ready to work
-    if (multi_task)
-    {
-       //push the flags to the stack and disable interrupts
-       __asm__ volatile ("pushf; cli");
-
-       //storing the stack pointer in the current task structure
-       __asm__ volatile ("mov %%esp, %0":"=a"(current_thread->esp));
-
-       //taking a new issue from the queue
-       current_thread = (thread_t*)current_thread->list_item.next;
-      
-       //setting a new page directory (for processes)
-       __asm__ volatile ("mov %0, %%cr3"::"a"(current_proc->page_dir));
-       //switching to the new task stack
-       __asm__ volatile ("mov %0, %%esp"::"a"(current_thread->esp));
-
-       //pushing flags from the stack, thus implicitly allowing interrupts
-       __asm__ volatile ("popf");
-       __asm__ volatile ("sti");
-    }
-}
-
-thread_t* thread_create(process_t* proc,   /* Родительский процесс */
-                        void* entry_point, /* Точка входа в поток */
-                        size_t stack_size, /* Размер стека потока */
-                        bool kernel,       /* Поток ядра */
-                        bool suspend)      /* Поток приостановлен */
+thread_t* thread_create(process_t* proc,   //child process
+                        void* entry_point, //point of entry to the stream
+                        size_t stack_size, //thread stack size
+                        bool kernel,       //kernel thread
+                        bool suspend)      //the thread is paused
 {
     void* stack = NULL;
     uint32_t eflags;
@@ -203,6 +178,7 @@ thread_t* thread_create(process_t* proc,   /* Родительский проц�
     tmp_thread->stack_size = stack_size;
     tmp_thread->suspend = suspend;/* */
     tmp_thread->entry_point = (uint32_t)entry_point;
+    tmp_thread->stack_top = (uint32_t)stack + stack_size;
 
     //creating a new thread stack
     stack = pm_malloc(stack_size);

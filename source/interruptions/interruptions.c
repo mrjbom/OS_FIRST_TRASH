@@ -220,7 +220,7 @@ void idt_init(void) {
 }
 
 void general_protection_fault_handler(uint32_t error_code) {
-	page_fault_exception(error_code);
+	general_protection_fault_exception(error_code);
 	outb(0x20, 0x20); //EOI
 }
 

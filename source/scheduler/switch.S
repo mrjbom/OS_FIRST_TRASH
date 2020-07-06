@@ -1,4 +1,5 @@
 .section .text
+//DONT USE
 .global switch_task_k
 switch_task_k:
     pusha
@@ -49,4 +50,33 @@ switch_task_k:
     ret #This ends all!
 
 
+.extern        current_thread   //external links to the current issue
+//.extern        tss            //and the task status segment
+.global        task_switch      //making the function global and accessible from the outside
+
+task_switch:
+    push    %ebp    //prologue of a C compatible function on call
+    pushf           //pushing flags into the stack
+    cli             //disabling interrupts
+
+    //saving the stack pointer for the current issue
+    mov    current_thread, %edx  //loading EDX with the address of the current task structure
+    mov    %esp, 28(%edx)        //writing the current ESP to the task structure.
+
+    //taking a new issue from the queue
+    mov    4(%edx), %ecx        //load the ECX address of the structure of the next task
+    mov    %ecx, current_thread //modifying the pointer to the current issue
+
+    //switching the stack
+    mov    current_thread, %edx //loading EDX with a pointer to a new task
+    mov    28(%edx), %esp       //loading the new task stack pointer to ESP
+
+    //modifying the top of the core stack in TSS
+    mov    40(%edx), %eax      //read the top of the stack of flow structure
+    //mov    $tss, %edx        //we ship EDX with the TSS address
+    //mov    %eax, 4(%edx)     //writing the stack vertex in the tss.esp0 field
+
+    popf           //returning flags from the stack, implicitly including interrupts
+    pop    %ebp    //epilogue of a C compatible function on call
+    ret
     

@@ -25,8 +25,10 @@ void pit_handler() {
     ++pit_tick_counter;
     serial_printf("pit_handler called\n");
     if(!(pit_tick_counter % 100)) {
-        serial_printf("try switch task...\n");
-        switch_task();
+        if(multi_task) {
+            serial_printf("try switch task...\n");
+            task_switch();
+        }
     }
 }
 

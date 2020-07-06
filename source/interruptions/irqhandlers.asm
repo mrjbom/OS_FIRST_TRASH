@@ -63,14 +63,9 @@ invalid_opcode:
   cli
   ;save all 32bit registers
   pushad
-  ;pass error code in function argument
-  push dword [esp + 32]
   call invalid_opcode_handler
-  pop dword [esp + 32]
   ;return all 32bit registers
   popad
-  ;delete error code from stack
-  add esp, 4
   sti
   iretd
 

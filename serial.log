@@ -2,6 +2,7 @@ pit_handler called
 pit_handler called
 pit_handler called
 pit_handler called
+pit_handler called
 end of kmain()
 pit_handler called
 pit_handler called
@@ -105,90 +106,17 @@ pit_handler called
 pit_handler called
 try switch task...
 invalid_opcode_exception!
-error_code = 76
-00000000000000000000000001001100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-pit_handler called
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
-general_protection_fault_exception!
-error_code = 2052
-00000000000000000000100000000100
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!
+invalid_opcode_exception!

@@ -7,11 +7,6 @@
 //6-42 Vol. 3A
 void invalid_opcode_exception(uint32_t error_code) {
     serial_printf("invalid_opcode_exception!\n");
-    serial_printf("error_code = %u\n", error_code);
-    for(int32_t i = 31; i >= 0; --i) {
-        serial_printf("%u", get_n_bit(error_code, i));
-    }
-    serial_printf("\n");
     lfb_clear(0xFF0000);
 }
 

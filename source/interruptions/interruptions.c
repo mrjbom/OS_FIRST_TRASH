@@ -228,8 +228,8 @@ void idt_init(void) {
 	load_idt(idt_ptr);
 }
 
-void invalid_opcode_handler(uint32_t error_code) {
-	invalid_opcode_exception(error_code);
+void invalid_opcode_handler(uint16_t cs, uint32_t eip) {
+	invalid_opcode_exception(cs, eip);
 	outb(0x20, 0x20); //EOI
 }
 

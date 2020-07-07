@@ -167,6 +167,10 @@ thread_t* thread_create(process_t* proc,   //child process
 
     //creating a new stream descriptor
     thread_t* tmp_thread = (thread_t*)pm_malloc(sizeof(thread_t));
+    if(!tmp_thread) {
+        serial_printf("thread_create error!\n");
+        return NULL;
+    }
 
     //clearing the memory of the descriptor structure
     memset(tmp_thread, 0, sizeof(thread_t));
@@ -176,12 +180,16 @@ thread_t* thread_create(process_t* proc,   //child process
     tmp_thread->list_item.list = NULL;
     tmp_thread->process = proc;
     tmp_thread->stack_size = stack_size;
-    tmp_thread->suspend = suspend;/* */
+    tmp_thread->suspend = suspend;
     tmp_thread->entry_point = (uint32_t)entry_point;
     tmp_thread->stack_top = (uint32_t)stack + stack_size;
 
     //creating a new thread stack
     stack = pm_malloc(stack_size);
+    if(!stack) {
+        serial_printf("thread_create error!\n");
+        return NULL;
+    }
    
     //saving the pointer to the stack memory
     tmp_thread->stack = stack;

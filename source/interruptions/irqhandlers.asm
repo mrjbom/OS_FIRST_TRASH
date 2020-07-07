@@ -63,7 +63,11 @@ invalid_opcode:
   cli
   ;save all 32bit registers
   pushad
+  push dword [esp + 32] ;push eip
+  push word [esp + 48] ;push cs
   call invalid_opcode_handler
+  pop dword [esp + 48] ;pop cs
+  pop word [esp + 32] ;pop eip
   ;return all 32bit registers
   popad
   sti

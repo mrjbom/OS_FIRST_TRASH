@@ -8,15 +8,16 @@
 #include "devices/pcspeaker/pcspeaker.h"
 #include "scheduler/scheduler.h"
 
-void task01(void)
+void task01()
 {
     serial_printf("I'm thread #1\n");
-    //while (1) serial_printf("#1 true...\n");
+    return;
 }
-void task02(void)
+
+void task02()
 {
     serial_printf("I'm thread #2\n");
-    //while (1) serial_printf("#2 true...\n");
+    return;
 }
 
 //pointers to thread structures
@@ -46,11 +47,13 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         return;
     }
     
+    /*
     if(!vm_init_paging()) {
         serial_printf("vm_init_paging() error!\n");
         lfb_clear(0xFF0000);
         return;
     }
+    */
 
     pit_init(100);
 
@@ -67,13 +70,11 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
                true,
                false);
 
-
     thread02 = thread_create(proc,
                &task02,
                0x2000,
                true,
                false);
-
     serial_printf("end of kmain()\n");
     return;
 }

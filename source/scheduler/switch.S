@@ -54,6 +54,7 @@ switch_task_k:
 //.extern        tss            //and the task status segment
 .global        task_switch      //making the function global and accessible from the outside
 
+
 task_switch:
     push    %ebp    //prologue of a C compatible function on call
     pushf           //pushing flags into the stack
@@ -67,6 +68,9 @@ task_switch:
     mov    4(%edx), %ecx        //load the ECX address of the structure of the next task
     mov    %ecx, current_thread //modifying the pointer to the current issue
 
+    mov    %cr2, %ax
+    mov    %ax, %cr2
+
     //switching the stack
     mov    current_thread, %edx //loading EDX with a pointer to a new task
     mov    28(%edx), %esp       //loading the new task stack pointer to ESP
@@ -76,7 +80,7 @@ task_switch:
     //mov    $tss, %edx        //we ship EDX with the TSS address
     //mov    %eax, 4(%edx)     //writing the stack vertex in the tss.esp0 field
 
-    popf           //returning flags from the stack, implicitly including interrupts
+    popf           //returning flags from the stack, implicitly enable interrupts
     pop    %ebp    //epilogue of a C compatible function on call
+    sti            //enabling interrupts(again)
     ret
-    

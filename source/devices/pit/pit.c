@@ -23,13 +23,15 @@ void pit_init(uint16_t freq) {
 
 void pit_handler() {
     ++pit_tick_counter;
-    serial_printf("pit_handler called\n");
-    if(!(pit_tick_counter % 100)) {
+    serial_printf("pit_handler()\n");
+    if(!(pit_tick_counter % 50)) {
         if(multi_task) {
             serial_printf("try switch task...\n");
             task_switch();
+            return;
         }
     }
+    return;
 }
 
 void pit_sleep(uint32_t milliseconds) {

@@ -21,7 +21,7 @@ typedef struct
     bool        suspend;       //pause flag
     uint32_t    pid;           //the process ID (PID)
     char        name[256];     //process name
-} __attribute__((packed)) process_t;
+} process_t;
 
 typedef struct
 {                                                //field offsets from the beginning of the structure, bytes
@@ -34,7 +34,7 @@ typedef struct
     uint32_t    entry_point; //point of entry to the thread //+32
     uint32_t    id;          //thread id //+36
     uint32_t    stack_top;   //stack top //+40
-} __attribute__((packed)) thread_t;
+} thread_t;
 
 extern void task_manager_init();
 

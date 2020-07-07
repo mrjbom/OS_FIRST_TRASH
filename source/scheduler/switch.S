@@ -68,9 +68,6 @@ task_switch:
     mov    4(%edx), %ecx        //load the ECX address of the structure of the next task
     mov    %ecx, current_thread //modifying the pointer to the current issue
 
-    mov    %cr2, %ax
-    mov    %ax, %cr2
-
     //switching the stack
     mov    current_thread, %edx //loading EDX with a pointer to a new task
     mov    28(%edx), %esp       //loading the new task stack pointer to ESP

@@ -230,17 +230,14 @@ void idt_init(void) {
 
 void invalid_opcode_handler(uint32_t error_code) {
 	invalid_opcode_exception(error_code);
-	outb(0x20, 0x20); //EOI
 }
 
 void general_protection_fault_handler(uint32_t error_code) {
 	general_protection_fault_exception(error_code);
-	outb(0x20, 0x20); //EOI
 }
 
 void page_fault_handler(uint32_t error_code) {
 	page_fault_exception(error_code);
-	outb(0x20, 0x20); //EOI
 }
 
 void irq0_handler(void) {

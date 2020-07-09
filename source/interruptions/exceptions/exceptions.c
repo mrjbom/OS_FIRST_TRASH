@@ -5,7 +5,7 @@
 
 //Intel® 64 and IA-32 architectures software developer’s manual combined volumes 1, 2A, 2B, 2C, 2D, 3A, 3B, 3C, 3D, and 4
 //6-42 Vol. 3A
-void invalid_opcode_exception(uint16_t cs, uint32_t eip) {
+void invalid_opcode_exception(uint32_t cs, uint32_t eip) {
     serial_printf("invalid_opcode_exception!\n");
     serial_printf("cs = %u(0x%x), eip = %u(0x%x)\n", cs, cs, eip, eip);
     lfb_clear(0xFF0000);

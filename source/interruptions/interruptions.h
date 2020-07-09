@@ -27,7 +27,7 @@ struct IDT_entry {
 };
 struct IDT_entry IDT[256];
 
-extern void invalid_opcode_handler(uint16_t cs, uint32_t eip);
+extern void invalid_opcode_handler(uint32_t cs, uint32_t eip);
 
 extern void general_protection_fault_handler(uint32_t error_code);
 

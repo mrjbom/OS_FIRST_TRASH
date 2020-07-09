@@ -56,6 +56,11 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     */
     pit_init(100);
 
+    //page_fault error test
+    //uint32_t* ptr = (uint32_t*)pm_malloc(4096);
+    //vm_set_page_flags(current_directory_table, ptr, 0);
+    //*ptr = 10;
+
     //tnitializing the scheduler
     task_manager_init();
  
@@ -74,6 +79,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
                0x2000,
                true,
                false);
+
     serial_printf("end of kmain()\n");
     return;
 }

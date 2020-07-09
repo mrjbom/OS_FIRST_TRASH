@@ -228,19 +228,16 @@ void idt_init(void) {
 	load_idt(idt_ptr);
 }
 
-void invalid_opcode_handler(uint16_t cs, uint32_t eip) {
+void invalid_opcode_handler(uint32_t cs, uint32_t eip) {
 	invalid_opcode_exception(cs, eip);
-	outb(0x20, 0x20); //EOI
 }
 
 void general_protection_fault_handler(uint32_t error_code) {
 	general_protection_fault_exception(error_code);
-	outb(0x20, 0x20); //EOI
 }
 
 void page_fault_handler(uint32_t error_code) {
 	page_fault_exception(error_code);
-	outb(0x20, 0x20); //EOI
 }
 
 void irq0_handler(void) {

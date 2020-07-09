@@ -380,19 +380,14 @@ bool vm_init_paging() {
 	}
 	memset(kernel_page_directory_table, 0, sizeof(uint32_t) * 1024);
 
-	for(uint32_t i = 0; i < 1024; ++i) {
-		//serial_printf("----%u----\n", i);
-		for (uint32_t j = 0; j < 1024; ++j) {
-			uint32_t* physaddr = (uint32_t*)((j + (i * 1024)) * 0x1000);
-			//serial_printf("%u physaddr = 0x%x(%u)\n", j, physaddr, physaddr);
-			//serial_printf("kernel_page_directory_table[%u] = %u\n", i, kernel_page_directory_table[i]);
-			if(!vm_map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_RW)) {
-				serial_printf("error map_page()!\n");
-				pm_free(kernel_page_directory_table);
-				return false;
-			}
+	for(uint32_t i = 0; i <= 1024 * 1024; ++i) {
+		uint32_t* physaddr = (uint32_t*)(i * 0x1000);
+		//serial_printf("i = %u, physaddr = 0x%x\n", i, physaddr);
+		if(!vm_map_page(kernel_page_directory_table, physaddr, physaddr, PAGE_PRESENT | PAGE_RW)) {
+			serial_printf("error map_page()!\n");
+			pm_free(kernel_page_directory_table);
+			return false;
 		}
-		//serial_printf("--------\n");
 	}
 	vm_set_current_page_directory(kernel_page_directory_table);
 

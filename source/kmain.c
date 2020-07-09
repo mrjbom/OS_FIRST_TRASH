@@ -54,7 +54,6 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
         return;
     }
     */
-
     pit_init(100);
 
     //tnitializing the scheduler

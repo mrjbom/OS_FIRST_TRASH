@@ -23,12 +23,9 @@ void pit_init(uint16_t freq) {
 
 void pit_handler() {
     ++pit_tick_counter;
-    serial_printf("pit_handler()\n");
+    //serial_printf("pit_handler()\n");
     if(!(pit_tick_counter % 10)) {
-        if(multi_task) {
-            serial_printf("try switch task...\n");
-            task_switch();
-        }
+        scheduler();
     }
 }
 
@@ -36,7 +33,7 @@ void pit_sleep(uint32_t milliseconds) {
     uint64_t local_tick_start = pit_tick_counter;
     //The frequency of interruption in milliseconds
     //float work faster
-    float tick_in_milliseconds = (double)1000 / freq_copy;
+    float tick_in_milliseconds = (float)1000 / freq_copy;
     //Number of ticks to wait for
     uint64_t ticks_to_wait = (float)milliseconds / tick_in_milliseconds;
     uint64_t local_tick_finish = local_tick_start + ticks_to_wait;

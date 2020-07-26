@@ -10,13 +10,15 @@
 
 void task01()
 {
-    serial_printf("I'm thread #1\n");
+    while(true)
+        serial_printf("I'm thread #1\n");
     return;
 }
 
 void task02()
 {
-    serial_printf("I'm thread #2\n");
+    while(true)
+        serial_printf("I'm thread #2\n");
     return;
 }
 
@@ -61,12 +63,13 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //vm_set_page_flags(current_directory_table, ptr, 0);
     //*ptr = 10;
 
+    
     //tnitializing the scheduler
-    task_manager_init();
+    scheduler_init();
  
     //getting a pointer to the current process
     process_t* proc = get_current_proc();
- 
+
     //creating two threads
     thread01 = thread_create(proc,
                &task01,
@@ -79,7 +82,6 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
                0x2000,
                true,
                false);
-
     serial_printf("end of kmain()\n");
     return;
 }

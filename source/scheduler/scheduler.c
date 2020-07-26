@@ -1,6 +1,11 @@
 #include "scheduler.h"
 #include "../lfbmemory/lfbmemory.h"
 
+/*
+Part of the code is borrowed from the @maisvendoo blog, http://phantomexos.blogspot.ru
+Thanks.
+*/
+
 //200, 100, 600, 500
 void task_colored_square(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
     for(uint32_t l = 0; l < 100; ++l) {
@@ -80,26 +85,27 @@ uint32_t next_pid = 0;
 uint32_t next_thread_id = 0;
 
 //process list
-list_t process_list;
+GList* process_list = NULL;
 
 //thread list
-list_t thread_list;
+GList* thread_list = NULL;
 
 //scheduler readiness flag
 bool multi_task = false;
 
 //descriptor of the kernel process
-process_t* kernel_proc = 0;
+process_t* kernel_proc = NULL;
 //descriptor of the kernel thread
-thread_t*  kernel_thread = 0;
+thread_t*  kernel_thread = NULL;
 
-//descriptor of the  current process
-process_t* current_proc;
-//descriptor of the  current thread
-thread_t*  current_thread;
+//descriptor of the current process
+process_t* current_proc = NULL;
+//descriptor of the current thread
+thread_t*  current_thread = NULL;
+//descriptor of the next thread
+thread_t*  next_thread = NULL;
 
-void task_manager_init()
-{
+void scheduler_init() {
     //read current stack pointer
     uint32_t esp = 0;
     __asm__ volatile ("mov %%esp, %0":"=a"(esp));       
@@ -107,8 +113,8 @@ void task_manager_init()
     //disabling interrupts and initializing the task lists
     __asm__ volatile ("cli");
 
-    list_init(&process_list);
-    list_init(&thread_list);
+    process_list = NULL;
+    thread_list = NULL;
 
     //creating a core process
     //allocate memory for the process descriptor and reset it to zero
@@ -119,12 +125,11 @@ void task_manager_init()
     //initializing the process
     kernel_proc->pid = next_pid++;
     kernel_proc->page_dir = kernel_page_directory_table;
-    kernel_proc->list_item.list = NULL;
     kernel_proc->threads_count = 1;
     strcpy(kernel_proc->name, "Kernel");
     kernel_proc->suspend = false;
 
-    list_add(&process_list, &kernel_proc->list_item);
+    process_list = g_list_append(process_list, kernel_proc);
 
     //creating the main core thread
     kernel_thread = (thread_t*)pm_malloc(sizeof(thread_t));
@@ -132,13 +137,12 @@ void task_manager_init()
     memset(kernel_thread, 0, sizeof(thread_t));
 
     kernel_thread->process = kernel_proc;
-    kernel_thread->list_item.list = NULL;
     kernel_thread->id = next_thread_id++;
     kernel_thread->stack_size = 0x2000;
     kernel_thread->suspend = false;
     kernel_thread->esp = esp;
    
-    list_add(&thread_list, &kernel_thread->list_item);
+    thread_list = g_list_append(thread_list, kernel_thread);
 
     //making the core process and thread current
     current_proc = kernel_proc;
@@ -165,7 +169,7 @@ thread_t* thread_create(process_t* proc,   //child process
     //disabling interrupts
     __asm__ volatile ("cli");
 
-    //creating a new stream descriptor
+    //creating a new thread descriptor
     thread_t* tmp_thread = (thread_t*)pm_malloc(sizeof(thread_t));
     if(!tmp_thread) {
         serial_printf("thread_create error!\n");
@@ -177,7 +181,6 @@ thread_t* thread_create(process_t* proc,   //child process
 
     //initializing a new thread
     tmp_thread->id = next_thread_id++;
-    tmp_thread->list_item.list = NULL;
     tmp_thread->process = proc;
     tmp_thread->stack_size = stack_size;
     tmp_thread->suspend = suspend;
@@ -199,7 +202,7 @@ thread_t* thread_create(process_t* proc,   //child process
     tmp_thread->esp = (uint32_t)stack + stack_size - 12;
 
     //adding a thread to the queue
-    list_add(&thread_list, &tmp_thread->list_item);
+    thread_list = g_list_append(thread_list, tmp_thread);
 
     //increasing the number of threads in the parent process
     proc->threads_count++;
@@ -209,7 +212,7 @@ thread_t* thread_create(process_t* proc,   //child process
     //creating a pointer to the memory allocated for the stack
     uint32_t* esp = (uint32_t*)(stack + stack_size);
 
-    //put the stream entry point on the stack and
+    //put the thread entry point on the stack and
     //flag register value
     esp[-1] = (uint32_t)entry_point;
     //raising the IF flag
@@ -218,11 +221,36 @@ thread_t* thread_create(process_t* proc,   //child process
     //enabling interrupts
     __asm__ volatile ("sti");
 
-    //возвращаем указатель на структуру потока
+    //return thread pointer
     return tmp_thread;
 }
 
-process_t* get_current_proc()
-{
+void thread_exit() {
+    
+}
+
+process_t* get_current_proc() {
     return current_proc;
+}
+
+//sheduler logic
+uint32_t counter = 0;
+
+void scheduler() {
+    if(!multi_task)
+        return;
+    if((counter + 1) < g_list_length(thread_list)) {
+        ++counter;
+    } else {
+        counter = 0;
+    }
+    
+    next_thread = (thread_t*)(g_list_nth_data(thread_list, counter));
+    serial_printf("before\n");
+    serial_printf("current_thread->id = %u\n", current_thread->id);
+    serial_printf("next_thread->id = %u\n", next_thread->id);
+    task_switch();
+    serial_printf("after\n");
+    serial_printf("current_thread->id = %u\n", current_thread->id);
+    serial_printf("next_thread->id = %u\n", next_thread->id);
 }

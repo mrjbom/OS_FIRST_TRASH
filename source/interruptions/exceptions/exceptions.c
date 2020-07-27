@@ -2,16 +2,28 @@
 #include "../../debug/debug.h"
 #include "../../memory/mmu/mmu.h"
 #include "../../lfbmemory/lfbmemory.h"
+#include "../../scheduler/scheduler.h"
+#include "../../inlineassembly/inlineassembly.h"
 
 //Intel® 64 and IA-32 architectures software developer’s manual combined volumes 1, 2A, 2B, 2C, 2D, 3A, 3B, 3C, 3D, and 4
 //6-42 Vol. 3A
 void invalid_opcode_exception(uint32_t cs, uint32_t eip) {
+    serial_printf("\n/--------------------------------------------------\\\n");
     serial_printf("invalid_opcode_exception!\n");
     serial_printf("cs = %u(0x%x), eip = %u(0x%x)\n", cs, cs, eip, eip);
     lfb_clear(0xFF0000);
+    thread_t* problematic_thread = scheduler_get_current_thread();
+    //if some thread is doing something wrong - kill
+    serial_printf("problematic_thread addr = 0x%x, id = %u\n", problematic_thread, problematic_thread->id);
+    if(problematic_thread->id != 0) {
+        //scheduler_thread_delete(problematic_thread);
+    }
+    scheduler_thread_show_list();
+    serial_printf("\\--------------------------------------------------/\n");
 }
 
 void general_protection_fault_exception(uint32_t error_code) {
+    serial_printf("\n/--------------------------------------------------\\\n");
     serial_printf("general_protection_fault_exception!\n");
     serial_printf("error_code = %u\n", error_code);
     for(int32_t i = 31; i >= 0; --i) {
@@ -19,9 +31,13 @@ void general_protection_fault_exception(uint32_t error_code) {
     }
     serial_printf("\n");
     lfb_clear(0xFF0000);
+
+    scheduler_thread_show_list();
+    serial_printf("\\--------------------------------------------------/\n");
 }
 
 void page_fault_exception(uint32_t error_code) {
+    serial_printf("\n/--------------------------------------------------\\\n");
     serial_printf("page_fault_exception!\n");
     uint32_t cr2 = 0;
     __asm__ volatile ("mov %%cr2, %0" : "=r"(cr2));
@@ -72,4 +88,5 @@ void page_fault_exception(uint32_t error_code) {
     //you must handle the error or exception will loop.
     //for example
     //vm_set_page_flags(current_directory_table, (void*)virtualaddr_aligned, PAGE_PRESENT);
+    serial_printf("\\--------------------------------------------------/\n");
 }

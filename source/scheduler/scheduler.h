@@ -1,5 +1,5 @@
-#ifndef __SCHEDULER_H__
-#define __SCHEDULER_H__
+#ifndef _SCHEDULER_H_
+#define _SCHEDULER_H_
 
 /*
 Part of the code is borrowed from the @maisvendoo blog, http://phantomexos.blogspot.ru
@@ -41,19 +41,28 @@ typedef struct
 
 extern void scheduler_init();
 
-extern thread_t* thread_create(process_t* proc,   //child process
-                               void* entry_point, //point of entry to the stream
-                               size_t stack_size, //thread stack size
-                               bool kernel,       //kernel thread
-                               bool suspend);     //the thread is paused
+extern thread_t* scheduler_thread_create(process_t* proc,   //child process
+                                         void* entry_point, //point of entry to the stream
+                                         size_t stack_size, //thread stack size
+                                         bool kernel,       //kernel thread
+                                         bool suspend);     //the thread is paused
 
-extern void thread_exit();
+//kill current_thread and delete from thread_list
+//CALL ONLY FROM CURRENT THREAD
+extern void scheduler_thread_exit_current();
 
-extern process_t* get_current_proc();
+//delete some thread from thread_list
+extern void scheduler_thread_delete(thread_t* thread);
 
-extern void scheduler();
+extern process_t* scheduler_get_current_proc();
+
+extern thread_t* scheduler_get_current_thread();
+
+extern void scheduler_switch();
 
 //asm function
 extern void task_switch();
+
+extern void scheduler_thread_show_list();
 
 #endif

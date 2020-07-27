@@ -79,10 +79,10 @@ task_switch:
     //mov    $tss, %edx        //we ship EDX with the TSS address
     //mov    %eax, 4(%edx)     //writing the stack vertex in the tss.esp0 field
 
-    popf           //returning flags from the stack, implicitly enable interrupts
     push   %ax     //save ax
     mov    $0x20, %ax
     outb   %al, $0x20    //send EOI
     pop    %ax
+    popf           //returning flags from the stack, implicitly enable interrupts
     pop    %ebp    //epilogue of a C compatible function on call
     ret

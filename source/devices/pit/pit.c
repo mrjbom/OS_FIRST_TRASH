@@ -25,7 +25,7 @@ void pit_handler() {
     ++pit_tick_counter;
     //serial_printf("pit_handler()\n");
     if(!(pit_tick_counter % 10)) {
-        scheduler();
+        scheduler_switch();
     }
 }
 

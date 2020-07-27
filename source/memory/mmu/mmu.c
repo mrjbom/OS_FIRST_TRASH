@@ -251,7 +251,7 @@ uint32_t pm_getsize(void* ptr) {
 }
 
 void pm_show_nframes_table(uint32_t from, uint32_t to) {
-	//serial_printf("\nPAGES_TABLE:\n");
+	serial_printf("\nPAGES_TABLE:\n");
 	for (uint32_t i = from; i <= to; ++i) {
 		if(i == memory_frames_table_size - 1)
 			return;

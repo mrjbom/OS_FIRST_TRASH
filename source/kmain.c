@@ -10,21 +10,29 @@
 
 void task01()
 {
-    while(true)
-        serial_printf("I'm thread #1\n");
+    serial_printf("I'm thread #1\n");
+    scheduler_thread_exit_current();
     return;
 }
 
 void task02()
 {
-    while(true)
-        serial_printf("I'm thread #2\n");
+    serial_printf("I'm thread #2\n");
+    scheduler_thread_exit_current();
+    return;
+}
+
+void task03()
+{
+    serial_printf("I'm thread #3\n");
+    //scheduler_thread_exit_current();
     return;
 }
 
 //pointers to thread structures
 thread_t* thread01;
 thread_t* thread02;
+thread_t* thread03;
 
 void kmain(unsigned long magic, multiboot_info_t* mbi) {
     (void)magic;
@@ -68,20 +76,32 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     scheduler_init();
  
     //getting a pointer to the current process
-    process_t* proc = get_current_proc();
+    process_t* proc = scheduler_get_current_proc();
 
     //creating two threads
-    thread01 = thread_create(proc,
+    thread01 = scheduler_thread_create(proc,
                &task01,
                0x2000,
                true,
                false);
 
-    thread02 = thread_create(proc,
+    ///*
+    thread02 = scheduler_thread_create(proc,
                &task02,
                0x2000,
                true,
                false);
+    //*/
+
+    ///*
+    thread03 = scheduler_thread_create(proc,
+               &task03,
+               0x2000,
+               true,
+               false);
+    //*/
+
+    pit_sleep(2000);
     serial_printf("end of kmain()\n");
     return;
 }

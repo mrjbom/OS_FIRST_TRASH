@@ -155,7 +155,7 @@ void scheduler_init() {
     __asm__ volatile ("sti");
 }
 
-thread_t* thread_create(process_t* proc,   //child process
+thread_t* scheduler_thread_create(process_t* proc,   //child process
                         void* entry_point, //point of entry to the stream
                         size_t stack_size, //thread stack size
                         bool kernel,       //kernel thread
@@ -225,18 +225,71 @@ thread_t* thread_create(process_t* proc,   //child process
     return tmp_thread;
 }
 
-void thread_exit() {
-    
+void scheduler_thread_exit_current() {
+    /* Отключаем прерывания */
+    __asm__ volatile ("cli");
+
+    //serial_printf("scheduler_thread_exit_current\n"
+    //              "current_thread id = %u\n", current_thread->id);
+
+    /* Удаляем поток из очереди */
+    thread_list = g_list_remove(thread_list, current_thread);
+    /* Уменьшаем число потоков в процессе, которому он принадлежит */
+    current_thread->process->threads_count--;
+
+    /* Освобождаем память, занятую потоком под стек и собственный описатель */
+    pm_free(current_thread->stack);
+    pm_free(current_thread);
+
+    /* Грузим в ECX адрес планировщика */
+    __asm__ volatile ("mov %0, %%ecx"::"a"(&scheduler_switch));
+
+    /* Включаем прерывания */
+    __asm__ volatile ("sti");
+
+    /* Вызываем планировщик */
+    __asm__ volatile ("call *%ecx");
 }
 
-process_t* get_current_proc() {
+void scheduler_thread_delete(thread_t* thread) {
+    /* Отключаем прерывания */
+    __asm__ volatile ("cli");
+
+    //serial_printf("scheduler_thread_exit\n"
+    //              "current_thread id = %u\n", current_thread->id);
+
+    /* Удаляем поток из очереди */
+    GList* list_copy = thread_list;
+    scheduler_thread_show_list();
+    thread_list = g_list_remove(thread_list, thread);
+    if(list_copy == thread_list) {
+        serial_printf("scheduler_thread_delete error!\n");
+        serial_printf("thread not found in thread_list\n");
+    }
+    /* Уменьшаем число потоков в процессе, которому он принадлежит */
+    thread->process->threads_count--;
+
+    /* Освобождаем память, занятую потоком под стек и собственный описатель */
+    pm_free(thread->stack);
+    pm_free(thread);
+
+    __asm__ volatile ("sti");
+}
+
+process_t* scheduler_get_current_proc() {
     return current_proc;
+}
+
+thread_t* scheduler_get_current_thread() {
+    return current_thread;
 }
 
 //sheduler logic
 uint32_t counter = 0;
 
-void scheduler() {
+void scheduler_switch() {
+    //если других задач нету
+    __asm__ volatile ("cli");
     if(!multi_task)
         return;
     if((counter + 1) < g_list_length(thread_list)) {
@@ -246,11 +299,20 @@ void scheduler() {
     }
     
     next_thread = (thread_t*)(g_list_nth_data(thread_list, counter));
-    serial_printf("before\n");
+    scheduler_thread_show_list();
+    serial_printf("\nbefore switch\n");
     serial_printf("current_thread->id = %u\n", current_thread->id);
     serial_printf("next_thread->id = %u\n", next_thread->id);
     task_switch();
-    serial_printf("after\n");
-    serial_printf("current_thread->id = %u\n", current_thread->id);
-    serial_printf("next_thread->id = %u\n", next_thread->id);
+    //serial_printf("\nCHEEEEEEEEEEEEECK MEEEEEEEE!\n");
+    __asm__ volatile ("sti");
+}
+
+void scheduler_thread_show_list() {
+    serial_printf("\nTHREAD LIST:\n");
+    size_t threads_count = g_list_length(thread_list);
+	for (uint32_t i = 0; i < threads_count; ++i) {
+		serial_printf("thread_list[%u] addr = 0x%x, id = %u\n", i, ((thread_t*)g_list_nth_data(thread_list, i)), ((thread_t*)g_list_nth_data(thread_list, i))->id);
+	}
+    serial_printf("\n");
 }

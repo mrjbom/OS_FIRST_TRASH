@@ -54,7 +54,9 @@ switch_task_k:
 .extern        next_thread      //external links to the next thread
 //.extern        tss            //and the task status segment
 .global        task_switch      //making the function global and accessible from the outside
-
+.global        thread_init
+.global        thread_continue
+.extern        scheduler_thread_exit_current
 
 task_switch:
     push    %ebp    //prologue of a C compatible function on call
@@ -75,10 +77,16 @@ task_switch:
     mov    16(%ecx), %esp       //loading the new task stack pointer to ESP
 
     //modifying the top of the core stack in TSS
-    mov    28(%edx), %eax      //read the top of the stack of flow structure
+    //mov    28(%edx), %eax      //read the top of the stack of flow structure
     //mov    $tss, %edx        //we ship EDX with the TSS address
     //mov    %eax, 4(%edx)     //writing the stack vertex in the tss.esp0 field
 
+    push %eax
+    mov $0, %eax
+    cmp 32(%ecx), %eax
+    pop %eax
+    je thread_init
+endOfInitCheck:
     push   %ax     //save ax
     mov    $0x20, %ax
     outb   %al, $0x20    //send EOI
@@ -86,3 +94,22 @@ task_switch:
     popf           //returning flags from the stack, implicitly enable interrupts
     pop    %ebp    //epilogue of a C compatible function on call
     ret
+
+thread_init:
+    push %eax
+    mov $1, %eax
+    mov %eax, 32(%ecx)
+    pop %eax
+
+    //send EOI
+    push   %ax     //save ax
+    mov    $0x20, %ax
+    outb   %al, $0x20    //send EOI
+    pop    %ax
+    sti
+
+    call *20(%ecx)
+    jmp endOfProg
+
+endOfProg:
+    call scheduler_thread_exit_current

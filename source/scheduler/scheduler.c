@@ -8,8 +8,7 @@ Thanks.
 
 //200, 100, 600, 500
 void task_colored_square(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
-    for(uint32_t l = 0; l < 100; ++l) {
-        uint32_t r, g, b;
+    uint32_t r, g, b;
         uint32_t hex;
         r = 255; g = 0; b = 0;
         /*
@@ -73,7 +72,6 @@ void task_colored_square(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
             hex = lfb_rgb_to_hex(r, i, b);
             lfb_draw_rectangle(x0, y0, x1, y1, hex);
         }
-    }
 }
 
 //scheduler
@@ -104,6 +102,10 @@ process_t* current_proc = NULL;
 thread_t*  current_thread = NULL;
 //descriptor of the next thread
 thread_t*  next_thread = NULL;
+
+void show_test_word() {
+    serial_printf("Test word!");
+}
 
 void scheduler_init() {
     //read current stack pointer
@@ -141,6 +143,7 @@ void scheduler_init() {
     kernel_thread->stack_size = 0x2000;
     kernel_thread->suspend = false;
     kernel_thread->esp = esp;
+    kernel_thread->is_inited = true;
    
     thread_list = g_list_append(thread_list, kernel_thread);
 
@@ -185,13 +188,19 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
     tmp_thread->stack_size = stack_size;
     tmp_thread->suspend = suspend;
     tmp_thread->entry_point = (uint32_t)entry_point;
-    tmp_thread->stack_top = (uint32_t)stack + stack_size;
 
     //creating a new thread stack
     stack = pm_malloc(stack_size);
     if(!stack) {
         serial_printf("thread_create error!\n");
         return NULL;
+    }
+
+    tmp_thread->stack_top = (uint32_t)stack + stack_size;
+
+    for(uint32_t i = 0; i < stack_size / 4; ++i) {
+        //fill stack
+        ((uint32_t*)stack)[i] = (0xFFFFFFFF - i);
     }
    
     //saving the pointer to the stack memory
@@ -200,6 +209,8 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
     //in the flow structure - it must point to the value
     //the number of flags that we will put on the stack
     tmp_thread->esp = (uint32_t)stack + stack_size - 12;
+    //why 12? look down
+    //esp[-1] = (uint32_t)entry_point; and esp[-3] = eflags | (1 << 9);
 
     //adding a thread to the queue
     thread_list = g_list_append(thread_list, tmp_thread);
@@ -214,7 +225,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
 
     //put the thread entry point on the stack and
     //flag register value
-    esp[-1] = (uint32_t)entry_point;
+    //esp[-1] = (uint32_t)&show_test_word;
     //raising the IF flag
     esp[-3] = eflags | (1 << 9);
 

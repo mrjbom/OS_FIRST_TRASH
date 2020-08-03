@@ -7,6 +7,7 @@ buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/lib/glist.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
 "./source/inlineassembly/inlineassembly.c"
+"./source/more/io.S"
 "./source/interruptions/interruptions.c"
 "./source/interruptions/exceptions/exceptions.c"
 "./source/memory/memdetect/memdetect.c"
@@ -26,7 +27,8 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/printf.o"
 "./o/glist.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
-"./o/inlineasm.o" 
+"./o/inlineasm.o"
+"./o/ioS.o"
 "./o/interruptions.o"
 "./o/interrexceptions.o"
 "./o/memorymemdetect.o"
@@ -47,7 +49,8 @@ clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
 "./o/printf.o"
 "./o/glist.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
-"./o/inlineasm.o" 
+"./o/inlineasm.o"
+"./o/ioS.o" 
 "./o/interruptions.o"
 "./o/interrexceptions.o"
 "./o/memorymemdetect.o"
@@ -69,6 +72,8 @@ gccLinkerDefaultFlagsString="-nostdlib -lgcc"
 #debug flags
 gccCompilerDebugFlagsString="--freestanding -m32 -std=c99 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -g3"
 gccLinkerDebugFlagsString="-nostdlib -lgcc"
+#nasmCompilerDebugFlagsString="-g -F stabs"
+nasmCompilerDebugFlagsString=""
 
 clear()
 {
@@ -112,7 +117,7 @@ then
 		clear
 		exit;
 	fi
-	nasm -f elf32 ./source/bootloader.asm -o ./o/bootloaderasm.o
+	nasm -f elf32 $nasmCompilerDebugFlagsString ./source/bootloader.asm -o ./o/bootloaderasm.o
 
 	#check and compile irqhandlers.asm
 	echo -e "\e[36mCompile ./source/interruptions/irqhandlers.asm...\n\e[0m"
@@ -124,7 +129,7 @@ then
 		clear
 		exit;
 	fi
-	nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
+	nasm -f elf32 $nasmCompilerDebugFlagsString ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
 
 	echo -e "\e[36m(debug) Compile .c files...\e[0m"
 	buildCRoutesSize=${#buildCRoutes[*]}
@@ -301,6 +306,7 @@ then
 
 	echo -e "\e[36mStart emulation...\e[0m"
 	#start emulation
+	echo -e "\e[32mWITHOUT GDB\n\e[0m"
 	echo -e "\e[32mSERIAL DEBUG ENABLE\n\e[0m"
 	qemu-system-i386 -serial file:serial.log bootable.iso
 fi

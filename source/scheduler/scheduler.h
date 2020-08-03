@@ -12,12 +12,13 @@ Thanks.
 #include "../lib/glist.h"
 #include "../memory/mmu/mmu.h"
 
+extern void show_test_word();
+
 extern void task_colored_square(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1);
 
 extern bool multi_task;
 
 //scheduler
-
 typedef struct
 {
     uint32_t*   page_dir;      //page catalog
@@ -37,6 +38,7 @@ typedef struct
     uint32_t    entry_point; //point of entry to the thread //+20
     uint32_t    id;          //thread id //+24
     uint32_t    stack_top;   //stack top //+28
+    bool is_inited;          //init flag //+32
 } thread_t;
 
 extern void scheduler_init();

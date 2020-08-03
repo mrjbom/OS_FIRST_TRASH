@@ -11,21 +11,33 @@
 void task01()
 {
     serial_printf("I'm thread #1\n");
-    scheduler_thread_exit_current();
+    for(int i = 0; i < 6 * 1; ++i) {
+        serial_printf("I'm thread #1\n");
+        task_colored_square(0, 0, 100, 100);
+    }
+    lfb_draw_rectangle(0, 0, 100, 100, 0x0);
     return;
 }
 
 void task02()
 {
-    serial_printf("I'm thread #2\n");
-    scheduler_thread_exit_current();
+    serial_printf("I'm thread #1\n");
+    for(int i = 0; i < 6 * 3; ++i) {
+        serial_printf("I'm thread #2\n");
+        task_colored_square(0, 200, 100, 300);
+    }
+    lfb_draw_rectangle(0, 200, 100, 300, 0x0);
     return;
 }
 
 void task03()
 {
-    serial_printf("I'm thread #3\n");
-    //scheduler_thread_exit_current();
+    serial_printf("I'm thread #1\n");
+    for(int i = 0; i < 6 * 2; ++i) {
+        serial_printf("I'm thread #3\n");
+        task_colored_square(0, 400, 100, 500);
+    }
+    lfb_draw_rectangle(0, 400, 100, 500, 0x0);
     return;
 }
 
@@ -78,12 +90,17 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //getting a pointer to the current process
     process_t* proc = scheduler_get_current_proc();
 
+    //multi_task = false;
+
     //creating two threads
     thread01 = scheduler_thread_create(proc,
                &task01,
                0x2000,
                true,
                false);
+
+    ///*
+    //*/
 
     ///*
     thread02 = scheduler_thread_create(proc,
@@ -102,6 +119,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //*/
 
     pit_sleep(2000);
+    lfb_clear(0xF0F0F0);
     serial_printf("end of kmain()\n");
     return;
 }

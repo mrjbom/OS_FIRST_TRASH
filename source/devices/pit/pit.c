@@ -23,9 +23,11 @@ void pit_init(uint16_t freq) {
 
 void pit_handler() {
     ++pit_tick_counter;
-    //serial_printf("pit_handler()\n");
     if(!(pit_tick_counter % 10)) {
-        scheduler_switch();
+        if(multi_task) {
+            serial_printf("task_switch()\n");
+            scheduler_switch();
+        }
     }
 }
 

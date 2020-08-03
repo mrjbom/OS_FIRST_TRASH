@@ -1,6 +1,7 @@
+global debug
+global invalid_opcode
 global page_fault
 global general_protection_fault
-global invalid_opcode
 global irq0
 global irq1
 global irq2
@@ -19,6 +20,7 @@ global irq14
 global irq15
 global load_idt
 
+global debug_handler
 global invalid_opcode_handler
 global page_fault_handler
 global general_protection_fault_handler
@@ -39,6 +41,7 @@ global irq13_handler
 global irq14_handler
 global irq15_handler
 
+extern debug_handler
 extern invalid_opcode_handler
 extern page_fault_handler
 extern general_protection_fault_handler
@@ -59,20 +62,50 @@ extern irq13_handler
 extern irq14_handler
 extern irq15_handler
 
-invalid_opcode:
-  cli
+debug:
+  cld ;DF is already saved in interrupt frame
   ;save all 32bit registers
   pushad
-  push dword [esp + 32] ;push eip
-  push dword [esp + 64] ;push cs
-  call invalid_opcode_handler
-  pop dword [esp + 64] ;pop cs
-  pop dword [esp + 32] ;pop eip
-  ;return all 32bit registers
-  popad
+  ; save and set segments
+  push ds
+  push es
+  mov ax,0x10
+  mov ds,ax
+  mov es,ax
+
+  push dword [esp + 40] ;push eip
+  push dword [esp + 48] ;push cs
+  call debug_handler
   ;delete eip and cs from stack
   add esp, 8
-  sti
+  ; restore segments
+  pop es
+  pop ds
+  ;return all 32bit registers
+  popad
+  iretd
+
+invalid_opcode:
+  cld ;DF is already saved in interrupt frame
+  ;save all 32bit registers
+  pushad
+  ; save and set segments
+  push ds
+  push es
+  mov ax,0x10
+  mov ds,ax
+  mov es,ax
+
+  push dword [esp + 40] ;push eip
+  push dword [esp + 48] ;push cs
+  call invalid_opcode_handler
+  ;delete eip and cs from stack
+  add esp, 8
+  ; restore segments
+  pop es
+  pop ds
+  ;return all 32bit registers
+  popad
   iretd
 
 general_protection_fault:

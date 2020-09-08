@@ -8,13 +8,16 @@ buildCRoutes=("./source/kmain.c" "./source/more/more.c"
 "./source/lfbmemory/lfbmemory.c" "./source/textmodememory/textmodememory.c" 
 "./source/inlineassembly/inlineassembly.c"
 "./source/more/io.S"
-"./source/interruptions/interruptions.c"
-"./source/interruptions/exceptions/exceptions.c"
+"./source/interruptions/descriptor_tables.c"
+"./source/interruptions/gdt.S"
+"./source/interruptions/interrupt.S"
+"./source/interruptions/isr.c"
 "./source/memory/memdetect/memdetect.c"
 "./source/memory/mmu/mmu.c"
 "./source/memory/mmu/paging.S"
 "./source/scheduler/scheduler.c"
 "./source/scheduler/task_switch.S"
+"./source/scheduler/usr.S"
 "./source/debug/debug.c"
 "./source/devices/keyboard/keyboard.c"
 "./source/devices/pit/pit.c"
@@ -29,13 +32,16 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o"
 "./o/ioS.o"
-"./o/interruptions.o"
-"./o/interrexceptions.o"
+"./o/interrdesctables.o"
+"./o/interrgdtS.o"
+"./o/interrS.o"
+"./o/interrisr.o"
 "./o/memorymemdetect.o"
 "./o/memorymmu.o"
 "./o/memorypagingS.o"
-"./o/scheduler.o"
-"./o/task_switchS.o"
+"./o/schedsched.o"
+"./o/schedtask_switchS.o"
+"./o/schedusrS.o"
 "./o/debug.o"
 "./o/devkeyboard.o"
 "./o/devpit.o"
@@ -43,7 +49,7 @@ buildObjectRoutes=("./o/kmain.o" "./o/more.o"
 "./o/devpcspeaker.o")
 
 declare -a clearRoutes
-clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
+clearRoutes=("./bootable.iso" "./o/bootloaderasm.o"
 "./o/kmain.o" "./o/more.o"
 "./o/string.o" "./o/math.o"
 "./o/printf.o"
@@ -51,13 +57,16 @@ clearRoutes=("./bootable.iso" "./o/bootloaderasm.o" "./o/irqhandlersasm.o"
 "./o/lfbmem.o" "./o/textmodemem.o" 
 "./o/inlineasm.o"
 "./o/ioS.o" 
-"./o/interruptions.o"
-"./o/interrexceptions.o"
+"./o/interrdesctables.o"
+"./o/interrgdtS.o"
+"./o/interrS.o"
+"./o/interrisr.o"
 "./o/memorymemdetect.o"
 "./o/memorymmu.o"
 "./o/memorypagingS.o"
-"./o/scheduler.o"
-"./o/task_switchS.o"
+"./o/schedsched.o"
+"./o/schedtask_switchS.o"
+"./o/schedusrS.o"
 "./o/debug.o" 
 "./o/devkeyboard.o"
 "./o/devpit.o"
@@ -70,7 +79,7 @@ gccCompilerDefaultFlagsString="--freestanding -m32 -std=c99 -Wall -Wextra -Werro
 gccLinkerDefaultFlagsString="-nostdlib -lgcc"
 
 #debug flags
-gccCompilerDebugFlagsString="--freestanding -m32 -std=c99 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -g3"
+gccCompilerDebugFlagsString="--freestanding -m32 -std=c99 -Wall -Wextra -Werror -Wno-unused-function -Wno-unused-parameter -Wno-unused-but-set-variable -g3"
 gccLinkerDebugFlagsString="-nostdlib -lgcc"
 #nasmCompilerDebugFlagsString="-g -F stabs"
 nasmCompilerDebugFlagsString=""
@@ -120,16 +129,16 @@ then
 	nasm -f elf32 $nasmCompilerDebugFlagsString ./source/bootloader.asm -o ./o/bootloaderasm.o
 
 	#check and compile irqhandlers.asm
-	echo -e "\e[36mCompile ./source/interruptions/irqhandlers.asm...\n\e[0m"
-	if [ ! -f ./source/interruptions/irqhandlers.asm ]
-	then
-		echo -e "\e[31mERROR!\e[0m"
-		echo "./source/interruptions/irqhandlers.asm not found"
-		echo "Abort..."
-		clear
-		exit;
-	fi
-	nasm -f elf32 $nasmCompilerDebugFlagsString ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
+	#echo -e "\e[36mCompile ./source/interruptions/irqhandlers.asm...\n\e[0m"
+	#if [ ! -f ./source/interruptions/irqhandlers.asm ]
+	#then
+	#	echo -e "\e[31mERROR!\e[0m"
+	#	echo "./source/interruptions/irqhandlers.asm not found"
+	#	echo "Abort..."
+	#	clear
+	#	exit;
+	#fi
+	#nasm -f elf32 $nasmCompilerDebugFlagsString ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
 
 	echo -e "\e[36m(debug) Compile .c files...\e[0m"
 	buildCRoutesSize=${#buildCRoutes[*]}
@@ -159,7 +168,7 @@ then
 	fi
 	echo -e "\n\e[36m(debug) Start linker...\n\e[0m"
 
-	./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/irqhandlersasm.o ./FreeSans.o ./UbuntuBold.o "${buildObjectRoutes[@]}" $gccLinkerDebugFlagsString
+	./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./FreeSans.o ./UbuntuBold.o "${buildObjectRoutes[@]}" $gccLinkerDebugFlagsString
 
 	#check kernel file
 	if [ ! -f ./kernel-0 ]
@@ -240,16 +249,16 @@ then
 	nasm -f elf32 ./source/bootloader.asm -o ./o/bootloaderasm.o
 
 	#check and compile irqhandlers.asm
-	echo -e "\e[36mCompile ./source/interruptions/irqhandlers.asm...\n\e[0m"
-	if [ ! -f ./source/interruptions/irqhandlers.asm ]
-	then
-		echo -e "\e[31mERROR!\e[0m"
-		echo "./source/interruptions/irqhandlers.asm not found"
-		echo "Abort..."
-		clear
-		exit;
-	fi
-	nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
+	#echo -e "\e[36mCompile ./source/interruptions/irqhandlers.asm...\n\e[0m"
+	#if [ ! -f ./source/interruptions/irqhandlers.asm ]
+	#then
+	#	echo -e "\e[31mERROR!\e[0m"
+	#	echo "./source/interruptions/irqhandlers.asm not found"
+	#	echo "Abort..."
+	#	clear
+	#	exit;
+	#fi
+	#nasm -f elf32 ./source/interruptions/irqhandlers.asm -o ./o/irqhandlersasm.o
 
 	echo -e "\e[36mCompile .c files...\e[0m"
 	buildCRoutesSize=${#buildCRoutes[*]}
@@ -279,7 +288,7 @@ then
 	fi
 	echo -e "\n\e[36mStart linker...\n\e[0m"
 
-	./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./o/irqhandlersasm.o ./FreeSans.o ./UbuntuBold.o "${buildObjectRoutes[@]}" $gccLinkerDefaultFlagsString
+	./i386-elf-4.9.1-Linux-x86_64/bin/i386-elf-gcc -T link.ld -o kernel-0 -ffreestanding ./o/bootloaderasm.o ./FreeSans.o ./UbuntuBold.o "${buildObjectRoutes[@]}" $gccLinkerDefaultFlagsString
 
 	#check kernel file
 	if [ ! -f ./kernel-0 ]

@@ -1,816 +1,668 @@
-tmp_thread addr = 0x1150000
-entry_point addr = 0x1001a3
-stack addr = 0x1151000
-stack_top = 0x1153000
-thread esp(-12) = 0x1152ff4
-thread_list addr = 0x114f000
-thread esp(write entry point and eflags) = 0x1153000
-tmp_thread addr = 0x1154000
-entry_point addr = 0x100203
-stack addr = 0x1155000
-stack_top = 0x1157000
-thread esp(-12) = 0x1156ff4
-thread_list addr = 0x114f000
-thread esp(write entry point and eflags) = 0x1157000
-tmp_thread addr = 0x1158000
-entry_point addr = 0x10026f
-stack addr = 0x1159000
-stack_top = 0x115b000
-thread esp(-12) = 0x115aff4
-thread_list addr = 0x114f000
-thread esp(write entry point and eflags) = 0x115b000
-task_switch()
+
+THREAD LIST:
+thread_list[0] addr = 0x114e000, id = 0
+
+
+before switch
+current_thread->id = 0, kernel = 1
+next_thread->id = 0, kernel = 1
+
+THREAD LIST:
+thread_list[0] addr = 0x114e000, id = 0
+thread_list[1] addr = 0x1150000, id = 1
+
+
+before switch
+current_thread->id = 0, kernel = 1
+next_thread->id = 1, kernel = 1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+
+THREAD LIST:
+thread_list[0] addr = 0x114e000, id = 0
+thread_list[1] addr = 0x1150000, id = 1
+
+
+before switch
+current_thread->id = 1, kernel = 1
+next_thread->id = 0, kernel = 1
 
 THREAD LIST:
 thread_list[0] addr = 0x114e000, id = 0
 thread_list[1] addr = 0x1150000, id = 1
 thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
+thread_list[3] addr = 0x115a000, id = 3
 
 
 before switch
-current_thread->id = 0
-next_thread->id = 1
-I'm thread #1
-I'm thread #1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #1
-I'm thread #2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-I'm thread #1
-I'm thread #3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-I'm thread #1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-I'm thread #3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #2
-task_switch()
+current_thread->id = 0, kernel = 1
+next_thread->id = 1, kernel = 1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
+Im thread #1
 
 THREAD LIST:
 thread_list[0] addr = 0x114e000, id = 0
 thread_list[1] addr = 0x1150000, id = 1
 thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
+thread_list[3] addr = 0x115a000, id = 3
 
 
 before switch
-current_thread->id = 2
-next_thread->id = 3
-I'm thread #3
-task_switch()
+current_thread->id = 1, kernel = 1
+next_thread->id = 2, kernel = 1
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
+Im thread #2
 
 THREAD LIST:
 thread_list[0] addr = 0x114e000, id = 0
 thread_list[1] addr = 0x1150000, id = 1
 thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
+thread_list[3] addr = 0x115a000, id = 3
 
 
 before switch
-current_thread->id = 3
-next_thread->id = 0
-end of kmain()
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-I'm thread #1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-I'm thread #1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-I'm thread #3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-I'm thread #1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-I'm thread #3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-I'm thread #3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-I'm thread #1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 2
-I'm thread #2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1150000, id = 1
-thread_list[2] addr = 0x1154000, id = 2
-thread_list[3] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 1
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 1
-next_thread->id = 3
-I'm thread #3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 0
-next_thread->id = 2
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 2
-next_thread->id = 3
-task_switch()
-
-THREAD LIST:
-thread_list[0] addr = 0x114e000, id = 0
-thread_list[1] addr = 0x1154000, id = 2
-thread_list[2] addr = 0x1158000, id = 3
-
-
-before switch
-current_thread->id = 3
-next_thread->id = 0
+current_thread->id = 2, kernel = 1
+next_thread->id = 3, kernel = 0
+going to init user thread

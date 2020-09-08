@@ -130,6 +130,7 @@ void scheduler_init() {
     kernel_proc->threads_count = 1;
     strcpy(kernel_proc->name, "Kernel");
     kernel_proc->suspend = false;
+    kernel_proc->kernel = true;
 
     process_list = g_list_append(process_list, kernel_proc);
 
@@ -144,6 +145,7 @@ void scheduler_init() {
     kernel_thread->suspend = false;
     kernel_thread->esp = esp;
     kernel_thread->is_inited = true;
+    kernel_thread->stack_top = (uint32_t)kernel_stack_top;
    
     thread_list = g_list_append(thread_list, kernel_thread);
 
@@ -158,10 +160,32 @@ void scheduler_init() {
     __asm__ volatile ("sti");
 }
 
+process_t* scheduler_proc_create(bool kernel,
+                                 const char name[256])
+{
+    process_t* new_proc = (process_t*)pm_malloc(sizeof(process_t));
+    if(!new_proc) {
+        serial_printf("scheduler_proc_create() failed!\n");
+        return NULL;
+    }
+
+    memset(new_proc, 0, sizeof(process_t));
+
+    //initializing the process
+    new_proc->pid = next_pid++;
+    new_proc->page_dir = NULL;
+    new_proc->threads_count = 0;
+    strcpy(new_proc->name, name);
+    new_proc->suspend = false;
+    new_proc->kernel = false;
+
+    process_list = g_list_append(process_list, new_proc);
+    return new_proc;
+}
+
 thread_t* scheduler_thread_create(process_t* proc,   //child process
                         void* entry_point, //point of entry to the stream
                         size_t stack_size, //thread stack size
-                        bool kernel,       //kernel thread
                         bool suspend)      //the thread is paused
 {
     void* stack = NULL;
@@ -225,7 +249,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
 
     //put the thread entry point on the stack and
     //flag register value
-    //esp[-1] = (uint32_t)&show_test_word;
+    //esp[-1] = (uint32_t)entry_point;
     //raising the IF flag
     esp[-3] = eflags | (1 << 9);
 
@@ -276,6 +300,7 @@ void scheduler_thread_delete(thread_t* thread) {
     if(list_copy == thread_list) {
         serial_printf("scheduler_thread_delete error!\n");
         serial_printf("thread not found in thread_list\n");
+        return;
     }
     /* Уменьшаем число потоков в процессе, которому он принадлежит */
     thread->process->threads_count--;
@@ -299,8 +324,8 @@ thread_t* scheduler_get_current_thread() {
 uint32_t counter = 0;
 
 void scheduler_switch() {
-    //если других задач нету
     __asm__ volatile ("cli");
+    //если других задач нету
     if(!multi_task)
         return;
     if((counter + 1) < g_list_length(thread_list)) {
@@ -308,14 +333,19 @@ void scheduler_switch() {
     } else {
         counter = 0;
     }
-    
     next_thread = (thread_t*)(g_list_nth_data(thread_list, counter));
     scheduler_thread_show_list();
     serial_printf("\nbefore switch\n");
-    serial_printf("current_thread->id = %u\n", current_thread->id);
-    serial_printf("next_thread->id = %u\n", next_thread->id);
-    task_switch();
-    //serial_printf("\nCHEEEEEEEEEEEEECK MEEEEEEEE!\n");
+    serial_printf("current_thread->id = %u, kernel = %u\n", current_thread->id, current_thread->process->kernel);
+    serial_printf("next_thread->id = %u, kernel = %u\n", next_thread->id, next_thread->process->kernel);
+    if(current_thread->process->kernel == 1 && next_thread->process->kernel == 0 && next_thread->is_inited == 0) {
+        serial_printf("going to init user thread\n");
+    }
+    if(current_thread->process->kernel == 1 && next_thread->process->kernel == 0 && next_thread->is_inited == 1) {
+        serial_printf("going to continue user thread\n");
+    }
+    
+    scheduler_low_thread_switch();
     __asm__ volatile ("sti");
 }
 

@@ -1,50 +1,73 @@
 #include "inlineassembly/inlineassembly.h"
-#include "interruptions/interruptions.h"
 #include "more/more.h"
 #include "memory/memdetect/memdetect.h"
 #include "memory/mmu/mmu.h"
 #include "devices/cpu/cpu.h"
 #include "devices/pit/pit.h"
 #include "devices/pcspeaker/pcspeaker.h"
+#include "interruptions/descriptor_tables.h"
 #include "scheduler/scheduler.h"
 
 void task01()
 {
+    for(uint32_t i = 0; i < 10000; ++i) {
+        serial_printf("Im thread #1\n");
+    }
+    
+    /*
     serial_printf("I'm thread #1\n");
-    for(int i = 0; i < 6 * 1; ++i) {
-        serial_printf("I'm thread #1\n");
+    for(int i = 0; i < 6; ++i) {
         task_colored_square(0, 0, 100, 100);
     }
     lfb_draw_rectangle(0, 0, 100, 100, 0x0);
-    return;
+    */
+    //return;
 }
 
 void task02()
 {
-    serial_printf("I'm thread #1\n");
-    for(int i = 0; i < 6 * 3; ++i) {
-        serial_printf("I'm thread #2\n");
+    for(uint32_t i = 0; i < 10000; ++i) {
+        serial_printf("Im thread #2\n");
+    }
+    /*
+    serial_printf("I'm thread #2\n");
+    for(int i = 0; i < 12; ++i) {
         task_colored_square(0, 200, 100, 300);
     }
     lfb_draw_rectangle(0, 200, 100, 300, 0x0);
+    */
     return;
 }
 
 void task03()
 {
-    serial_printf("I'm thread #1\n");
-    for(int i = 0; i < 6 * 2; ++i) {
-        serial_printf("I'm thread #3\n");
+    //for(uint32_t i = 0; i < 10000; ++i) {
+    //    serial_printf("Im thread #3\n");
+    //}
+    ///*
+    serial_printf("I'm thread #3\n");
+    for(int i = 0; i < 8; ++i) {
         task_colored_square(0, 400, 100, 500);
     }
     lfb_draw_rectangle(0, 400, 100, 500, 0x0);
+    //*/
     return;
 }
 
-//pointers to thread structures
+void task04u() {
+    //serial_printf("I'm USER thread #4\n");
+    int j = 10;
+    for(int i = 0; i < 99999999; ++i) {
+        j += i * 2;
+    }
+    j = 123;
+    return;
+}
+
 thread_t* thread01;
 thread_t* thread02;
 thread_t* thread03;
+thread_t* thread04u;
 
 void kmain(unsigned long magic, multiboot_info_t* mbi) {
     (void)magic;
@@ -54,8 +77,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     lfb_clear(0x00FF00);
     //clear_lfb_mem(0xFE01AC);
 
-    lidt(IDT, sizeof(IDT));
-    idt_init();
+    init_descriptor_tables();
     serial_init();
 
     detect_cpu();
@@ -91,35 +113,33 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     process_t* proc = scheduler_get_current_proc();
 
     //multi_task = false;
-
     //creating two threads
     thread01 = scheduler_thread_create(proc,
                &task01,
                0x2000,
-               true,
                false);
-
-    ///*
-    //*/
-
+//
     ///*
     thread02 = scheduler_thread_create(proc,
                &task02,
                0x2000,
-               true,
                false);
     //*/
+//
+    /////*
+    //thread03 = scheduler_thread_create(proc,
+    //           &task03,
+    //           0x2000,
+    //           true,
+    //           false);
+    ////*/
 
-    ///*
-    thread03 = scheduler_thread_create(proc,
-               &task03,
-               0x2000,
-               true,
-               false);
-    //*/
+    process_t* user_proc = scheduler_proc_create(false, "User process");
+    scheduler_thread_create(user_proc, &task04u, 0x2000, false);
 
-    pit_sleep(2000);
+    pit_sleep(1000);
     lfb_clear(0xF0F0F0);
+
     serial_printf("end of kmain()\n");
     return;
 }

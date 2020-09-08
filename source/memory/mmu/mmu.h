@@ -20,8 +20,8 @@
 #define set_n_bit(value, n, bit) (bit) ? ((value) |= 1 << (n)) : ((value) &= ~(1 << (n)))
 
 //stack data from bootloader.asm
-extern char stack_bottom[];
-extern char stack_top[];
+extern char kernel_stack_bottom[];
+extern char kernel_stack_top[];
 
 //section - what RAM is divided into in memory_map
 //frame - what the available section is divided into within physical memory

@@ -1,5 +1,6 @@
 #include "debug.h"
 #include "../inlineassembly/inlineassembly.h"
+#include "../scheduler/sync.h"
 
 void serial_init() {
    outb(PORT_COM1 + 1, 0x00);    // Disable all interrupts
@@ -27,10 +28,17 @@ void serial_write_str(const char* str) {
    }
 }
 
+/*
+semaphore_t serial_printf_semaphore = { .max_value = 1,
+                                        .current_value = 1 };
+*/
+
 void serial_printf(const char* fmt, ...) {
+   //semaphore_lock(&serial_printf_semaphore);
    char outstr[1024];
    va_list list;
    va_start(list, fmt);
    vsnprintf(outstr, 1024, fmt, list);
    serial_write_str(outstr);
+   //semaphore_unlock(&serial_printf_semaphore);
 }

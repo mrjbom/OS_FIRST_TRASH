@@ -23,12 +23,7 @@ void pit_init(uint16_t freq) {
 
 void pit_handler() {
     ++pit_tick_counter;
-    if(!(pit_tick_counter % 10)) {
-        if(multi_task) {
-            serial_printf("task_switch()\n");
-            scheduler_switch();
-        }
-    }
+    scheduler_switch();
 }
 
 void pit_sleep(uint32_t milliseconds) {

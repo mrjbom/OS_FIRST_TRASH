@@ -71,6 +71,9 @@ bool pm_init_memory_page_allocator() {
 					   (
 						   (memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)multiboot_reserved_start || memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) > (uint32_t)multiboot_reserved_end)
 					   ) && 
+					   (
+						   (memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) + 0x1000 < (uint32_t)kernel_stack_bottom || memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) > (uint32_t)kernel_stack_top)
+					   ) &&
 					   		//memory below 1 MB may be used by devices
 					   		memory_framing[memory_framing_sections_number].address + (0x1000 * page_index) > 0x100000
 					) {
@@ -100,6 +103,9 @@ bool pm_init_memory_page_allocator() {
 void* pm_malloc(uint32_t nbytes) {
 	//serial_printf("kmalloc()\n");
 	//serial_printf("\nkmalloc try allocate %u bytes\n", nbytes);
+	if(!nbytes) {
+		return NULL;
+	}
 	void* first_page_address = 0x0;
 	if(!(nbytes % 4096)) {
 		first_page_address = pm_search_nframes(nbytes / 4096);

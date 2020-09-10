@@ -5,8 +5,8 @@
 //
 //----------------------------------------------------------------------------*/
 
-#ifndef		_DESCRIPTOR_TABLES_H_
-#define		_DESCRIPTOR_TABLES_H_
+#ifndef _DESCRIPTOR_TABLES_H_
+#define _DESCRIPTOR_TABLES_H_
 
 #include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stddef.h"
 #include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdint.h"
@@ -17,8 +17,8 @@
 //----------------------------------------------------------------------------*/
 struct tss_descriptor
 {
-	uint16_t	limit_15_0;
-	uint16_t	base_15_0;
+	uint16_t limit_15_0;
+	uint16_t base_15_0;
 	uint8_t	base_23_16;
 	uint8_t	type:4;
 	uint8_t	sys:1;
@@ -68,7 +68,7 @@ struct	tss_entry
 	uint16_t	iomap_offset;
 	uint8_t	iomap;
 
-} __attribute__((packed));
+};
 
 typedef struct tss_entry tss_entry_t;
 
@@ -80,10 +80,10 @@ struct gdt_entry_struct
  
   uint16_t	limit_low;
   uint16_t	base_low;
-  uint8_t		base_middle;
-  uint8_t		access;
-  uint8_t		granularity;
-  uint8_t		base_high;
+  uint8_t	base_middle;
+  uint8_t	access;
+  uint8_t	granularity;
+  uint8_t	base_high;
   
 }__attribute__((packed));
 
@@ -110,8 +110,8 @@ struct idt_entry_struct
   
   uint16_t	base_low;
   uint16_t	selector;
-  uint8_t		allways0;
-  uint8_t		flags;
+  uint8_t	allways0;
+  uint8_t	flags;
   uint16_t	base_high;  
   
 }__attribute__((packed));
@@ -190,5 +190,7 @@ extern void isr46(void);
 extern void isr47(void);
 
 extern void isr80(void);
+
+extern uint32_t get_tss_esp0(void);
 
 #endif

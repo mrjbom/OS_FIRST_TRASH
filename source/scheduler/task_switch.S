@@ -1,110 +1,77 @@
 .section .text
 
-.extern        current_thread                 //external links to the current thread
-.extern        next_thread                    //external links to the next thread
+.extern        current_thread                 //external link to the current thread
+.extern        next_thread                    //external link to the next thread
 .extern        tss                            //and the task status segment
+.extern        scheduler_thread_exit_current  //external link to the exit from kernel thread
 .global        scheduler_low_thread_switch    //making the function global and accessible from the outside
-.extern        user_mode_switch
-.extern        scheduler_thread_exit_current
 
-.macro SEND_EOI_POP_EBP
-
-    //send EOI
-    push   %ax     //save ax
-    mov    $0x20, %ax
-    outb   %al, $0x20    //send EOI
-    pop    %ax
-    popf           //returning flags from the stack, implicitly enable interrupts
-    pop    %ebp    //epilogue of a C compatible function on call
-    sti
-
+.macro SEND_EOI
+    mov $0x20, %al //load EOI command
+    outb %al, $0x20 //send EOI command
 .endm
 
 scheduler_low_thread_switch:
-    push    %ebp    //prologue of a C compatible function on call
-    pushf           //pushing flags into the stack
-    cli             //disabling interrupts
+    push %ebp   //prologue of a C compatible function on call
+    pushf       //save EFLAGS to stack
+    pusha       //save general-purpose registers to the stack
+    cli
 
     //saving the stack pointer for the current thread
-    mov    current_thread, %edx  //loading EDX with the address of the current task structure
-    mov    %esp, 16(%edx)        //writing the current ESP to the task structure.
+    mov current_thread, %eax    //loading EDX with the address of the current task structure
+    mov %esp, 16(%eax)          //writing the current ESP to the task structure.
 
-    //taking a new thread from the queue
-    mov    next_thread, %ecx        //load the ECX address of the structure of the next task
+    mov next_thread, %ebx       //loading EDX with the address of the next task structure
 
-    //switching the stack
-    mov    %ecx, current_thread //load next_thread to current_thread
-    mov    16(%ecx), %esp       //loading the new task stack pointer to ESP
+    //is this a kernel thread?
+    //if 1 - kernel thread
+    mov 0(%ebx), %ecx           //loading a structure with information about the process
+                                //that the process belongs to in ECX
+    
+    mov 272(%ecx), %cl         //loading the "kernel" flag in CL
+                                //if 1 - kernel thread
+                                //if 0 - userspace thread
+    mov $1, %dl                //we will compare the flag with the value true
+    cmp %cl, %dl
+    je check_kernel_init_or_continue
+    jne run_userspace_thread
 
-    //modifying the top of the core stack in TSS
-    mov    36(%edx), %eax      //read the top of the stack of flow structure
-    mov    $tss, %edx        //we ship EDX with the TSS address
-    mov    %eax, 4(%edx)     //writing the stack vertex in the tss.esp0 field
+check_kernel_init_or_continue:
+    mov 32(%ebx), %cl            //loading the "is_inited" flag in CL
+                                  //if 0 - need to initialize execution(so that return works normally)
+                                  //if 1 - continue execution
+    mov $0, %dl                  //we will compare the flag with the value false
+    cmp %cl, %dl
+    je init_kernel_thread
+    jne continue_kernel_thread
 
-    //check is_inited
-    push %eax
-    mov $0, %eax
-    cmp 32(%ecx), %eax
-    pop %eax
-    je thread_init
-    jmp thread_continue
+init_kernel_thread:
+    //set "is_inited" flag, now flag = true
+    movl $1, 32(%ebx)
+    SEND_EOI
+    pop %ebp                  //epilogue of a C compatible function on call
+    popf
+    popa
+    sti
+    //mov 32(%ebx), %esp        //load new stack
+    call *20(%ebx)
+    jmp end_kernel_thread
 
-thread_init:
-    //set is inited - true
-    push %eax
-    mov $1, %eax
-    mov %eax, 32(%ecx)
-    pop %eax
+continue_kernel_thread:
+    SEND_EOI
+    pop %ebp                  //epilogue of a C compatible function on call
+    popf
+    popa
+    sti
+    mov 32(%ebx), %esp        //load new stack
+    ret                       //go to new task
 
-    //check kernel or userspace
-    //if 0 - userspace
-    push %eax
-    push %ebx
-    //parent proccess info to eax
-    mov 0(%ecx), %eax
-    //kernel or userspace flag to eax
-    mov 272(%eax), %eax
-    mov $0, %ebx
-    cmp %eax, %ebx
-    pop %ebx
-    pop %eax
-    je thread_userspace_init
+run_userspace_thread:
+    nop
+    nop
+    nop
+    
 
-    //kernel thread init
-    SEND_EOI_POP_EBP
-    call *20(%ecx)
-    jmp end_thread
-
-thread_continue:
-    //if inited
-    //check kernel or userspace
-    //if 0 - userspace
-    push %eax
-    push %ebx
-    //parent proccess info to eax
-    mov 0(%ecx), %eax
-    //kernel or userspace flag to eax
-    mov 272(%eax), %eax
-    mov $0, %ebx
-    cmp %eax, %ebx
-    pop %ebx
-    pop %eax
-    je thread_userspace_continue
-    SEND_EOI_POP_EBP
-    ret
-
-thread_userspace_init:
-    //push entry_point into parameters
-    SEND_EOI_POP_EBP
-    push 20(%ecx)
-    call user_mode_switch
-
-thread_userspace_continue:
-    //push esp to params
-    SEND_EOI_POP_EBP
-    push 16(%ecx)
-    call user_mode_switch
-
-end_thread:
+end_kernel_thread:
     call scheduler_thread_exit_current
     ret

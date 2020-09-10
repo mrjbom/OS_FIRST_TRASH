@@ -1,3 +1,5 @@
+.section .text
+
 .global setl,
 .type setl, @function
 setl:

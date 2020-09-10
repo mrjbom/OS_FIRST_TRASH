@@ -43,7 +43,7 @@ typedef struct
     uint32_t    tss;         //          //+36
 } thread_t;
 
-extern void scheduler_init();
+extern void scheduler_init(bool enable_multitask_after_setting);
 
 process_t* scheduler_proc_create(bool kernel,
                                  const char name[256]);

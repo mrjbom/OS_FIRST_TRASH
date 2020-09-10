@@ -108,8 +108,10 @@ isr_common_stub:
       mov    %ax, %es
       mov    %ax, %fs
       mov    %ax, %gs
-     
+
+      push %esp
       call   isr_handler   /* Calling handler */
+      add $4, %esp
      
       pop    %eax          /* Restoring the original data segment selector */
       mov    %ax, %ds      

@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include "../lfbmemory/lfbmemory.h"
+#include "../interruptions/descriptor_tables.h"
 
 /*
 Part of the code is borrowed from the @maisvendoo blog, http://phantomexos.blogspot.ru
@@ -107,7 +108,7 @@ void show_test_word() {
     serial_printf("Test word!");
 }
 
-void scheduler_init() {
+void scheduler_init(bool enable_multitask_after_setting) {
     //read current stack pointer
     uint32_t esp = 0;
     __asm__ volatile ("mov %%esp, %0":"=a"(esp));       
@@ -154,7 +155,7 @@ void scheduler_init() {
     current_thread = kernel_thread;
    
     //raising the scheduler readiness flag
-    multi_task = true;
+    multi_task = enable_multitask_after_setting;
    
     //enabling interrupts again
     __asm__ volatile ("sti");
@@ -212,6 +213,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
     tmp_thread->stack_size = stack_size;
     tmp_thread->suspend = suspend;
     tmp_thread->entry_point = (uint32_t)entry_point;
+    tmp_thread->is_inited = false;
 
     //creating a new thread stack
     stack = pm_malloc(stack_size);
@@ -224,7 +226,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
 
     for(uint32_t i = 0; i < stack_size / 4; ++i) {
         //fill stack
-        ((uint32_t*)stack)[i] = (0xFFFFFFFF - i);
+        ((uint32_t*)stack)[i] = (0xCCCCCCCC - i);
     }
    
     //saving the pointer to the stack memory
@@ -326,8 +328,9 @@ uint32_t counter = 0;
 void scheduler_switch() {
     __asm__ volatile ("cli");
     //если других задач нету
-    if(!multi_task)
+    if(!multi_task) {
         return;
+    }
     if((counter + 1) < g_list_length(thread_list)) {
         ++counter;
     } else {
@@ -336,15 +339,14 @@ void scheduler_switch() {
     next_thread = (thread_t*)(g_list_nth_data(thread_list, counter));
     scheduler_thread_show_list();
     serial_printf("\nbefore switch\n");
-    serial_printf("current_thread->id = %u, kernel = %u\n", current_thread->id, current_thread->process->kernel);
-    serial_printf("next_thread->id = %u, kernel = %u\n", next_thread->id, next_thread->process->kernel);
+    serial_printf("current_thread->id = %u, kernel = %u, is_inited = %u\n", current_thread->id, current_thread->process->kernel, current_thread->is_inited);
+    serial_printf("next_thread->id = %u, kernel = %u, is_inited = %u", next_thread->id, next_thread->process->kernel, next_thread->is_inited);
     if(current_thread->process->kernel == 1 && next_thread->process->kernel == 0 && next_thread->is_inited == 0) {
         serial_printf("going to init user thread\n");
     }
     if(current_thread->process->kernel == 1 && next_thread->process->kernel == 0 && next_thread->is_inited == 1) {
         serial_printf("going to continue user thread\n");
     }
-    
     scheduler_low_thread_switch();
     __asm__ volatile ("sti");
 }
@@ -353,7 +355,7 @@ void scheduler_thread_show_list() {
     serial_printf("\nTHREAD LIST:\n");
     size_t threads_count = g_list_length(thread_list);
 	for (uint32_t i = 0; i < threads_count; ++i) {
-		serial_printf("thread_list[%u] addr = 0x%x, id = %u\n", i, ((thread_t*)g_list_nth_data(thread_list, i)), ((thread_t*)g_list_nth_data(thread_list, i))->id);
+		serial_printf("thread_list[%u] addr = 0x%x, id = %u, kernel = %u\n", i, ((thread_t*)g_list_nth_data(thread_list, i)), ((thread_t*)g_list_nth_data(thread_list, i))->id, ((thread_t*)g_list_nth_data(thread_list, i))->process->kernel);
 	}
     serial_printf("\n");
 }

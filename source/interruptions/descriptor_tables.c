@@ -8,6 +8,7 @@
 #include "descriptor_tables.h"
 #include "../inlineassembly/inlineassembly.h"
 #include "../lib/string.h"
+#include "../memory/mmu/mmu.h"
 
 /*******************************************************************************
 	GDT
@@ -35,7 +36,8 @@ idt_ptr_t	idt_ptr;
 
 tss_entry_t	tss;
 
-extern uint32_t init_esp;
+unsigned char stack_for_tss_bottom[4096];
+uint32_t stack_for_tss_top = (uint32_t)stack_for_tss_bottom + 4096;
 
 extern void tss_flush();
 
@@ -54,12 +56,12 @@ void init_gdt(void)
   gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); /* User mode data segment */
   gdt_set_gate(5, (uint32_t)&tss, (uint32_t)&tss + sizeof(tss_entry_t), 0xE9, 0xCF);
 
+  //uint32_t stack = 0;
+  //__asm__ volatile ("mov %%esp, %0" : "=r"(stack));
+  write_tss(5, 0x10, stack_for_tss_top);
+  serial_printf("STACK_TOP FOR TSS = 0x%x(%u)\n", get_tss_esp0(), get_tss_esp0());
+
   gdt_flush((uint32_t)&gdt_ptr);
-
-  uint32_t stack = 0;
-  __asm__ volatile ("mov %%esp, %0" : "=r"(stack));
-
-  write_tss(5, 0x10, stack);
 
   tss_flush();
 }

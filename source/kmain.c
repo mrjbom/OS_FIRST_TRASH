@@ -78,6 +78,7 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //clear_lfb_mem(0xFE01AC);
 
     init_descriptor_tables();
+
     serial_init();
 
     detect_cpu();
@@ -104,15 +105,15 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //uint32_t* ptr = (uint32_t*)pm_malloc(4096);
     //vm_set_page_flags(current_directory_table, ptr, 0);
     //*ptr = 10;
-
     
     //tnitializing the scheduler
-    scheduler_init();
+    scheduler_init(true);
+
+    __asm__ volatile ("mov $0x100, %eax");
  
     //getting a pointer to the current process
     process_t* proc = scheduler_get_current_proc();
 
-    //multi_task = false;
     //creating two threads
     thread01 = scheduler_thread_create(proc,
                &task01,
@@ -120,10 +121,10 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
                false);
 //
     ///*
-    thread02 = scheduler_thread_create(proc,
-               &task02,
-               0x2000,
-               false);
+    //thread02 = scheduler_thread_create(proc,
+    //           &task02,
+    //           0x2000,
+    //           false);
     //*/
 //
     /////*
@@ -134,8 +135,8 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     //           false);
     ////*/
 
-    process_t* user_proc = scheduler_proc_create(false, "User process");
-    scheduler_thread_create(user_proc, &task04u, 0x2000, false);
+    //process_t* user_proc = scheduler_proc_create(false, "User process");
+    //scheduler_thread_create(user_proc, &task04u, 0x2000, false);
 
     pit_sleep(1000);
     lfb_clear(0xF0F0F0);

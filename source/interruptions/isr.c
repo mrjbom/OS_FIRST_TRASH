@@ -21,17 +21,18 @@ void PIC_sendEOI(uint8_t intnum)
   }
 }
 
-void isr_handler(registers_t regs)
+void isr_handler(registers_t* regs)
 {
-  if(regs.int_num == 6) {
+  if(regs->int_num == 6) {
     scheduler_thread_show_list();
-    PIC_sendEOI(regs.int_num);
+    PIC_sendEOI(regs->int_num);
     return;
   }
-  if(regs.int_num == 32) {
+  if(regs->int_num == 32) {
     pit_handler();
+    PIC_sendEOI(regs->int_num);
     return;
   }
-  serial_printf("unhandled interrupt: %u\n", regs.int_num);
-  PIC_sendEOI(regs.int_num);
+  serial_printf("unhandled interrupt: %u\n", regs->int_num);
+  PIC_sendEOI(regs->int_num);
 }

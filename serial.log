@@ -1,0 +1,58 @@
+STACK_TOP FOR TSS = 0x149f60(1351520)
+
+THREAD LIST:
+thread_list[0] addr = 0x114f000, id = 0, kernel = 1
+
+
+before switch
+current_thread->id = 0, kernel = 1, is_inited = 1
+next_thread->id = 0, kernel = 1, is_inited = 1esp for task = 0x1153ff4
+esp for task = 0x1159ff4
+
+THREAD LIST:
+thread_list[0] addr = 0x114f000, id = 0, kernel = 1
+thread_list[1] addr = 0x1151000, id = 1, kernel = 1
+thread_list[2] addr = 0x1157000, id = 2, kernel = 0
+
+
+before switch
+current_thread->id = 0, kernel = 1, is_inited = 1
+next_thread->id = 1, kernel = 1, is_inited = 0I'm thread #1
+
+THREAD LIST:
+thread_list[0] addr = 0x114f000, id = 0, kernel = 1
+thread_list[1] addr = 0x1151000, id = 1, kernel = 1
+thread_list[2] addr = 0x1157000, id = 2, kernel = 0
+
+
+before switch
+current_thread->id = 1, kernel = 1, is_inited = 1
+next_thread->id = 2, kernel = 0, is_inited = 0going to init user thread
+
+THREAD LIST:
+thread_list[0] addr = 0x114f000, id = 0, kernel = 1
+thread_list[1] addr = 0x1151000, id = 1, kernel = 1
+thread_list[2] addr = 0x1157000, id = 2, kernel = 0
+
+
+before switch
+current_thread->id = 2, kernel = 0, is_inited = 1
+next_thread->id = 0, kernel = 1, is_inited = 1
+THREAD LIST:
+thread_list[0] addr = 0x114f000, id = 0, kernel = 1
+thread_list[1] addr = 0x1151000, id = 1, kernel = 1
+thread_list[2] addr = 0x1157000, id = 2, kernel = 0
+
+
+before switch
+current_thread->id = 0, kernel = 1, is_inited = 1
+next_thread->id = 1, kernel = 1, is_inited = 1
+THREAD LIST:
+thread_list[0] addr = 0x114f000, id = 0, kernel = 1
+thread_list[1] addr = 0x1151000, id = 1, kernel = 1
+thread_list[2] addr = 0x1157000, id = 2, kernel = 0
+
+
+before switch
+current_thread->id = 1, kernel = 1, is_inited = 1
+next_thread->id = 2, kernel = 0, is_inited = 1going to continue user thread

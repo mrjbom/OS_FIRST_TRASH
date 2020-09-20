@@ -29,7 +29,7 @@ void isr_handler(registers_t* regs)
     return;
   }
   if(regs->int_num == 32) {
-    pit_handler();
+    pit_handler(regs);
     PIC_sendEOI(regs->int_num);
     return;
   }

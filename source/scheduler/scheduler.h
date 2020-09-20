@@ -11,6 +11,7 @@ Thanks.
 #include "../../i386-elf-4.9.1-Linux-x86_64/lib/gcc/i386-elf/4.9.1/include/stdbool.h"
 #include "../lib/glist.h"
 #include "../memory/mmu/mmu.h"
+#include "../interruptions/isr.h"
 
 extern void show_test_word();
 
@@ -41,6 +42,9 @@ typedef struct
     uint32_t    stack_top;   //stack top //+28
     bool        is_inited;   //init flag //+32
     uint32_t    tss;         //          //+36
+    uint32_t    entry_point_return;  //an address that is taken from the stack  //+40
+                                     //in the assembly code to transfer control using ret
+                                     //(mainly for resuming previously interrupted user tasks)
 } thread_t;
 
 extern void scheduler_init(bool enable_multitask_after_setting);
@@ -64,7 +68,7 @@ extern process_t* scheduler_get_current_proc();
 
 extern thread_t* scheduler_get_current_thread();
 
-extern void scheduler_switch();
+extern void scheduler_switch(registers_t* regs);
 
 //asm function
 extern void scheduler_low_thread_switch();

@@ -235,6 +235,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
     //in the flow structure - it must point to the value
     //the number of flags that we will put on the stack
     tmp_thread->esp = (uint32_t)stack + stack_size - 12;
+    serial_printf("esp for task = 0x%x\n", tmp_thread->esp);
     //why 12? look down
     //esp[-1] = (uint32_t)entry_point; and esp[-3] = eflags | (1 << 9);
 
@@ -322,11 +323,30 @@ thread_t* scheduler_get_current_thread() {
     return current_thread;
 }
 
+
 //sheduler logic
 uint32_t counter = 0;
 
-void scheduler_switch() {
+//копия стека полученая из параметров для scheduler_low_thread_switch
+//(используется при прыжке с 3 на 0 кольцо(после прерывания))
+uint32_t* useresp_copy_before_int = 0x0;
+
+void scheduler_switch(registers_t* regs) {
     __asm__ volatile ("cli");
+
+    /*
+    Если был прерван пользовательский процесс,
+    то значит что сейчас esp равен tss.esp0
+    (посколько произошёл переход с кольца 3 на кольцо 0
+    и процессор загрузил новый стек(tss.esp0))
+    А значит мы должны загрузить взять
+    его стек(useresp) из аргументов хендлера прерывания(regs) и сохранить
+    В этом случае функция scheduler_low_thread_switch делает 
+    */
+    if(current_thread->process->kernel == false) {
+        useresp_copy_before_int = (uint32_t*)regs->useresp;
+    } 
+
     //если других задач нету
     if(!multi_task) {
         return;

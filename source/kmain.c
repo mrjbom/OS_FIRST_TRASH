@@ -10,33 +10,31 @@
 
 void task01()
 {
-    for(uint32_t i = 0; i < 10000; ++i) {
-        serial_printf("Im thread #1\n");
-    }
+    //for(uint32_t i = 0; i < 10000; ++i) {
+    //    serial_printf("Im thread #1\n");
+    //}
     
-    /*
+    ///*
     serial_printf("I'm thread #1\n");
     for(int i = 0; i < 6; ++i) {
         task_colored_square(0, 0, 100, 100);
     }
     lfb_draw_rectangle(0, 0, 100, 100, 0x0);
-    */
-    //return;
+    //*/
 }
 
 void task02()
 {
-    for(uint32_t i = 0; i < 10000; ++i) {
-        serial_printf("Im thread #2\n");
-    }
-    /*
+    //for(uint32_t i = 0; i < 10000; ++i) {
+    //    serial_printf("Im thread #2\n");
+    //}
+    ///*
     serial_printf("I'm thread #2\n");
     for(int i = 0; i < 12; ++i) {
         task_colored_square(0, 200, 100, 300);
     }
     lfb_draw_rectangle(0, 200, 100, 300, 0x0);
-    */
-    return;
+    //*/
 }
 
 void task03()
@@ -57,8 +55,10 @@ void task03()
 void task04u() {
     //serial_printf("I'm USER thread #4\n");
     int j = 10;
-    for(int i = 0; i < 99999999; ++i) {
-        j += i * 2;
+    for(int i = 0; i < 10; ++i) {
+        for(int i = 0; i < 99999999; ++i) {
+            j += i * 2;
+        }
     }
     j = 123;
     return;
@@ -108,35 +108,36 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
     
     //tnitializing the scheduler
     scheduler_init(true);
-
-    __asm__ volatile ("mov $0x100, %eax");
  
     //getting a pointer to the current process
     process_t* proc = scheduler_get_current_proc();
 
     //creating two threads
+    ///*
     thread01 = scheduler_thread_create(proc,
                &task01,
                0x2000,
                false);
-//
-    ///*
-    //thread02 = scheduler_thread_create(proc,
-    //           &task02,
-    //           0x2000,
-    //           false);
     //*/
-//
-    /////*
-    //thread03 = scheduler_thread_create(proc,
-    //           &task03,
-    //           0x2000,
-    //           true,
-    //           false);
-    ////*/
+    /*
+    thread02 = scheduler_thread_create(proc,
+               &task02,
+               0x2000,
+               false);
+    */
 
-    //process_t* user_proc = scheduler_proc_create(false, "User process");
-    //scheduler_thread_create(user_proc, &task04u, 0x2000, false);
+    /*
+    thread03 = scheduler_thread_create(proc,
+               &task03,
+               0x2000,
+               true);
+    */
+
+    process_t* user_proc = scheduler_proc_create(false, "User process");
+    thread04u = scheduler_thread_create(user_proc,
+                &task04u,
+                0x2000,
+                false);
 
     pit_sleep(1000);
     lfb_clear(0xF0F0F0);

@@ -21,9 +21,9 @@ void pit_init(uint16_t freq) {
     pit_tick_counter = 0;
 }
 
-void pit_handler() {
+void pit_handler(registers_t* regs) {
     ++pit_tick_counter;
-    scheduler_switch();
+    scheduler_switch(regs);
 }
 
 void pit_sleep(uint32_t milliseconds) {

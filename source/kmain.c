@@ -69,6 +69,15 @@ thread_t* thread02;
 thread_t* thread03;
 thread_t* thread04u;
 
+void test_foo() {
+    __asm__ volatile ("mov $1, %eax");
+    __asm__ volatile ("mov $2, %ebx");
+    __asm__ volatile ("mov $3, %ecx");
+    __asm__ volatile ("mov $4, %edx");
+    //__asm__ volatile ("int $0x1F"); //31
+    __asm__ volatile ("int $0x20");
+}
+
 void kmain(unsigned long magic, multiboot_info_t* mbi) {
     (void)magic;
     multiboot_info_init(mbi);
@@ -133,11 +142,13 @@ void kmain(unsigned long magic, multiboot_info_t* mbi) {
                true);
     */
 
-    process_t* user_proc = scheduler_proc_create(false, "User process");
-    thread04u = scheduler_thread_create(user_proc,
-                &task04u,
-                0x2000,
-                false);
+    //process_t* user_proc = scheduler_proc_create(false, "User process");
+    //thread04u = scheduler_thread_create(user_proc,
+    //            &task04u,
+    //            0x2000,
+    //            false);
+
+    test_foo();
 
     pit_sleep(1000);
     lfb_clear(0xF0F0F0);

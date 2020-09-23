@@ -234,27 +234,13 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
     //setting the ESP value
     //in the flow structure - it must point to the value
     //the number of flags that we will put on the stack
-    tmp_thread->esp = (uint32_t)stack + stack_size - 12;
-    serial_printf("esp for task = 0x%x\n", tmp_thread->esp);
-    //why 12? look down
-    //esp[-1] = (uint32_t)entry_point; and esp[-3] = eflags | (1 << 9);
+    tmp_thread->esp = (uint32_t)stack + stack_size;
 
     //adding a thread to the queue
     thread_list = g_list_append(thread_list, tmp_thread);
 
     //increasing the number of threads in the parent process
     proc->threads_count++;
-
-    //formed by the stack of tasks
-
-    //creating a pointer to the memory allocated for the stack
-    uint32_t* esp = (uint32_t*)(stack + stack_size);
-
-    //put the thread entry point on the stack and
-    //flag register value
-    //esp[-1] = (uint32_t)entry_point;
-    //raising the IF flag
-    esp[-3] = eflags | (1 << 9);
 
     //enabling interrupts
     __asm__ volatile ("sti");
@@ -266,6 +252,9 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
 void scheduler_thread_exit_current() {
     /* Отключаем прерывания */
     __asm__ volatile ("cli");
+
+    serial_printf("END THREAD LIST\n");
+    scheduler_thread_show_list();
 
     //serial_printf("scheduler_thread_exit_current\n"
     //              "current_thread id = %u\n", current_thread->id);
@@ -329,17 +318,21 @@ uint32_t counter = 0;
 
 //копия стека полученая из параметров для scheduler_low_thread_switch
 //(используется при прыжке с 3 на 0 кольцо(после прерывания))
-uint32_t* useresp_copy_before_int = 0x0;
+uint32_t* useresp_copy_before_int = NULL;
+
+//указатель на структуру регистров сохранённых прерыванием
+uint32_t* saved_regs = NULL;
 
 void scheduler_switch(registers_t* regs) {
     __asm__ volatile ("cli");
+    saved_regs = (uint32_t*)regs;
 
     /*
     Если был прерван пользовательский процесс,
     то значит что сейчас esp равен tss.esp0
     (посколько произошёл переход с кольца 3 на кольцо 0
     и процессор загрузил новый стек(tss.esp0))
-    А значит мы должны загрузить взять
+    А значит мы должны взять
     его стек(useresp) из аргументов хендлера прерывания(regs) и сохранить
     В этом случае функция scheduler_low_thread_switch делает 
     */

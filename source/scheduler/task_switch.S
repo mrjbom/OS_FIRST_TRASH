@@ -1,6 +1,6 @@
 .section .bss
 
-//tmp 4 byte value
+//tmp 4 byte variable()
 tmp_var: .space 4, 0
 
 
@@ -14,11 +14,21 @@ tmp_var: .space 4, 0
 
 .global scheduler_low_thread_switch
 
-
+//policy on the best use of registers
 //eax = current_thread
 //ebx = next_thread
 //ecx = pointers
 //edx = comparisons
+
+.macro SEND_EOI
+
+    push %ax
+    mov    $0x20, %ax
+    outb   %al, $0x20    //send EOI
+    pop %ax
+
+.endm
+
 scheduler_low_thread_switch:
     push %EBP
     pushf
@@ -59,25 +69,19 @@ kernel_check_next_thread_init_or_continue:
     jne kernel_next_thread_continue
 
 kernel_next_thread_init:
-    mov 20(%EBX), %ECX //save entry_point
-    mov %ECX, tmp_var
-    //load saved general-purpose registers from stack
-    pop %ECX
-    pop %EAX
-    pop %EDX
-    pop %EBX
-    pop %ESI
-    pop %EDI
-    popf
-    pop %EBP
-    call *tmp_var
-    call scheduler_thread_show_list //test c func call
-    call scheduler_thread_show_list //test c func call
-    call scheduler_thread_show_list //test c func call
+    SEND_EOI
+    mov %EBX, current_thread
+    movb $1, 32(%EBX)
+    sti
+    call *20(%EBX)
     call scheduler_thread_exit_current
+    ret
 
 
 kernel_next_thread_continue:
+    //load general-purpose registers into stack
+    SEND_EOI
+    mov %EBX, current_thread
     pop %ECX
     pop %EAX
     pop %EDX
@@ -86,6 +90,7 @@ kernel_next_thread_continue:
     pop %EDI
     popf
     pop %EBP
+    sti
     ret
 
 userspace_check_next_thread_init_or_continue:

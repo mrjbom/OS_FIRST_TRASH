@@ -76,6 +76,8 @@ void task_colored_square(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1) {
 }
 
 //scheduler
+//Number of all threads
+uint32_t threads_counter = 0;
 
 //next process identifier (PID)
 uint32_t next_pid = 0;
@@ -149,6 +151,7 @@ void scheduler_init(bool enable_multitask_after_setting) {
     kernel_thread->stack_top = (uint32_t)kernel_stack_top;
    
     thread_list = g_list_append(thread_list, kernel_thread);
+    ++threads_counter;
 
     //making the core process and thread current
     current_proc = kernel_proc;
@@ -156,7 +159,7 @@ void scheduler_init(bool enable_multitask_after_setting) {
    
     //raising the scheduler readiness flag
     multi_task = enable_multitask_after_setting;
-   
+
     //enabling interrupts again
     __asm__ volatile ("sti");
 }
@@ -199,6 +202,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
 
     //creating a new thread descriptor
     thread_t* tmp_thread = (thread_t*)pm_malloc(sizeof(thread_t));
+    serial_printf("\n\n\ntmp_thread addr: 0x%x - 0x%x\n", (uint32_t)tmp_thread, (uint32_t)tmp_thread + sizeof(thread_t));
     if(!tmp_thread) {
         serial_printf("thread_create error!\n");
         return NULL;
@@ -217,6 +221,7 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
 
     //creating a new thread stack
     stack = pm_malloc(stack_size);
+    serial_printf("stack addr: 0x%x - 0x%x\n", (uint32_t)stack, (uint32_t)stack + stack_size);
     if(!stack) {
         serial_printf("thread_create error!\n");
         return NULL;
@@ -233,14 +238,17 @@ thread_t* scheduler_thread_create(process_t* proc,   //child process
     tmp_thread->stack = stack;
     //setting the ESP value
     //in the flow structure - it must point to the value
-    //the number of flags that we will put on the stack
     tmp_thread->esp = (uint32_t)stack + stack_size;
+    serial_printf("esp addr: 0x%x\n", (uint32_t)tmp_thread->esp);
 
     //adding a thread to the queue
     thread_list = g_list_append(thread_list, tmp_thread);
+    ++threads_counter;
+    serial_printf("thread_list addr: 0x%x\n", (uint32_t)thread_list);
 
     //increasing the number of threads in the parent process
     proc->threads_count++;
+
 
     //enabling interrupts
     __asm__ volatile ("sti");
@@ -253,6 +261,7 @@ void scheduler_thread_exit_current() {
     /* Отключаем прерывания */
     __asm__ volatile ("cli");
 
+    serial_printf("EXIT_FROM_CURRENT\n");
     serial_printf("END THREAD LIST\n");
     scheduler_thread_show_list();
 
@@ -261,8 +270,12 @@ void scheduler_thread_exit_current() {
 
     /* Удаляем поток из очереди */
     thread_list = g_list_remove(thread_list, current_thread);
+    --threads_counter;
     /* Уменьшаем число потоков в процессе, которому он принадлежит */
     current_thread->process->threads_count--;
+
+    serial_printf("AFTER REMOVE\n");
+    scheduler_thread_show_list();
 
     /* Освобождаем память, занятую потоком под стек и собственный описатель */
     pm_free(current_thread->stack);
@@ -344,16 +357,16 @@ void scheduler_switch(registers_t* regs) {
     if(!multi_task) {
         return;
     }
-    if((counter + 1) < g_list_length(thread_list)) {
+    if((counter + 1) < threads_counter) {
         ++counter;
     } else {
         counter = 0;
     }
     next_thread = (thread_t*)(g_list_nth_data(thread_list, counter));
     scheduler_thread_show_list();
-    serial_printf("\nbefore switch\n");
+    serial_printf("before switch\n");
     serial_printf("current_thread->id = %u, kernel = %u, is_inited = %u\n", current_thread->id, current_thread->process->kernel, current_thread->is_inited);
-    serial_printf("next_thread->id = %u, kernel = %u, is_inited = %u", next_thread->id, next_thread->process->kernel, next_thread->is_inited);
+    serial_printf("next_thread->id = %u, kernel = %u, is_inited = %u\n", next_thread->id, next_thread->process->kernel, next_thread->is_inited);
     if(current_thread->process->kernel == 1 && next_thread->process->kernel == 0 && next_thread->is_inited == 0) {
         serial_printf("going to init user thread\n");
     }

@@ -15,18 +15,10 @@ void PIC_sendEOI(uint8_t intnum)
   //37   44
   //38   45
   if(intnum >= 32) {
+    outb(0x20, 0x20); //EOI to PIC1
 	  if(intnum >= 39)
 		  outb(0xA0, 0x20); //EOI to PIC2
-	  outb(0x20, 0x20); //EOI to PIC1
   }
-}
-
-void test_handler(registers_t* regs) {
-  serial_printf("saved regs by int 31\n");
-  serial_printf("eax = %X\n", regs->eax);
-  serial_printf("ebx = %X\n", regs->ebx);
-  serial_printf("ecx = %X\n", regs->ecx);
-  serial_printf("edx = %X\n", regs->edx);
 }
 
 void isr_handler(registers_t* regs)
@@ -38,11 +30,6 @@ void isr_handler(registers_t* regs)
   }
   if(regs->int_num == 32) {
     pit_handler(regs);
-    PIC_sendEOI(regs->int_num);
-    return;
-  }
-  if(regs->int_num == 31) {
-    test_handler(regs);
     PIC_sendEOI(regs->int_num);
     return;
   }

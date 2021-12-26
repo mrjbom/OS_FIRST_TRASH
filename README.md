@@ -1,6 +1,8 @@
 # OS
 The simplest example of an operating system.
 
+#### This repository is no longer used for development, this version is also no longer being developed.
+
 ### How to build on Linux
 1. Clone repository
 2. Enter to OS folder

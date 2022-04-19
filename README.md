@@ -1,7 +1,12 @@
 # OS
 The simplest example of an operating system.
 
-#### This repository is no longer used for development, this version is also no longer being developed.
+**This repository is no longer used for development, this version is also no longer being developed.**
+
+The code of this project is **GARBAGE**.  
+At that time, I didn't pay enough attention to the quality of the code and the project turned into a garbage dump  
+I would like to delete it, but I feel sorry for this repository  
+A better version of this project is most likely being developed now, take a look among the repositories if you are interested  
 
 ### How to build on Linux
 1. Clone repository

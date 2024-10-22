@@ -1,5 +1,5 @@
-# OS
-The simplest example of an operating system.
+# OS First Trash
+Old OS project
 
 **This repository is no longer used for development, this version is also no longer being developed.**
 
